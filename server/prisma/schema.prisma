@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(uuid())
+  username String @db.VarChar(255) @unique
+  password Password?
+  nickname String @db.VarChar(255) @unique
+  role Role @default(USER)
+  games Game[]
+}
+
+model Password {
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id]) 
+  userId String @unique
+  password String @db.VarChar(255)
+
+}
+
+model Game{
+  id Int @id @default(autoincrement())
+  user User? @relation(fields: [userId], references: [id])
+  userId String?
+  mode GameMode
+  time Int 
+  bbbv Int
+  points Float
+}
+
+enum GameMode{
+  BEGGINER
+  INTERMEDIATE
+  EXPERT
+}
+
+enum Role{
+  USER
+  ADMIN
+}

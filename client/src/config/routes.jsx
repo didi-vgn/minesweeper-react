@@ -6,6 +6,7 @@ import LogIn from "../views/LogIn.jsx";
 import SignUp from "../views/SignUp.jsx";
 import ErrorPage from "../views/ErrorPage.jsx";
 import App from "../App.jsx";
+import Admin from "../views/Admin.jsx";
 
 const router = [
   {
@@ -39,6 +40,10 @@ const router = [
       {
         path: "story",
         element: <Story></Story>,
+      },
+      {
+        path: "admin",
+        element: <Admin></Admin>,
       },
     ],
   },

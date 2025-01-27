@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, NavLink } from "react-router-dom";
 
 function App() {
   const admin = false;
@@ -7,16 +7,44 @@ function App() {
       <nav>
         <ul>
           <li>
-            <Link to='/'>Play</Link>
+            <NavLink
+              to='/'
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Play
+            </NavLink>
           </li>
           <li>
-            <Link to='story'>Story</Link>
+            <NavLink
+              to='story'
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Story
+            </NavLink>
           </li>
           <li>
-            <Link to='leaderboards'>Leaderboards</Link>
+            <NavLink
+              to='leaderboards'
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Leaderboards
+            </NavLink>
           </li>
           <li>
-            <Link to='profile'>Profile</Link>
+            <NavLink
+              to='profile'
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Profile
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to='admin'
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Admin
+            </NavLink>
           </li>
         </ul>
       </nav>
