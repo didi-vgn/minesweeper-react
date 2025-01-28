@@ -22,16 +22,6 @@ const router = [
       {
         path: "profile",
         element: <Profile></Profile>,
-        children: [
-          {
-            path: "login",
-            element: <LogIn></LogIn>,
-          },
-          {
-            path: "signup",
-            element: <SignUp></SignUp>,
-          },
-        ],
       },
       {
         path: "leaderboards",
@@ -44,6 +34,14 @@ const router = [
       {
         path: "admin",
         element: <Admin></Admin>,
+      },
+      {
+        path: "login",
+        element: <LogIn></LogIn>,
+      },
+      {
+        path: "signup",
+        element: <SignUp></SignUp>,
       },
     ],
   },

@@ -1,14 +1,33 @@
+import Input from "../components/Input";
+import { FormProvider, useForm } from "react-hook-form";
+import { login_validation } from "../utils/validations";
+import Form from "../components/Form";
+
 export default function LogIn() {
+  const methods = useForm();
+
+  const onSubmit = methods.handleSubmit((data) => {
+    console.log(data);
+  });
+
   return (
-    <div>
-      <h3>Log in</h3>
-      <form action=''>
-        <label htmlFor='username'>Username:</label>
-        <input type='text' name='username' id='username' required />
-        <label htmlFor='password'>Password:</label>
-        <input type='password' name='password' id='password' />
-        <button>Log in</button>
-      </form>
-    </div>
+    <FormProvider {...methods}>
+      <Form onClick={onSubmit} buttonText='Log In'>
+        <Input
+          label='username'
+          type='text'
+          id='username'
+          placeholder='username...'
+          {...login_validation}
+        />
+        <Input
+          label='password'
+          type='password'
+          id='password'
+          placeholder='password...'
+          {...login_validation}
+        />
+      </Form>
+    </FormProvider>
   );
 }

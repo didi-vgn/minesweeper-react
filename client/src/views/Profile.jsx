@@ -17,10 +17,10 @@ export default function Profile() {
         ) : (
           <div>
             <button>
-              <Link to='/profile/login'>Log in</Link>
+              <Link to='/login'>Log in</Link>
             </button>
             <button>
-              <Link to='/profile/signup'>Sign up</Link>
+              <Link to='/signup'>Sign up</Link>
             </button>
             <Outlet></Outlet>
           </div>
