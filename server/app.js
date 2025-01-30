@@ -16,6 +16,8 @@ app.use("/users", userRouter);
 app.use("/games", gameRouter);
 app.use("/auth", authRouter);
 
+// console.log(require("crypto").randomBytes(32).toString("hex"));
+
 process.on("SIGTERM", async () => {
   console.log("Disconnecting from database...");
   await prisma.$disconnect();

@@ -1,5 +1,7 @@
+import Row from "../components/Row";
+
 export default function Leaderboards() {
-  const scores = [
+  const games = [
     {
       nickname: "didi",
       difficulty: "intermediate",
@@ -45,26 +47,25 @@ export default function Leaderboards() {
   ];
 
   return (
-    <div>
-      <h3>Leaderboards</h3>
-      <div className='row'>
-        <div>Nickname</div>
-        <div>Difficulty</div>
-        <div>Time</div>
-        <div>3BV</div>
-        <div>Score</div>
-      </div>
-      {scores.map((score, index) => {
-        return (
-          <div className='row' key={index}>
-            <div>{score.nickname}</div>
-            <div>{score.difficulty}</div>
-            <div>{score.time}</div>
-            <div>{score["3BV"]}</div>
-            <div>{score.score}</div>
-          </div>
-        );
-      })}
+    <div className='w-9/10 m-10'>
+      <Row
+        key='head'
+        nickname='Nickname'
+        gameMode='Game Mode'
+        time='Time'
+        bbbv='3BV'
+        score='Score'
+      ></Row>
+      {games.map((game, index) => (
+        <Row
+          key={index}
+          nickname={game.nickname}
+          gameMode={game.difficulty}
+          time={game.time}
+          bbbv={game["3BV"]}
+          score={game.score}
+        ></Row>
+      ))}
     </div>
   );
 }

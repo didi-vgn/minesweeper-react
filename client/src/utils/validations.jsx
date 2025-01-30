@@ -16,6 +16,10 @@ export const username_validation = {
       value: 16,
       message: "Max 16 characters",
     },
+    pattern: {
+      value: /^[a-zA-Z0-9]+$/,
+      message: "Must be alphanumeric",
+    },
   },
 };
 
@@ -37,12 +41,16 @@ export const nickname_validation = {
       value: 16,
       message: "Max 16 characters",
     },
+    pattern: {
+      value: /^[a-zA-Z0-9]+$/,
+      message: "Must be alphanumeric",
+    },
   },
 };
 
 export const password_validation = {
   label: "password:",
-  type: "text",
+  type: "password",
   id: "password",
   placeholder: "password...",
   validation: {

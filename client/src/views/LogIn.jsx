@@ -1,18 +1,35 @@
-import Input from "../components/Input";
 import { FormProvider, useForm } from "react-hook-form";
 import { login_validation } from "../utils/validations";
+import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
+import Input from "../components/Input";
+import { useState } from "react";
+import { logInUser } from "../services/logInService";
 
 export default function LogIn() {
   const methods = useForm();
+  const navigate = useNavigate();
+  const [serverErrors, setServerErrors] = useState([]);
 
-  const onSubmit = methods.handleSubmit((data) => {
-    console.log(data);
+  const onSubmit = methods.handleSubmit(async (data) => {
+    try {
+      const response = await logInUser(data);
+
+      if (response.status === 200) {
+        alert("Logged in!");
+        console.log(response.accessToken);
+        // navigate("/profile");
+      } else {
+        setServerErrors(response);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   return (
     <FormProvider {...methods}>
-      <Form onClick={onSubmit} buttonText='Log In'>
+      <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
         <Input
           label='username'
           type='text'

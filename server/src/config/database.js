@@ -54,6 +54,22 @@ exports.findUserBy = async (name, value) => {
   }
 };
 
+exports.createGame = async (userId, gameMode, time, bbbv, points) => {
+  try {
+    return await prisma.game.create({
+      data: {
+        userId: userId,
+        gameMode: gameMode,
+        time: time,
+        bbbv: bbbv,
+        points: points,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 exports.findManyGames = async (gameMode, sort, order, nickname) => {
   try {
     return await prisma.game.findMany({

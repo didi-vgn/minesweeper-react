@@ -19,12 +19,12 @@ export default function Input({ label, type, id, placeholder, validation }) {
         id={id}
         placeholder={placeholder}
         className={`w-full p-5 font-medium border rounded-md ${
-          error ? "border-red-500" : "border-slate-300"
+          error ? "border-pink-600" : "border-slate-300"
         } placeholder:opacity-60`}
         {...register(id, validation)}
       />
       {(error && (
-        <div className='flex items-center gap-1 text-red-500 text-sm h-5'>
+        <div className='flex items-center gap-1 text-pink-600 text-sm h-5'>
           <MdOutlineErrorOutline /> {error.message}
         </div>
       )) ||
