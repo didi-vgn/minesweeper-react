@@ -1,31 +1,26 @@
-import { Outlet, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
+import LargeButton from "../components/LargeButton";
 
 export default function Profile() {
-  const connected = false;
-  const nickname = "didi";
+  const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
+
   return (
     <div>
-      <h3>Profile</h3>
-
-      <div>
-        {connected ? (
-          <div>
-            <div className='profilePicture'></div>
-            <div>Welcome {nickname}!!</div>
-            <button>Log out</button>
+      {user ? (
+        <div>
+          <div className='text-3xl text-bold text-gray-600'>
+            Welcome {user.nickname}!
           </div>
-        ) : (
-          <div>
-            <button>
-              <Link to='/login'>Log in</Link>
-            </button>
-            <button>
-              <Link to='/signup'>Sign up</Link>
-            </button>
-            <Outlet></Outlet>
-          </div>
-        )}
-      </div>
+          <LargeButton onClick={logout} text='Log Out' />
+        </div>
+      ) : (
+        <div>
+          <LargeButton onClick={() => navigate("/login")} text='Log In' />
+          <LargeButton onClick={() => navigate("/signup")} text='Sign Up' />
+        </div>
+      )}
     </div>
   );
 }

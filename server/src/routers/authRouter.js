@@ -6,6 +6,13 @@ const router = express.Router();
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 
-// router.post("/logout", authController.logout);
+///testing token
+router.get("/role", authenticateToken, (req, res) => {
+  if (req.user.role === "ADMIN") {
+    return res.status(200).json("Admin in!");
+  } else if (req.user.role === "USER") {
+    return res.status(200).json("Normal user in!");
+  }
+});
 
 module.exports = router;

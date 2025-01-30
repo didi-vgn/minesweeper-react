@@ -67,10 +67,11 @@ exports.login = async (req, res) => {
     const accessToken = generateJwt({
       id: user.id,
       username: user.username,
+      nickname: user.nickname,
       role: user.role,
     });
 
-    return res.status(200).json({ accessToken });
+    return res.status(200).json(accessToken);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Failed to log in." });

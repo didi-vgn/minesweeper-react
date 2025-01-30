@@ -13,6 +13,6 @@ export const logInUser = async (data) => {
       return [responseData];
     }
   } catch (err) {
-    console.log(err);
+    console.error("Login failed.", err);
   }
 };

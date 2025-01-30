@@ -5,11 +5,13 @@ import Form from "../components/Form";
 import Input from "../components/Input";
 import { useState } from "react";
 import { logInUser } from "../services/logInService";
+import { useAuthContext } from "../context/AuthContext";
 
 export default function LogIn() {
   const methods = useForm();
   const navigate = useNavigate();
   const [serverErrors, setServerErrors] = useState([]);
+  const { login } = useAuthContext();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
@@ -18,7 +20,8 @@ export default function LogIn() {
       if (response.status === 200) {
         alert("Logged in!");
         console.log(response.accessToken);
-        // navigate("/profile");
+        login(response.accessToken);
+        navigate("/profile");
       } else {
         setServerErrors(response);
       }

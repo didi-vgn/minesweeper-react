@@ -1,9 +1,9 @@
 const db = require("../config/database");
 
 exports.createGame = async (req, res) => {
-  const { userId, gameMode, time, bbbv, points } = req.body;
+  const { userId, mode, time, bbbv, points } = req.body;
   try {
-    await db.createGame(userId, gameMode, time, bbbv, points);
+    await db.createGame(userId, mode, time, bbbv, points);
     return res
       .status(201)
       .json({ message: "Game stats added to leaderboards." });

@@ -54,19 +54,20 @@ exports.findUserBy = async (name, value) => {
   }
 };
 
-exports.createGame = async (userId, gameMode, time, bbbv, points) => {
+exports.createGame = async (userId = null, mode, time, bbbv, points) => {
   try {
-    return await prisma.game.create({
-      data: {
-        userId: userId,
-        gameMode: gameMode,
-        time: time,
-        bbbv: bbbv,
-        points: points,
-      },
-    });
+    const data = {
+      mode: mode,
+      time: time,
+      bbbv: bbbv,
+      points: points,
+    };
+    if (userId) data.userId = userId;
+
+    return await prisma.game.create({ data });
   } catch (err) {
     console.error(err);
+    throw new Error("Failed to add game.");
   }
 };
 
@@ -74,7 +75,7 @@ exports.findManyGames = async (gameMode, sort, order, nickname) => {
   try {
     return await prisma.game.findMany({
       where: {
-        gameMode: gameMode.toUpperCase(),
+        mode: gameMode.toUpperCase(),
         ...(nickname && { user: { nickname } }),
       },
       orderBy: { [sort]: order },
