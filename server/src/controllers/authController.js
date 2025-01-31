@@ -2,7 +2,7 @@ const db = require("../config/database");
 const bcrypt = require("bcryptjs");
 const validateUser = require("../utils/validation");
 const { validationResult } = require("express-validator");
-const { generateJwt } = require("../utils/jwt");
+const { generateAccessToken } = require("../utils/jwt");
 
 exports.signup = [
   validateUser,
@@ -64,7 +64,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: "Incorrect password." });
     }
 
-    const accessToken = generateJwt({
+    const accessToken = generateAccessToken({
       id: user.id,
       username: user.username,
       nickname: user.nickname,

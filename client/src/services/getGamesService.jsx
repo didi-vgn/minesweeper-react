@@ -1,6 +1,9 @@
-export const getGameStats = async (gameMode) => {
+import { API_HOST } from "../utils/variables";
+
+export const getGameStats = async (gameMode, nickname) => {
+  const user = nickname ? `${nickname}/` : "";
   try {
-    const response = await fetch(`http://localhost:3000/games/${gameMode}`, {
+    const response = await fetch(`${API_HOST}games/${gameMode}/${user}`, {
       method: "GET",
     });
     const responseData = await response.json();

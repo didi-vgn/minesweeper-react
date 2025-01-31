@@ -1,4 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
+import { isTokenValid } from "../utils/authUtils";
 
 const AuthContext = createContext(null);
 
@@ -15,6 +16,14 @@ export default function AuthContextProvider({ children }) {
     if (storedToken) {
       try {
         const decoded = JSON.parse(atob(storedToken.split(".")[1]));
+
+        const valid = isTokenValid(storedToken);
+        if (!valid) {
+          console.warn("Access Token expired, logging out");
+          logout();
+          return;
+        }
+
         setUser({
           id: decoded.id,
           username: decoded.username,

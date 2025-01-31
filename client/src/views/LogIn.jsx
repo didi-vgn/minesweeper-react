@@ -19,7 +19,6 @@ export default function LogIn() {
 
       if (response.status === 200) {
         alert("Logged in!");
-        console.log(response.accessToken);
         login(response.accessToken);
         navigate("/profile");
       } else {

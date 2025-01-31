@@ -5,6 +5,6 @@ const { Router } = require("express");
 const router = new Router();
 
 router.get("/", userController.findManyUsers);
-router.use("/:nickname", gameRouter);
+// router.use("/:nickname", gameRouter);
 
 module.exports = router;

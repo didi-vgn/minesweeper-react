@@ -1,61 +1,23 @@
-import { useEffect, useState } from "react";
-import Button from "../components/Button";
-import Row from "../components/Row";
-import { getGameStats } from "../services/getGamesService";
+import { useState } from "react";
+import GamesTable from "../components/GamesTable";
 
 export default function Leaderboards() {
-  const [selectedGameMode, setSelectedGameMode] = useState("expert");
-  const [games, setGames] = useState([]);
+  //need to work on this later
+  const [query, setQuery] = useState("");
 
-  useEffect(() => {
-    async function fetchGames() {
-      try {
-        const response = await getGameStats(selectedGameMode);
-        if (response.status === 200) {
-          setGames(response.games);
-        } else {
-          console.error("failed to fetch games.");
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    fetchGames();
-  }, [selectedGameMode]);
-
+  function handleChange(e) {
+    const value = e.target.value;
+    setQuery(value);
+  }
   return (
-    <div className='container'>
-      <div className='flex gap-10'>
-        <Button
-          text='Begginer'
-          onClick={() => setSelectedGameMode("begginer")}
-        />
-        <Button
-          text='Intermediate'
-          onClick={() => setSelectedGameMode("intermediate")}
-        />
-        <Button text='Expert' onClick={() => setSelectedGameMode("expert")} />
-      </div>
-
-      <div className='m-10'>
-        <Row
-          nickname='Nickname'
-          gameMode='Game Mode'
-          time='Time'
-          bbbv='3BV'
-          score='Score'
-        ></Row>
-        {games.map((game, index) => (
-          <Row
-            key={index}
-            nickname={game.userId ? game.user.nickname : "guest"}
-            gameMode={game.mode}
-            time={game.time}
-            bbbv={game.bbbv}
-            score={game.points}
-          ></Row>
-        ))}
-      </div>
+    <div>
+      <input
+        type='text'
+        value={query}
+        onChange={handleChange}
+        className='w-full p-5 font-medium border rounded-md border-slate-600'
+      />
+      <GamesTable nickname={query} />;
     </div>
   );
 }

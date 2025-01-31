@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContext";
 import LargeButton from "../components/LargeButton";
+import GamesTable from "../components/GamesTable";
 
 export default function Profile() {
   const { user, logout } = useAuthContext();
@@ -10,10 +11,13 @@ export default function Profile() {
     <div>
       {user ? (
         <div>
-          <div className='text-3xl text-bold text-gray-600'>
-            Welcome {user.nickname}!
+          <div className='container flex items-center'>
+            <div className='text-3xl text-bold text-gray-600'>
+              Welcome {user.nickname}!
+            </div>
+            <LargeButton onClick={logout} text='Log Out' />
           </div>
-          <LargeButton onClick={logout} text='Log Out' />
+          <GamesTable nickname={user.nickname} />
         </div>
       ) : (
         <div>

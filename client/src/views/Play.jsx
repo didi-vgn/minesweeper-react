@@ -1,5 +1,6 @@
 import LargeButton from "../components/LargeButton";
 import { useAuthContext } from "../context/AuthContext";
+import GameApp from "../game/GameApp";
 import { postGameStats } from "../services/postGameService";
 
 export default function Play() {
@@ -28,16 +29,19 @@ export default function Play() {
 
   return (
     <div>
-      {user ? (
-        <div className='text-3xl text-bold text-gray-600'>
-          Authenticated as {user.nickname}
-        </div>
-      ) : (
-        <div className='text-3xl text-bold text-gray-600'>
-          Not authenticated
-        </div>
-      )}
-      <LargeButton onClick={onSubmit} text='Post Game' />
+      <div className='container flex items-center m-10'>
+        {user ? (
+          <div className='text-3xl text-bold text-gray-600'>
+            Authenticated as {user.nickname}
+          </div>
+        ) : (
+          <div className='text-3xl text-bold text-gray-600'>
+            Not authenticated
+          </div>
+        )}
+        <LargeButton onClick={onSubmit} text='Post Game' />
+      </div>
+      <GameApp />
     </div>
   );
 }
