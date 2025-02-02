@@ -1,21 +1,12 @@
-export const getBoardDifficulty = (board) => {
+import { adjacentCells } from "../utils/variables";
+
+export const calculateDifficulty = (board) => {
   const height = board.length;
   const width = board[0].length;
 
   let visited = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => 0)
   );
-
-  const adjacentCells = [
-    [-1, -1],
-    [-1, 0],
-    [-1, +1],
-    [0, -1],
-    [0, +1],
-    [+1, -1],
-    [+1, 0],
-    [+1, +1],
-  ];
 
   function withinBounds(row, col) {
     return row >= 0 && row < height && col >= 0 && col < width;

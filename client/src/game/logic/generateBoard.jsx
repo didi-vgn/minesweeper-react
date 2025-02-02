@@ -1,24 +1,20 @@
-import { getBoardDifficulty } from "./calculateDifficulty";
+import { adjacentCells } from "../utils/variables";
 
 export const generateBoard = (width, height, bombs) => {
   let board = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       value: 0,
-      clicked: true,
+      clicked: false,
       flagged: false,
     }))
   );
 
   addBombs(board, bombs);
   addNumbers(board);
-  const diff = getBoardDifficulty(board);
-
-  console.log(diff);
-
   return board;
 };
 
-function addBombs(board, bombs) {
+const addBombs = (board, bombs) => {
   const height = board.length;
   const width = board[0].length;
   let bombsLeft = bombs;
@@ -32,25 +28,14 @@ function addBombs(board, bombs) {
       bombsLeft--;
     }
   }
-}
+};
 
-function addNumbers(board) {
+const addNumbers = (board) => {
   const height = board.length;
   const width = board[0].length;
 
-  const adjacentCells = [
-    [-1, -1],
-    [-1, 0],
-    [-1, +1],
-    [0, -1],
-    [0, +1],
-    [+1, -1],
-    [+1, 0],
-    [+1, +1],
-  ];
-
-  function withinBounds(row, col) {
-    return row >= 0 && row < height && col >= 0 && col < width;
+  function withinBounds(i, j) {
+    return i >= 0 && i < height && j >= 0 && j < width;
   }
 
   for (let i = 0; i < height; i++) {
@@ -71,4 +56,4 @@ function addNumbers(board) {
       board[i][j].value = number;
     }
   }
-}
+};

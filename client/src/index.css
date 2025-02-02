@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+.custom-border {
+  box-sizing: border-box;
+  border: 5px solid;
+  border-color: #e5e7eb #9ca3af #9ca3af #e5e7eb;
+}
 /* :root {
   --font-display: "Satoshi", "sans-serif";
   --breakpoint-3xl: 1920px;

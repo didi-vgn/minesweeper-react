@@ -1,11 +1,9 @@
-import { PiStarBold } from "react-icons/pi";
+import { FaStar } from "react-icons/fa";
 
-export default function BombsLeft() {
-  const bombsLeft = 99;
-
+export default function BombsLeft({ children }) {
   return (
     <div className='flex items-center justify-center gap-2'>
-      {bombsLeft} <PiStarBold />
+      {children} <FaStar />
     </div>
   );
 }

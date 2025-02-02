@@ -1,10 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInterval } from "../hooks/useInterval";
 
-export default function Stopwatch() {
+export default function Stopwatch({ isGameActive, resetTrigger }) {
   const [display, setDisplay] = useState("00:00");
   const stopwatchRef = useRef(0);
-  const stopwatchStart = false;
+
+  useEffect(() => {
+    stopwatchRef.current = 0;
+    setDisplay("00:00");
+  }, [resetTrigger]);
 
   useInterval(
     () => {
@@ -20,7 +24,7 @@ export default function Stopwatch() {
 
       setDisplay(stopwatch);
     },
-    stopwatchStart ? 1000 : null
+    isGameActive ? 1000 : null
   );
   return <div>{display}</div>;
 }

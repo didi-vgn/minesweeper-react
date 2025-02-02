@@ -1,5 +1,6 @@
 import LargeButton from "../components/LargeButton";
 import { useAuthContext } from "../context/AuthContext";
+import { GameProvider } from "../game/context/GameContext";
 import GameApp from "../game/GameApp";
 import { postGameStats } from "../services/postGameService";
 

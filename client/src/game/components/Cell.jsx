@@ -1,23 +1,24 @@
-import { PiStarBold } from "react-icons/pi";
+import Bomb from "./cells/Bomb";
+import Empty from "./cells/Empty";
+import Number from "./cells/Number";
+import Flag from "./cells/Flag";
+import Cover from "./cells/Cover";
 
-export default function Cell({ cell }) {
+export default function Cell({ cell, onClick, onRightClick }) {
   return (
-    <div>
+    <div
+      className='flex items-center justify-center'
+      onClick={onClick}
+      onContextMenu={onRightClick}
+    >
       {cell.clicked && cell.value === -1 ? (
-        <div className='flex items-center justify-center size-9 bg-pink-50 text-3xl text-pink-600 border rounded-sm rm-pink-600'>
-          <PiStarBold />
-        </div>
-      ) : cell.value === 0 ? (
-        <div className='flex items-center justify-center size-9 bg-pink-50 text-3xl text-pink-600 border rounded-sm rm-pink-600'></div>
+        <Bomb />
+      ) : cell.clicked && cell.value === 0 ? (
+        <Empty />
       ) : (
-        <div className='flex items-center justify-center size-9 bg-pink-50 text-3xl text-pink-600 border rounded-sm rm-pink-600'>
-          {" "}
-          {cell.value}
-        </div>
+        cell.clicked && <Number value={cell.value} />
       )}
-      {!cell.clicked && (
-        <div className='flex items-center justify-center size-9 bg-blue-300 text-3xl text-blue-600 border rounded-sm rm-blue-600'></div>
-      )}
+      {(cell.flagged && <Flag />) || (!cell.clicked && <Cover />)}
     </div>
   );
 }

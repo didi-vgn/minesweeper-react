@@ -1,16 +1,12 @@
 import { useState } from "react";
 
-export default function Select() {
-  function handleChange(e) {
-    const value = e.target.value;
-    console.log(value);
-  }
+export default function Select({ onChange }) {
   return (
     <select
-      name='difficulty'
+      name='gameMode'
       id='difficulty'
       defaultValue={"b"}
-      onChange={handleChange}
+      onChange={onChange}
     >
       <option value='a'>9x9 10 mines</option>
       <option value='b'>16x16 40 mines</option>
