@@ -18,9 +18,7 @@ export default function Input({ label, type, id, placeholder, validation }) {
         type={type}
         id={id}
         placeholder={placeholder}
-        className={`w-full p-5 font-medium border rounded-md ${
-          error ? "border-pink-600" : "border-slate-300"
-        } placeholder:opacity-60`}
+        className='custom-border-rev w-full p-3 font-medium border-gray-800 placeholder:opacity-60'
         {...register(id, validation)}
       />
       {(error && (

@@ -4,6 +4,9 @@ import { leftClick, rightClick } from "../logic/click";
 import { checkWin } from "../logic/checkWin";
 import { countFlags } from "../logic/countFlags";
 import { calculateDifficulty } from "../logic/calculateDifficulty";
+import { useStatsContext } from "./StatsContext";
+import { useAuthContext } from "../../context/AuthContext";
+import { boardToArray } from "../utils/boardToArray";
 
 const GameContext = createContext(null);
 
@@ -12,11 +15,15 @@ export function useGameContext() {
 }
 
 export function GameProvider({ children }) {
+  const { setStats } = useStatsContext();
   const [board, setBoard] = useState(() => generateBoard(16, 16, 40));
   const [bombs, setBombs] = useState(40);
   const [bombsLeft, setBombsLeft] = useState(bombs);
   const [isGameActive, setIsGameActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
+
+  const [time, setTime] = useState(0);
+  const [getTimeTrigger, setGetTimeTrigger] = useState(0);
 
   function resetGame(w, h, b) {
     setBoard(generateBoard(w, h, b));
@@ -30,12 +37,22 @@ export function GameProvider({ children }) {
     if (gameOver) return;
     !isGameActive && setIsGameActive(true);
     const newBoard = leftClick(board, i, j);
+    // console.log(boardToArray(board));
 
     setBoard(newBoard);
 
     if (checkWin(newBoard)) {
-      console.log("Won!");
       setIsGameActive(false);
+
+      setGetTimeTrigger((prev) => prev + 1);
+
+      const arr = boardToArray(board);
+      setStats((prevStats) => ({
+        ...prevStats,
+        bombs: bombs,
+        bbbv: getBoardDifficulty(),
+        board: JSON.stringify(arr),
+      }));
     }
 
     if (newBoard[i][j].value === -1) {
@@ -75,6 +92,8 @@ export function GameProvider({ children }) {
         handleRightClick,
         resetGame,
         getBoardDifficulty,
+        setTime,
+        getTimeTrigger,
       }}
     >
       {children}

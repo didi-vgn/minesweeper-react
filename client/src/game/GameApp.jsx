@@ -1,12 +1,9 @@
 import Cell from "./components/Cell";
-import Header from "./components/Header";
+import GameHeader from "./components/GameHeader";
 import { useGameContext } from "./context/GameContext";
 
 export default function GameApp() {
-  const { board, handleLeftClick, handleRightClick, getBoardDifficulty } =
-    useGameContext();
-
-  const difficulty = getBoardDifficulty();
+  const { board, handleLeftClick, handleRightClick } = useGameContext();
   const width = board[0].length;
 
   const gridStyle = {
@@ -16,10 +13,9 @@ export default function GameApp() {
   }[width];
 
   return (
-    <div className='flex flex-col gap-5 justify-center items-center bg-pink-300 p-5'>
-      <Header />
-      <div>{difficulty}</div>
-      <div className={`${gridStyle}`}>
+    <div className='flex flex-col justify-center items-center bg-gray-300 p-1 custom-border'>
+      <GameHeader />
+      <div className={`${gridStyle} m-5 custom-border-rev`}>
         {board.map((row, i) =>
           row.map((cell, j) => (
             <Cell

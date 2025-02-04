@@ -18,7 +18,6 @@ export default function LogIn() {
       const response = await logInUser(data);
 
       if (response.status === 200) {
-        alert("Logged in!");
         login(response.accessToken);
         navigate("/profile");
       } else {
@@ -30,23 +29,25 @@ export default function LogIn() {
   });
 
   return (
-    <FormProvider {...methods}>
-      <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
-        <Input
-          label='username'
-          type='text'
-          id='username'
-          placeholder='username...'
-          {...login_validation}
-        />
-        <Input
-          label='password'
-          type='password'
-          id='password'
-          placeholder='password...'
-          {...login_validation}
-        />
-      </Form>
-    </FormProvider>
+    <div className='w-4/5 m-auto'>
+      <FormProvider {...methods}>
+        <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
+          <Input
+            label='username'
+            type='text'
+            id='username'
+            placeholder='username...'
+            {...login_validation}
+          />
+          <Input
+            label='password'
+            type='password'
+            id='password'
+            placeholder='password...'
+            {...login_validation}
+          />
+        </Form>
+      </FormProvider>
+    </div>
   );
 }

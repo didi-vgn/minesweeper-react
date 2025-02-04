@@ -1,8 +1,12 @@
+import Header from "../components/Header";
+import ProfileButton from "../components/ProfileButton";
+
 export default function Story() {
   return (
     <div>
-      <h3>Story</h3>
-      <div className='gameBoard'></div>
+      <Header>
+        <ProfileButton />
+      </Header>
     </div>
   );
 }

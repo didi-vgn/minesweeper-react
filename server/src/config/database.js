@@ -54,13 +54,14 @@ exports.findUserBy = async (name, value) => {
   }
 };
 
-exports.createGame = async (userId = null, mode, time, bbbv, points) => {
+exports.createGame = async (userId = null, mode, time, bbbv, points, board) => {
   try {
     const data = {
       mode: mode,
       time: time,
       bbbv: bbbv,
       points: points,
+      board: board,
     };
     if (userId) data.userId = userId;
 
@@ -98,6 +99,15 @@ exports.deleteManyGamesByUserId = async (id) => {
         userId: id,
       },
     });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete games.");
+  }
+};
+
+exports.deleteAllGames = async () => {
+  try {
+    await prisma.game.deleteMany({});
   } catch (err) {
     console.error(err);
     throw new Error("Failed to delete games.");

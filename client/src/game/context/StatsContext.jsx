@@ -1,5 +1,4 @@
 import { createContext, useContext, useState } from "react";
-import { useAuthContext } from "../../context/AuthContext";
 
 const StatsContext = createContext(null);
 
@@ -9,12 +8,15 @@ export function useStatsContext() {
 
 export function StatsProvider({ children }) {
   const [stats, setStats] = useState({
-    userId: null,
-    mode: "",
+    bombs: 0,
     time: 0,
     bbbv: 0,
-    points: 0,
+    board: [],
   });
 
-  return <StatsContext.Provider>{children}</StatsContext.Provider>;
+  return (
+    <StatsContext.Provider value={{ stats, setStats }}>
+      {children}
+    </StatsContext.Provider>
+  );
 }

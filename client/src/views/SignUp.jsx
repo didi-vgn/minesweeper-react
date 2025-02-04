@@ -33,7 +33,7 @@ export default function SignUp() {
   });
 
   return (
-    <>
+    <div className='w-4/5 m-auto'>
       <FormProvider {...methods}>
         <Form onClick={onSubmit} buttonText='Sign Up' errors={serverErrors}>
           <Input {...username_validation} />
@@ -55,6 +55,6 @@ export default function SignUp() {
           />
         </Form>
       </FormProvider>
-    </>
+    </div>
   );
 }

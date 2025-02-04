@@ -1,9 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useInterval } from "../hooks/useInterval";
+import { useGameContext } from "../context/GameContext";
+import { useStatsContext } from "../context/StatsContext";
 
 export default function Stopwatch({ isGameActive, resetTrigger }) {
+  const { stats, setStats } = useStatsContext();
+  const { getTimeTrigger, setTime } = useGameContext();
   const [display, setDisplay] = useState("00:00");
   const stopwatchRef = useRef(0);
+
+  useEffect(() => {
+    const newStats = { ...stats, time: stopwatchRef.current };
+    setStats(newStats);
+    // console.log(newStats);
+
+    // setStats((prevStats) => ({
+    //   ...prevStats,
+    //   time: stopwatchRef.current,
+    // }));
+  }, [getTimeTrigger]);
 
   useEffect(() => {
     stopwatchRef.current = 0;
@@ -26,5 +41,5 @@ export default function Stopwatch({ isGameActive, resetTrigger }) {
     },
     isGameActive ? 1000 : null
   );
-  return <div>{display}</div>;
+  return <div className='custom-border-rev bg-white'>{display}</div>;
 }

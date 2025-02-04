@@ -5,7 +5,7 @@ import Select from "./Select";
 import Stopwatch from "./Stopwatch";
 import { useState } from "react";
 
-export default function Header2() {
+export default function GameHeader() {
   const { resetGame, isGameActive, bombsLeft } = useGameContext();
   const [resetTrigger, setResetTrigger] = useState(0);
   const [gameConfig, setGameConfig] = useState({
@@ -33,7 +33,7 @@ export default function Header2() {
   }
 
   return (
-    <div className='custom-border bg-white p-3 w-full rounded-md grid grid-cols-4 text-center '>
+    <div className='custom-border bg-gray-300 p-3 w-full grid grid-cols-4 gap-2 text-center '>
       <BombsLeft>{bombsLeft}</BombsLeft>
       <Stopwatch isGameActive={isGameActive} resetTrigger={resetTrigger} />
       <Select onChange={handleGameMode} />

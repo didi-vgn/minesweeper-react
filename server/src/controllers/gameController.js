@@ -1,9 +1,9 @@
 const db = require("../config/database");
 
 exports.createGame = async (req, res) => {
-  const { userId, mode, time, bbbv, points } = req.body;
+  const { userId, mode, time, bbbv, points, board } = req.body;
   try {
-    await db.createGame(userId, mode, time, bbbv, points);
+    await db.createGame(userId, mode, time, bbbv, points, board);
     return res
       .status(201)
       .json({ message: "Game stats added to leaderboards." });
@@ -47,6 +47,21 @@ exports.deleteGamesByNickname = async (req, res) => {
   }
 };
 
+exports.deleteAllGames = async (req, res) => {
+  if (req.user.role === "ADMIN") {
+    console.log("Admin request approved.");
+    try {
+      await db.deleteAllGames();
+      return res.status(200).json({ message: "All games deleted." });
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  } else if (req.user.role === "USER") {
+    console.log("Only admin can make this request");
+    return res.status(403).json("Forbidden.");
+  }
+};
 ///probably won't need this function
 // exports.deleteGamesByGameId = async (req, res) => {
 //   const { id } = req.params;

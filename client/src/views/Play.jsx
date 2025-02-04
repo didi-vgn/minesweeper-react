@@ -1,23 +1,20 @@
-import LargeButton from "../components/LargeButton";
+import Button from "../components/Button";
 import { useAuthContext } from "../context/AuthContext";
-import { GameProvider } from "../game/context/GameContext";
+import { useStatsContext } from "../game/context/StatsContext";
 import GameApp from "../game/GameApp";
 import { postGameStats } from "../services/postGameService";
+import { processStats } from "../utils/processGameStats";
+import Header from "../components/Header";
+import ProfileButton from "../components/ProfileButton";
 
 export default function Play() {
   const { user } = useAuthContext();
-
-  const mockGameData = {
-    userId: user ? user.id : null,
-    mode: "BEGGINER",
-    time: 170,
-    bbbv: 21,
-    points: 2,
-  };
+  const { stats } = useStatsContext();
 
   const onSubmit = async () => {
     try {
-      const response = await postGameStats(mockGameData);
+      const gameData = processStats(stats, user);
+      const response = await postGameStats(gameData);
       if (response === 201) {
         alert("Game added!");
       } else {
@@ -30,19 +27,13 @@ export default function Play() {
 
   return (
     <div>
-      <div className='container flex items-center m-10'>
-        {user ? (
-          <div className='text-3xl text-bold text-gray-600'>
-            Authenticated as {user.nickname}
-          </div>
-        ) : (
-          <div className='text-3xl text-bold text-gray-600'>
-            Not authenticated
-          </div>
-        )}
-        <LargeButton onClick={onSubmit} text='Post Game' />
+      <Header>
+        <ProfileButton />
+      </Header>
+      <div className='flex justify-center m-10'>
+        <GameApp />
       </div>
-      <GameApp />
+      <Button onClick={onSubmit} text='Post Game' />
     </div>
   );
 }

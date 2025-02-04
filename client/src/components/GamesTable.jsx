@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import Button from "../components/Button";
-import Row from "../components/Row";
+import TableRow from "./TableRow";
 import { getGameStats } from "../services/getGamesService";
 
-export default function GamesTable({ nickname = null }) {
-  const [selectedGameMode, setSelectedGameMode] = useState("expert");
+export default function GamesTable({ gameMode, nickname = null }) {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     async function fetchGames() {
       try {
-        const response = await getGameStats(selectedGameMode, nickname);
+        const response = await getGameStats(gameMode, nickname);
         if (response.status === 200) {
-          setGames(response.games);
+          const gamesData = response.games.map((game) => ({
+            ...game,
+            board: JSON.parse(game.board),
+          }));
+          setGames(gamesData);
         } else {
           console.error("failed to fetch games.");
         }
@@ -21,40 +23,27 @@ export default function GamesTable({ nickname = null }) {
       }
     }
     fetchGames();
-  }, [selectedGameMode, nickname]);
+  }, [gameMode, nickname]);
 
   return (
-    <div className='container'>
-      <div className='flex gap-10'>
-        <Button
-          text='Begginer'
-          onClick={() => setSelectedGameMode("begginer")}
-        />
-        <Button
-          text='Intermediate'
-          onClick={() => setSelectedGameMode("intermediate")}
-        />
-        <Button text='Expert' onClick={() => setSelectedGameMode("expert")} />
-      </div>
-
-      <div className='m-10'>
-        <Row
-          nickname='Nickname'
-          gameMode='Game Mode'
-          time='Time'
-          bbbv='3BV'
-          score='Score'
-        ></Row>
+    <div>
+      <div>
         {games.map((game, index) => (
-          <Row
+          <TableRow
             key={index}
             nickname={game.userId ? game.user.nickname : "guest"}
             gameMode={game.mode}
             time={game.time}
             bbbv={game.bbbv}
             score={game.points}
-          ></Row>
+            board={game.board}
+          ></TableRow>
         ))}
+        {games.length === 0 && (
+          <div className='text-pink-600 text-2xl text-center m-10'>
+            No games yet...
+          </div>
+        )}
       </div>
     </div>
   );

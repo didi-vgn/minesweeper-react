@@ -11,7 +11,7 @@ export default function Number({ value }) {
     "text-indigo-600",
   ];
   return (
-    <div className='flex items-center justify-center size-9 border bg-gray-300 border-gray-400 text-xl font-extrabold'>
+    <div className='flex items-center justify-center size-8 border bg-gray-300 border-gray-400 text-xl font-extrabold'>
       <div className={`${colors[value]}`}>{value}</div>
     </div>
   );

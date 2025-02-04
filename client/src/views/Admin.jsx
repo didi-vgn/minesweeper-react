@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
+import LargeButton from "../components/LargeButton";
+import { API_HOST } from "../utils/variables";
 
 export default function Admin() {
   const [users, setUsers] = useState([]);
@@ -29,7 +31,7 @@ export default function Admin() {
   useEffect(() => {
     async function fetchRole() {
       try {
-        const response = await fetch("http://localhost:3000/auth/role", {
+        const response = await fetch(`${API_HOST}auth/role`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,8 +53,28 @@ export default function Admin() {
     fetchRole();
   }, []);
 
+  async function deleteGames() {
+    try {
+      const response = await fetch(`${API_HOST}games/delete-all`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        console.log("All games deleted");
+      } else {
+        const errorData = await response.json();
+        console.error(errorData);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   return (
     <div>
+      <LargeButton onClick={deleteGames} text='Delete ALL Games' />
       {users.map((user) => (
         <div key={user.id}>
           {user.id} ||
