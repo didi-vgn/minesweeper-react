@@ -5,7 +5,6 @@ import { checkWin } from "../logic/checkWin";
 import { countFlags } from "../logic/countFlags";
 import { calculateDifficulty } from "../logic/calculateDifficulty";
 import { useStatsContext } from "./StatsContext";
-import { useAuthContext } from "../../context/AuthContext";
 import { boardToArray } from "../utils/boardToArray";
 
 const GameContext = createContext(null);
@@ -21,8 +20,6 @@ export function GameProvider({ children }) {
   const [bombsLeft, setBombsLeft] = useState(bombs);
   const [isGameActive, setIsGameActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-
-  const [time, setTime] = useState(0);
   const [getTimeTrigger, setGetTimeTrigger] = useState(0);
 
   function resetGame(w, h, b) {
@@ -37,8 +34,6 @@ export function GameProvider({ children }) {
     if (gameOver) return;
     !isGameActive && setIsGameActive(true);
     const newBoard = leftClick(board, i, j);
-    // console.log(boardToArray(board));
-
     setBoard(newBoard);
 
     if (checkWin(newBoard)) {
@@ -55,7 +50,7 @@ export function GameProvider({ children }) {
       }));
     }
 
-    if (newBoard[i][j].value === -1) {
+    if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
       setIsGameActive(false);
       setGameOver(true);
     }
@@ -92,7 +87,6 @@ export function GameProvider({ children }) {
         handleRightClick,
         resetGame,
         getBoardDifficulty,
-        setTime,
         getTimeTrigger,
       }}
     >
