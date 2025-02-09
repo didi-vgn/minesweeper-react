@@ -1,47 +1,59 @@
 import Play from "../views/Play.jsx";
 import Profile from "../views/Profile.jsx";
 import Leaderboards from "../views/Leaderboards.jsx";
-import Story from "../views/Story.jsx";
 import LogIn from "../views/LogIn.jsx";
 import SignUp from "../views/SignUp.jsx";
 import ErrorPage from "../views/ErrorPage.jsx";
 import App from "../App.jsx";
 import Admin from "../views/Admin.jsx";
+import LevelSelection from "../views/LevelSelection.jsx";
+import Level from "../views/Level.jsx";
+import Adventure from "../views/Adventure.jsx";
 
 const router = [
   {
     path: "/",
-    element: <App></App>,
-    errorElement: <ErrorPage></ErrorPage>,
+    element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
         path: "/",
-        element: <Play></Play>,
+        element: <Play />,
       },
       {
         path: "profile",
-        element: <Profile></Profile>,
+        element: <Profile />,
       },
       {
         path: "leaderboards",
-        element: <Leaderboards></Leaderboards>,
+        element: <Leaderboards />,
       },
       {
-        path: "story",
-        element: <Story></Story>,
+        path: "adventure",
+        element: <Adventure />,
+        children: [
+          {
+            index: true,
+            element: <LevelSelection />,
+          },
+          {
+            path: "play",
+            element: <Level />,
+          },
+        ],
       },
       {
         path: "admin",
-        element: <Admin></Admin>,
+        element: <Admin />,
       },
       {
         path: "login",
-        element: <LogIn></LogIn>,
+        element: <LogIn />,
       },
       {
         path: "signup",
-        element: <SignUp></SignUp>,
+        element: <SignUp />,
       },
     ],
   },

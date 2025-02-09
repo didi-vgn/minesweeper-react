@@ -5,34 +5,39 @@ export const leftClick = (board, row, col) => {
   const width = board[0].length;
 
   if (!clickedOrFlagged(row, col)) {
-    const newBoard = board.map((row) => row.slice());
+    const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
 
-    function click(row, col) {
-      newBoard[row][col].clicked = true;
+    const stack = [[row, col]];
 
-      if (newBoard[row][col].value === 0) {
+    while (stack.length > 0) {
+      const [r, c] = stack.pop();
+      if (newBoard[r][c].clicked) continue;
+
+      newBoard[r][c] = { ...newBoard[r][c], clicked: true };
+
+      if (newBoard[r][c].value === 0) {
         adjacentCells.forEach(([i, j]) => {
-          const newRow = i + row;
-          const newCol = j + col;
+          const newRow = r + i;
+          const newCol = c + j;
           if (
             withinBounds(newRow, newCol) &&
             !clickedOrFlagged(newRow, newCol)
           ) {
-            click(newRow, newCol);
+            stack.push([newRow, newCol]);
           }
-        });
-      } else if (newBoard[row][col].value === -1) {
-        newBoard.map((row) => {
-          row.map((cell) => {
-            if (cell.value === -1 && !cell.flagged) {
-              cell.clicked = true;
-            }
-          });
         });
       }
     }
 
-    click(row, col);
+    if (newBoard[row][col].value === -1) {
+      newBoard.forEach((row, i) =>
+        row.forEach((cell, j) => {
+          if (cell.value === -1 && !cell.flagged) {
+            newBoard[i][j] = { ...newBoard[i][j], clicked: true };
+          }
+        })
+      );
+    }
     return newBoard;
   }
   function withinBounds(i, j) {
@@ -48,8 +53,11 @@ export const leftClick = (board, row, col) => {
 
 export const rightClick = (board, row, col) => {
   if (!board[row][col].clicked) {
-    const newBoard = board.map((row) => row.slice());
-    newBoard[row][col].flagged = !newBoard[row][col].flagged;
+    const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
+    newBoard[row][col] = {
+      ...newBoard[row][col],
+      flagged: !newBoard[row][col].flagged,
+    };
     return newBoard;
   }
   return board;

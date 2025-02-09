@@ -11,3 +11,13 @@
   border: 5px solid;
   border-color: #9ca3af #e5e7eb #e5e7eb #9ca3af;
 }
+
+.game-container {
+  max-width: 1024px;
+  overflow: hidden;
+}
+
+.board {
+  transition: transform 0.3s ease-in-out;
+  width: max-content;
+}

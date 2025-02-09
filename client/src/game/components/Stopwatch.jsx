@@ -5,19 +5,13 @@ import { useStatsContext } from "../context/StatsContext";
 
 export default function Stopwatch({ isGameActive, resetTrigger }) {
   const { stats, setStats } = useStatsContext();
-  const { getTimeTrigger, setTime } = useGameContext();
+  const { getTimeTrigger } = useGameContext();
   const [display, setDisplay] = useState("00:00");
   const stopwatchRef = useRef(0);
 
   useEffect(() => {
     const newStats = { ...stats, time: stopwatchRef.current };
     setStats(newStats);
-    // console.log(newStats);
-
-    // setStats((prevStats) => ({
-    //   ...prevStats,
-    //   time: stopwatchRef.current,
-    // }));
   }, [getTimeTrigger]);
 
   useEffect(() => {
