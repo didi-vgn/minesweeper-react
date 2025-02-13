@@ -24,7 +24,14 @@ const sprites = {
 export default function Player() {
   const [currentSprite, setCurrentSprite] = useState(sprites.movement);
   const [pos, setPos] = useState(currentSprite[0]);
-  const { event } = useAdventureContext();
+  const { event, playerSprite } = useAdventureContext();
+
+  const spriteStyle = {
+    height: "256px",
+    width: "2816px",
+    backgroundImage: `url(${playerSprite})`,
+    backgroundRepeat: "no-repeat",
+  };
 
   const handleSpriteChange = useCallback(() => {
     const newPos = pos + 128;
@@ -89,11 +96,4 @@ const containerStyle = {
   zIndex: 99,
   transform: "scale(0.5) translateX(-64px) translateY(-384px)",
   objectPosition: "center top",
-};
-
-const spriteStyle = {
-  height: "256px",
-  width: "2816px",
-  backgroundImage: `url("/player/player_sprite_pink.png")`,
-  backgroundRepeat: "no-repeat",
 };

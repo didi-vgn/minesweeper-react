@@ -1,7 +1,7 @@
 import { addBombs } from "./addBombs";
 import { addNumbers } from "./addNumbers";
 
-export const generateStoryBoard = (width, height, bombs) => {
+export const generateStoryBoard = (width, height, bombs, gems) => {
   let board = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       value: 0,
@@ -14,7 +14,7 @@ export const generateStoryBoard = (width, height, bombs) => {
   );
 
   addBombs(board, bombs);
-  addGems(board, 15);
+  addGems(board, gems);
   addNumbers(board);
   return board;
 };

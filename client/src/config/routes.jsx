@@ -7,8 +7,8 @@ import ErrorPage from "../views/ErrorPage.jsx";
 import App from "../App.jsx";
 import Admin from "../views/Admin.jsx";
 import LevelSelection from "../views/LevelSelection.jsx";
-import Level from "../views/Level.jsx";
 import Adventure from "../views/Adventure.jsx";
+import AdventureApp from "../game/AdventureApp.jsx";
 
 const router = [
   {
@@ -39,7 +39,7 @@ const router = [
           },
           {
             path: "play",
-            element: <Level />,
+            element: <AdventureApp />,
           },
         ],
       },
