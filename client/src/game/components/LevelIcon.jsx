@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function LevelIcon({ onClick, level, icon, completed }) {
+export default function LevelIcon({ onClick, level, completed }) {
   const [hover, setHover] = useState(false);
 
   const style = completed
@@ -9,18 +9,17 @@ export default function LevelIcon({ onClick, level, icon, completed }) {
 
   return (
     <div
-      className={`flex flex-col justify-around items-center size-30 cursor-pointer ${style}`}
+      className={`flex flex-col justify-around items-center size-20 cursor-pointer ${style}`}
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       {(hover &&
-        ((!completed && <div className='text-3xl'>Play</div>) || (
-          <div className='text-3xl'>Replay</div>
+        ((!completed && <div className='text-2xl'>Play</div>) || (
+          <div className='text-2xl'>Replay</div>
         ))) || (
         <>
           <div className='text-xl'>{level}</div>
-          <div className='text-6xl'>{icon}</div>
         </>
       )}
     </div>

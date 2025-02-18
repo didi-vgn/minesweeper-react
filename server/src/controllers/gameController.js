@@ -8,8 +8,8 @@ exports.createGame = async (req, res) => {
       .status(201)
       .json({ message: "Game stats added to leaderboards." });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to save game stats." });
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -62,6 +62,34 @@ exports.deleteAllGames = async (req, res) => {
     return res.status(403).json("Forbidden.");
   }
 };
+
+exports.upsertAdventureGame = async (req, res) => {
+  const { userId, levelId, collectedGems, points } = req.body;
+  try {
+    await db.upsertAdventureGame(userId, levelId, collectedGems, points);
+    return res.status(201).json({ message: "Game data created/updated." });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+exports.findManyAdventureGames = async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const games = await db.findManyAdventureGames(userId);
+    if (games.length === 0) {
+      return res
+        .status(200)
+        .json({ message: "No progress for this user yet.", games: [] });
+    }
+    return res.status(200).json({ games });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 ///probably won't need this function
 // exports.deleteGamesByGameId = async (req, res) => {
 //   const { id } = req.params;

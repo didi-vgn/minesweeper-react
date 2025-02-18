@@ -41,8 +41,8 @@ exports.signup = [
       await db.createUser(username, hashedPassword, nickname);
       return res.status(201).json({ message: "Sign up successful." });
     } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Failed to sign up." });
+      console.error(err.message);
+      return res.status(500).json({ error: err.message });
     }
   },
 ];
@@ -73,7 +73,7 @@ exports.login = async (req, res) => {
 
     return res.status(200).json(accessToken);
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Failed to log in." });
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };

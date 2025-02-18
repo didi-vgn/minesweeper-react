@@ -1,11 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { generateBoard } from "../logic/generateBoard";
 import { leftClick, rightClick } from "../logic/click";
 import { checkWin } from "../logic/checkWin";
 import { countFlags } from "../logic/countFlags";
-import { calculateDifficulty } from "../logic/calculateDifficulty";
-import { useStatsContext } from "./StatsContext";
-import { boardToArray } from "../utils/boardToArray";
 
 const GameContext = createContext(null);
 
@@ -14,83 +17,85 @@ export function useGameContext() {
 }
 
 export function GameProvider({ children }) {
-  const { setStats } = useStatsContext();
   const [board, setBoard] = useState(() => generateBoard(16, 16, 40));
   const [bombs, setBombs] = useState(40);
   const [bombsLeft, setBombsLeft] = useState(bombs);
   const [isGameActive, setIsGameActive] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-  const [getTimeTrigger, setGetTimeTrigger] = useState(0);
+  const [gameWin, setGameWin] = useState(false);
 
-  function resetGame(w, h, b) {
+  const resetGame = useCallback((w, h, b) => {
     setBoard(generateBoard(w, h, b));
     setBombs(b);
     setIsGameActive(false);
     setGameOver(false);
     setBombsLeft(b);
-  }
+    setGameWin(false);
+  }, []);
 
-  function handleLeftClick(i, j) {
-    if (gameOver) return;
-    !isGameActive && setIsGameActive(true);
-    const newBoard = leftClick(board, i, j);
-    setBoard(newBoard);
+  const handleLeftClick = useCallback(
+    (i, j) => {
+      if (gameOver || gameWin) return;
+      !isGameActive && setIsGameActive(true);
+      const newBoard = leftClick(board, i, j);
+      setBoard(newBoard);
 
-    if (checkWin(newBoard)) {
-      setIsGameActive(false);
+      if (checkWin(newBoard)) {
+        setIsGameActive(false);
+        setGameWin(true);
+      }
 
-      setGetTimeTrigger((prev) => prev + 1);
+      if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
+        setIsGameActive(false);
+        setGameOver(true);
+      }
+    },
+    [board, gameOver, gameWin, isGameActive]
+  );
 
-      const arr = boardToArray(board);
-      setStats((prevStats) => ({
-        ...prevStats,
-        bombs: bombs,
-        bbbv: getBoardDifficulty(),
-        board: JSON.stringify(arr),
-      }));
-    }
+  const handleRightClick = useCallback(
+    (e, i, j) => {
+      e.preventDefault();
+      if (gameOver || gameWin) return;
+      !isGameActive && setIsGameActive(true);
 
-    if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
-      setIsGameActive(false);
-      setGameOver(true);
-    }
-  }
+      const newBoard = rightClick(board, i, j);
 
-  function handleRightClick(e, i, j) {
-    e.preventDefault();
-    if (gameOver || checkWin(board)) return;
-    !isGameActive && setIsGameActive(true);
+      setBoard(newBoard);
+      setBombsLeft(bombs - countFlags(newBoard));
+    },
+    [board, gameOver, gameWin, isGameActive]
+  );
 
-    const newBoard = rightClick(board, i, j);
-
-    setBoard(newBoard);
-    setBombsLeft(bombs - countFlags(newBoard));
-  }
-
-  function getBoardDifficulty() {
-    return calculateDifficulty(board);
-  }
-
+  const contextValue = useMemo(
+    () => ({
+      board,
+      setBoard,
+      bombs,
+      bombsLeft,
+      setBombsLeft,
+      isGameActive,
+      setIsGameActive,
+      gameOver,
+      setGameOver,
+      handleLeftClick,
+      handleRightClick,
+      resetGame,
+      gameWin,
+    }),
+    [
+      board,
+      bombs,
+      bombsLeft,
+      isGameActive,
+      gameOver,
+      gameWin,
+      handleLeftClick,
+      handleRightClick,
+      resetGame,
+    ]
+  );
   return (
-    <GameContext.Provider
-      value={{
-        board,
-        setBoard,
-        bombs,
-        bombsLeft,
-        setBombsLeft,
-        isGameActive,
-        setIsGameActive,
-        gameOver,
-        setGameOver,
-        handleLeftClick,
-        handleRightClick,
-        resetGame,
-        getBoardDifficulty,
-        getTimeTrigger,
-      }}
-    >
-      {children}
-    </GameContext.Provider>
+    <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );
 }

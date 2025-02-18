@@ -30,6 +30,7 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
+// console.log(prisma);
 app.use(errorHandler);
 
 app.listen(3000, () => {

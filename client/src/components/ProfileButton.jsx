@@ -7,17 +7,6 @@ export default function ProfileButton() {
   const { user, logout } = useAuthContext();
   const navigate = useNavigate();
 
-  function settingsClick() {
-    console.log("Settings");
-  }
-
-  function signUpClick() {
-    console.log("Sign Up");
-  }
-  function logInClick() {
-    console.log("Log In");
-  }
-
   return (
     <Dropdown
       text={

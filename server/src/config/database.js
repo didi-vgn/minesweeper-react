@@ -113,3 +113,44 @@ exports.deleteAllGames = async () => {
     throw new Error("Failed to delete games.");
   }
 };
+
+exports.upsertAdventureGame = async (
+  userId,
+  levelId,
+  collectedGems,
+  points
+) => {
+  try {
+    await prisma.adventure_Progress.upsert({
+      where: {
+        userId_levelId: { userId, levelId },
+      },
+      update: {
+        collectedGems,
+        points,
+      },
+      create: {
+        levelId,
+        userId,
+        collectedGems,
+        points,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to add or update game data.");
+  }
+};
+
+exports.findManyAdventureGames = async (userId) => {
+  try {
+    return await prisma.adventure_Progress.findMany({
+      where: {
+        userId,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to fetch games.");
+  }
+};

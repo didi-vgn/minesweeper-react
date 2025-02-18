@@ -10,6 +10,7 @@ export const generateStoryBoard = (width, height, bombs, gems) => {
         color: "",
         collected: false,
       },
+      scanned: false,
     }))
   );
 
@@ -25,10 +26,10 @@ const addGems = (board, gems) => {
   const height = board.length;
   const width = board[0].length;
 
-  //add 15 small gems
   let availablePositions = [];
   for (let i = 1; i < height - 1; i++) {
     for (let j = 0; j < width; j++) {
+      if (i === 4 && j === 0) continue;
       if (board[i][j].value !== -1) {
         availablePositions.push({ i, j });
       }
@@ -40,7 +41,6 @@ const addGems = (board, gems) => {
     board[i][j].gem.color = colors[Math.floor(Math.random() * colors.length)];
   }
 
-  //add 1 golden gem
   availablePositions = [];
   for (let i = 1; i < height - 1; i++) {
     for (let j = board[0].length - 1; j >= board[0].length - 5; j--) {

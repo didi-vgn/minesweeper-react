@@ -10,7 +10,7 @@ export function processStats(data, user = null) {
     time: formatTime(data.time),
     bbbv: data.bbbv,
     points: Number(
-      (Math.round((data.time / data.bbbv) * 100) / 100).toFixed(2)
+      (Math.round((data.bbbv / data.time) * 100) / 100).toFixed(2)
     ),
     board: data.board,
   };

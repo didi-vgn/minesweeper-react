@@ -1,7 +1,14 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 import { generateStoryBoard } from "../logic/generateStoryBoard";
 import { leftClick } from "../logic/click";
 import { mapSkins, playerSprites } from "../utils/assets";
+import { adjacentCells } from "../utils/variables";
 
 const AdventureContext = createContext(null);
 
@@ -19,31 +26,32 @@ export function AdventureProvider({ children }) {
   const [collectedGems, setCollectedGems] = useState(0);
   const [event, setEvent] = useState(null);
   const [gameOver, setGameOver] = useState(false);
-  const [isGameActive, setIsGameActive] = useState(false);
+  const [isAdvGameActive, setIsAdvGameActive] = useState(false);
   const [settings, setSettings] = useState({
     character: "random",
     map: "random",
   });
   const [mapSkin, setMapSkin] = useState(null);
   const [playerSprite, setPlayerSprite] = useState(null);
-  const [gameWin, setGameWin] = useState(false);
-  const [getStatsTrigger, setGetStatsTrigger] = useState(0);
+  const [advGameWin, setAdvGameWin] = useState(false);
+  const [getAdvStatsTrigger, setGetAdvStatsTrigger] = useState(0);
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(null);
 
-  function newGame(levelData) {
+  const newGame = useCallback((levelData) => {
     setGameOver(false);
     setCollectedGems(0);
     const newBoard = generateStoryBoard(
-      levelData.w,
+      levelData.width,
       9,
-      levelData.b,
-      levelData.g
+      levelData.bombs,
+      levelData.gems
     );
     setBoard(newBoard);
-    setIsGameActive(true);
-    setGameWin(false);
+    setIsAdvGameActive(true);
+    setAdvGameWin(false);
     setCurrentLevel(levelData.id);
+    triggerEvent("normal");
 
     if (settings.character === "random") {
       setPlayerSprite(randomProp(playerSprites));
@@ -51,63 +59,107 @@ export function AdventureProvider({ children }) {
     if (settings.map === "random") {
       setMapSkin(randomProp(mapSkins));
     } else setMapSkin(mapSkins[settings.map]);
-  }
+  }, []);
 
   function triggerEvent(eventType) {
     setEvent(eventType);
     setTimeout(() => setEvent(null), 100);
   }
 
-  function movePlayer(i, j) {
-    const newBoard = leftClick(board, i, j);
+  const movePlayer = useCallback(
+    (i, j) => {
+      const newBoard = leftClick(board, i, j);
 
-    if (newBoard[i][j].gem.color !== "" && !newBoard[i][j].gem.collected) {
-      newBoard[i][j] = {
-        ...newBoard[i][j],
-        gem: { ...newBoard[i][j].gem, collected: true },
-      };
+      if (newBoard[i][j].gem.color !== "" && !newBoard[i][j].gem.collected) {
+        newBoard[i][j] = {
+          ...newBoard[i][j],
+          gem: { ...newBoard[i][j].gem, collected: true },
+        };
 
-      triggerEvent(newBoard[i][j].gem.color);
-      setCollectedGems((prev) => prev + 1);
-    }
+        triggerEvent(newBoard[i][j].gem.color);
+        setCollectedGems((prev) => prev + 1);
+      }
 
-    if (newBoard[i][j].value === -1) {
-      triggerEvent("bomb");
-      setGameOver(true);
-      setIsGameActive(false);
-    }
+      if (newBoard[i][j].value === -1) {
+        triggerEvent("bomb");
+        setGameOver(true);
+        setIsAdvGameActive(false);
+      }
 
-    if (newBoard[i][j].gem.color === "golden") {
-      setGameWin(true);
-      setIsGameActive(false);
-      setGetStatsTrigger((prev) => prev + 1);
-    }
+      if (newBoard[i][j].gem.color === "golden") {
+        setAdvGameWin(true);
+        setIsAdvGameActive(false);
+        setGetAdvStatsTrigger((prev) => prev + 1);
+      }
 
-    setBoard(newBoard);
-  }
+      setBoard(newBoard);
+    },
+    [board]
+  );
+
+  const scan = useCallback(
+    (i, j) => {
+      const height = board.length;
+      const width = board[0].length;
+      const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
+      adjacentCells.forEach(([r, c]) => {
+        const newRow = r + i;
+        const newCol = c + j;
+
+        if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
+          newBoard[newRow][newCol] = {
+            ...newBoard[newRow][newCol],
+            scanned: true,
+          };
+        }
+      });
+      setBoard(newBoard);
+    },
+    [board]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      board,
+      newGame,
+      movePlayer,
+      collectedGems,
+      event,
+      gameOver,
+      playerSprite,
+      mapSkin,
+      settings,
+      setSettings,
+      isAdvGameActive,
+      advGameWin,
+      getAdvStatsTrigger,
+      setScore,
+      score,
+      currentLevel,
+      setCurrentLevel,
+      scan,
+    }),
+    [
+      board,
+      newGame,
+      movePlayer,
+      collectedGems,
+      event,
+      gameOver,
+      playerSprite,
+      mapSkin,
+      settings,
+      isAdvGameActive,
+      advGameWin,
+      getAdvStatsTrigger,
+      score,
+      currentLevel,
+      scan,
+    ]
+  );
 
   return (
-    <AdventureContext.Provider
-      value={{
-        board,
-        newGame,
-        movePlayer,
-        collectedGems,
-        event,
-        gameOver,
-        playerSprite,
-        mapSkin,
-        settings,
-        setSettings,
-        isGameActive,
-        gameWin,
-        getStatsTrigger,
-        setScore,
-        score,
-        currentLevel,
-        setCurrentLevel,
-      }}
-    >
+    <AdventureContext.Provider value={contextValue}>
       {children}
     </AdventureContext.Provider>
   );

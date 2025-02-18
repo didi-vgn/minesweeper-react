@@ -40,8 +40,6 @@ export default function Admin() {
         if (response.ok) {
           const data = await response.json();
           console.log(data);
-
-          // setUsers(da);
         } else {
           const errorData = await response.json();
           console.log(errorData);

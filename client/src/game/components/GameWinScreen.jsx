@@ -4,7 +4,6 @@ import { useInterval } from "../hooks/useInterval";
 
 export default function GameWinScreen() {
   const [pos, setPos] = useState(0);
-  //might be able to use "currentLevel" for this
   const { score } = useAdventureContext();
   const [points, setPoints] = useState(0);
 

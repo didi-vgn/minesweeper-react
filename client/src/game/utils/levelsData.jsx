@@ -1,0 +1,86 @@
+export const adventureLevels = [
+  {
+    id: 1,
+    width: 30,
+    bombs: 20,
+    gems: 5,
+  },
+  {
+    id: 2,
+    width: 40,
+    bombs: 30,
+    gems: 7,
+  },
+  {
+    id: 3,
+    width: 50,
+    bombs: 40,
+    gems: 9,
+  },
+  {
+    id: 4,
+    width: 60,
+    bombs: 50,
+    gems: 11,
+  },
+  {
+    id: 5,
+    width: 70,
+    bombs: 75,
+    gems: 13,
+  },
+  {
+    id: 6,
+    width: 80,
+    bombs: 85,
+    gems: 15,
+  },
+  {
+    id: 7,
+    width: 80,
+    bombs: 95,
+    gems: 17,
+  },
+  {
+    id: 8,
+    width: 80,
+    bombs: 105,
+    gems: 19,
+  },
+  {
+    id: 9,
+    width: 80,
+    bombs: 110,
+    gems: 21,
+  },
+  {
+    id: 10,
+    width: 90,
+    bombs: 115,
+    gems: 23,
+  },
+  {
+    id: 11,
+    width: 90,
+    bombs: 125,
+    gems: 15,
+  },
+  {
+    id: 12,
+    width: 90,
+    bombs: 135,
+    gems: 15,
+  },
+  {
+    id: 13,
+    width: 90,
+    bombs: 145,
+    gems: 15,
+  },
+  {
+    id: 14,
+    width: 90,
+    bombs: 155,
+    gems: 15,
+  },
+];

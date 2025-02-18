@@ -3,6 +3,8 @@ const { Router } = require("express");
 const { authenticateToken } = require("../middleware/auth");
 const router = new Router();
 
+router.post("/adventure/add-game", gameController.upsertAdventureGame);
+router.get("/adventure/:userId", gameController.findManyAdventureGames);
 router.get("/:gameMode", gameController.findManyGames);
 router.post("/add-game", gameController.createGame);
 router.get("/:gameMode/:nickname", gameController.findManyGames);
