@@ -42,6 +42,8 @@ export const icons = {
   cave: "/icon/icon_cave.png",
 };
 
+export const smoke = "/smoke.png";
+
 const movement = [0, 128];
 const explode = [128 * 2, 128 * 3];
 const pickUpGolden = [128 * 4, 128 * 5, 128 * 6];
@@ -61,3 +63,15 @@ export const animation = {
   pickUpYellow,
   pickUpWhite,
 };
+
+export const colors = [
+  "text-stone-950",
+  "text-lime-600",
+  "text-amber-400",
+  "text-orange-500",
+  "text-red-600",
+  "text-pink-600",
+  "text-fuchsia-600",
+  "text-violet-500",
+  "text-indigo-600",
+];

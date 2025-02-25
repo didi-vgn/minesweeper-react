@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useState } from "react";
 import { generateBoard } from "../logic/generateBoard";
 import { leftClick, rightClick } from "../logic/click";
 import { checkWin } from "../logic/checkWin";
@@ -24,77 +18,85 @@ export function GameProvider({ children }) {
   const [gameOver, setGameOver] = useState(false);
   const [gameWin, setGameWin] = useState(false);
 
-  const resetGame = useCallback((w, h, b) => {
+  const resetGame = (w, h, b) => {
     setBoard(generateBoard(w, h, b));
     setBombs(b);
     setIsGameActive(false);
     setGameOver(false);
     setBombsLeft(b);
     setGameWin(false);
-  }, []);
+  };
 
-  const handleLeftClick = useCallback(
-    (i, j) => {
-      if (gameOver || gameWin) return;
-      !isGameActive && setIsGameActive(true);
-      const newBoard = leftClick(board, i, j);
-      setBoard(newBoard);
+  const handleLeftClick = (i, j) => {
+    if (gameOver || gameWin) return;
 
-      if (checkWin(newBoard)) {
-        setIsGameActive(false);
-        setGameWin(true);
+    if (!isGameActive) {
+      setIsGameActive(true);
+      if (board[i][j].value === -1) {
+        const gameMode = {
+          10: {
+            w: 9,
+            h: 9,
+          },
+          40: {
+            w: 16,
+            h: 16,
+          },
+          99: {
+            w: 30,
+            h: 16,
+          },
+        }[bombs];
+        const unluckyClick = generateBoard(gameMode.w, gameMode.h, bombs, [
+          i,
+          j,
+        ]);
+        const newBoard = leftClick(unluckyClick, i, j);
+        setBoard(newBoard);
+        return;
       }
+    }
 
-      if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
-        setIsGameActive(false);
-        setGameOver(true);
-      }
-    },
-    [board, gameOver, gameWin, isGameActive]
-  );
+    const newBoard = leftClick(board, i, j);
+    setBoard(newBoard);
 
-  const handleRightClick = useCallback(
-    (e, i, j) => {
-      e.preventDefault();
-      if (gameOver || gameWin) return;
-      !isGameActive && setIsGameActive(true);
+    if (checkWin(newBoard)) {
+      setIsGameActive(false);
+      setGameWin(true);
+    }
 
-      const newBoard = rightClick(board, i, j);
+    if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
+      setIsGameActive(false);
+      setGameOver(true);
+    }
+  };
 
-      setBoard(newBoard);
-      setBombsLeft(bombs - countFlags(newBoard));
-    },
-    [board, gameOver, gameWin, isGameActive]
-  );
+  const handleRightClick = (e, i, j) => {
+    e.preventDefault();
+    if (gameOver || gameWin) return;
+    !isGameActive && setIsGameActive(true);
 
-  const contextValue = useMemo(
-    () => ({
-      board,
-      setBoard,
-      bombs,
-      bombsLeft,
-      setBombsLeft,
-      isGameActive,
-      setIsGameActive,
-      gameOver,
-      setGameOver,
-      handleLeftClick,
-      handleRightClick,
-      resetGame,
-      gameWin,
-    }),
-    [
-      board,
-      bombs,
-      bombsLeft,
-      isGameActive,
-      gameOver,
-      gameWin,
-      handleLeftClick,
-      handleRightClick,
-      resetGame,
-    ]
-  );
+    const newBoard = rightClick(board, i, j);
+
+    setBoard(newBoard);
+    setBombsLeft(bombs - countFlags(newBoard));
+  };
+
+  const contextValue = {
+    board,
+    setBoard,
+    bombs,
+    bombsLeft,
+    setBombsLeft,
+    isGameActive,
+    setIsGameActive,
+    gameOver,
+    setGameOver,
+    handleLeftClick,
+    handleRightClick,
+    resetGame,
+    gameWin,
+  };
   return (
     <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );

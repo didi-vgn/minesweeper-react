@@ -10,8 +10,8 @@ const MemoizedNav = React.memo(() => (
   <nav className='flex items-center justify-center bg-gray-600 text-gray-50 text-lg font-bold h-20'>
     <ul className='flex gap-20'>
       <CustomNavLink path='/' text='Play' />
-      <CustomNavLink path='adventure' text='Adventure' />
       <CustomNavLink path='leaderboards' text='Leaderboards' />
+      <CustomNavLink path='adventure' text='Adventure' />
       <CustomNavLink path='profile' text='Profile' />
       <CustomNavLink path='admin' text='Admin' />
     </ul>

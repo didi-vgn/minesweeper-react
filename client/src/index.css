@@ -27,3 +27,13 @@
   transition: transform 0.3s ease-in-out;
   width: max-content;
 }
+
+.font-outline {
+  filter: drop-shadow(-1px -1px 0px #fff) drop-shadow(1px -1px 0px #fff)
+    drop-shadow(1px 1px 0px #fff) drop-shadow(-1px 1px 0px #fff);
+}
+
+.font-outline-black {
+  filter: drop-shadow(-1px -1px 0px #000) drop-shadow(1px -1px 0px #000)
+    drop-shadow(1px 1px 0px #000) drop-shadow(-1px 1px 0px #000);
+}

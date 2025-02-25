@@ -14,11 +14,9 @@ exports.createGame = async (req, res) => {
 };
 
 exports.findManyGames = async (req, res) => {
-  const { gameMode, nickname } = req.params;
-  const sort = req.query.sort || "time";
-  const order = req.query.order === "desc" ? "desc" : "asc";
+  const { gameMode, nickname, sort, order } = req.query;
   try {
-    const games = await db.findManyGames(gameMode, sort, order, nickname);
+    const games = await db.findManyGames(gameMode, nickname, sort, order);
     if (games.length === 0) {
       return res
         .status(200)
@@ -89,25 +87,3 @@ exports.findManyAdventureGames = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
-
-///probably won't need this function
-// exports.deleteGamesByGameId = async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const game = await db.score.findUnique({ where: { id } });
-
-//     if (!game) {
-//       return res.status(404).json({ error: "Game not found." });
-//     }
-
-//     await db.game.delete({
-//       where: {
-//         id,
-//       },
-//     });
-//     return res.status(200).json({ message: "Game removed." });
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ error: "Failed to remove game." });
-//   }
-// };

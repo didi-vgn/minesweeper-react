@@ -3,6 +3,7 @@ import { useAdventureContext } from "../context/AdventureContext";
 import AdvCell from "./AdvCell";
 import GameOverScreen from "./GameOverScreen";
 import GameWinScreen from "./GameWinScreen";
+import Scanner from "./Scanner";
 
 export default function AdventureBoard({
   viewportStart,
@@ -10,21 +11,10 @@ export default function AdventureBoard({
   player,
   setPlayer,
 }) {
-  const { board, movePlayer, gameOver, advGameWin, scan } =
+  const { board, movePlayer, gameOver, advGameWin, scan, availableScanners } =
     useAdventureContext();
 
   const viewportWidth = 16;
-
-  const gridStyle = {
-    30: "grid grid-cols-30",
-    40: "grid grid-cols-40",
-    50: "grid grid-cols-50",
-    60: "grid grid-cols-60",
-    70: "grid grid-cols-70",
-    80: "grid grid-cols-80",
-    90: "grid grid-cols-90",
-    100: "grid grid-cols-100",
-  }[board[0].length];
 
   useEffect(() => {
     function handleKeyPress(e) {
@@ -40,7 +30,7 @@ export default function AdventureBoard({
           return { x, y };
         });
 
-        if (e.key === " ") {
+        if (e.key === " " && availableScanners > 0) {
           scan(player.y, player.x);
         }
       }
@@ -62,22 +52,25 @@ export default function AdventureBoard({
   return (
     <div className='custom-border-rev'>
       <div className='game-container relative bg-gray-300'>
+        <Scanner x={player.x - viewportStart} y={player.y} />
         <div
-          className={`board ${gridStyle}`}
+          className={`board flex flex-col`}
           style={{
             transform: `translateX(-${viewportStart * 4}rem)`,
             transition: "transform 0.3s ease-in-out",
           }}
         >
-          {board?.map((row, i) =>
-            row.map((cell, j) => (
-              <AdvCell
-                key={`${i}-${j}`}
-                cell={cell}
-                player={player.x === j && player.y === i ? true : false}
-              />
-            ))
-          )}
+          {board?.map((row, i) => (
+            <div key={i} className='flex'>
+              {row.map((cell, j) => (
+                <AdvCell
+                  key={`${i}-${j}`}
+                  cell={cell}
+                  player={player.x === j && player.y === i ? true : false}
+                />
+              ))}
+            </div>
+          ))}
         </div>
         {(gameOver && <GameOverScreen />) || (advGameWin && <GameWinScreen />)}
       </div>

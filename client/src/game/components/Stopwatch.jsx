@@ -23,15 +23,10 @@ export default function Stopwatch({ active, resetTrigger, callback }) {
       const min = Math.floor(stopwatchRef.current / 60)
         .toString()
         .padStart(2, "0");
-
       const stopwatch = `${min}:${sec}`;
       setDisplay(stopwatch);
     },
     active ? 1000 : null
   );
-  return (
-    <div className='custom-border-rev bg-white h-full flex justify-center items-center'>
-      {display}
-    </div>
-  );
+  return <div>{display}</div>;
 }

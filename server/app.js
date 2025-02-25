@@ -4,6 +4,8 @@ prisma = new PrismaClient();
 const userRouter = require("./src/routers/userRouter");
 const gameRouter = require("./src/routers/gameRouter");
 const authRouter = require("./src/routers/authRouter");
+const achievementRouter = require("./src/routers/achievementRouter");
+
 const app = express();
 const cors = require("cors");
 const errorHandler = require("./src/middleware/errorHandler");
@@ -15,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/users", userRouter);
 app.use("/games", gameRouter);
 app.use("/auth", authRouter);
+app.use("/achievements", achievementRouter);
 
 // console.log(require("crypto").randomBytes(32).toString("hex"));
 

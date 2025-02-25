@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import TableRow from "./TableRow";
 import { getGameStats } from "../services/getGamesService";
 
-export default function GamesTable({ gameMode, nickname = null }) {
+export default function GamesTable({ gameMode, nickname = null, sort, order }) {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     async function fetchGames() {
       try {
-        const response = await getGameStats(gameMode, nickname);
+        const response = await getGameStats(gameMode, nickname, sort, order);
         if (response.status === 200) {
           const gamesData = response.games.map((game) => ({
             ...game,
@@ -23,7 +23,7 @@ export default function GamesTable({ gameMode, nickname = null }) {
       }
     }
     fetchGames();
-  }, [gameMode, nickname]);
+  }, [gameMode, nickname, sort, order]);
 
   return (
     <div>

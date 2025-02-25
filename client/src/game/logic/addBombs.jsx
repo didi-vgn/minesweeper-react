@@ -1,4 +1,4 @@
-export const addBombs = (board, bombs) => {
+export const addBombs = (board, bombs, conditions) => {
   const height = board.length;
   const width = board[0].length;
   let bombsLeft = bombs;
@@ -7,7 +7,10 @@ export const addBombs = (board, bombs) => {
     const i = Math.floor(Math.random() * height);
     const j = Math.floor(Math.random() * width);
 
-    if (board[i][j].value !== -1) {
+    if (
+      board[i][j].value !== -1 &&
+      !conditions.some((condition) => condition[0] === i && condition[1] === j)
+    ) {
       board[i][j].value = -1;
       bombsLeft--;
     }

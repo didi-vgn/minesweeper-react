@@ -34,10 +34,11 @@ const overlayStyle = {
   justifyContent: "center",
   alignItems: "center",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 100,
+  zIndex: 80,
 };
 
 const gameOverStyle = {
+  marginTop: 30,
   height: "512px",
   width: "1536px",
   backgroundImage: `url("/game_over.png")`,

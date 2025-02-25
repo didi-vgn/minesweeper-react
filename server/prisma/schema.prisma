@@ -15,6 +15,8 @@ model User {
   role Role @default(USER)
   games Game[]
   adventureProgress Adventure_Progress[]
+  stats Stats?
+  achievements User_Achievement[] 
 }
 
 model Password {
@@ -45,6 +47,40 @@ model Adventure_Progress {
   points Int
 
   @@unique([userId, levelId])
+}
+
+model Achievement {
+  id String @id @default(uuid())
+  title String @unique
+  description String
+  icon String
+  condition String
+  users User_Achievement[]
+}
+
+model User_Achievement {
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+  achievementId String
+  earnedAt DateTime @default(now())
+
+  @@id([userId, achievementId])
+}
+
+model Stats {
+  userId String @id @unique
+  levelsCompleted Int @default(0)
+  bombsScanned Int @default(0)
+  totalGems Int @default(0)
+  deaths Int @default(0)
+  pinkGames Int @default(0)
+  blueGames Int @default(0)
+  whiteGames Int @default(0)
+  yellowGames Int @default(0)
+  greenGames Int @default(0)
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 enum GameMode{

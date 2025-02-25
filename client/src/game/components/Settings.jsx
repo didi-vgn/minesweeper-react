@@ -33,11 +33,11 @@ export default function Settings() {
             defaultValue={settings.character}
             onChange={handleCharacterChange}
           >
-            <option value='pink'>Pink</option>
-            <option value='blue'>Blue</option>
-            <option value='green'>Green</option>
-            <option value='yellow'>Yellow</option>
-            <option value='white'>White</option>
+            <option value='pink'>Zaya</option>
+            <option value='blue'>Luma</option>
+            <option value='green'>Rilo</option>
+            <option value='yellow'>Milio</option>
+            <option value='white'>Inka</option>
             <option value='random'>Random</option>
           </select>
         </div>

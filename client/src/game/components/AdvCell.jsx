@@ -1,12 +1,14 @@
 import { useAdventureContext } from "../context/AdventureContext";
 import { TiWarningOutline } from "react-icons/ti";
+import { GiFluffyCloud } from "react-icons/gi";
 
-import { gemColors } from "../utils/assets";
+import { gemColors, colors } from "../utils/assets";
 import Player from "./Player";
 import React from "react";
 
 const AdvCell = React.memo(({ cell, player }) => {
   const { mapSkin } = useAdventureContext();
+
   return (
     <div>
       <div className='w-[64px] h-[64px]'>
@@ -18,13 +20,20 @@ const AdvCell = React.memo(({ cell, player }) => {
                 <img
                   src={gemColors[cell.gem.color]}
                   alt=''
-                  className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 drop-shadow-[0_35px_35px_rgba(75, 38, 3, 0.8)]'
+                  className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
                 />
-              )) || (
-                <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl'>
-                  {cell.value === 0 ? "" : cell.value}
-                </div>
-              ))) ||
+              )) ||
+                (cell.scanner && (
+                  <div className='absolute top-4 left-3 text-4xl font-outline'>
+                    <GiFluffyCloud />
+                  </div>
+                )) || (
+                  <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-outline-black'>
+                    <div className={`${colors[cell.value]}`}>
+                      {cell.value === 0 ? "" : cell.value}
+                    </div>
+                  </div>
+                ))) ||
               (cell.value === -1 && (
                 <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl'>
                   💣
@@ -35,7 +44,7 @@ const AdvCell = React.memo(({ cell, player }) => {
           <div className='relative'>
             <img src={mapSkin.cover} alt='' />
             {cell.scanned && cell.value === -1 && (
-              <div className='absolute top-1 left-1 z-999 text-red-500 text-[60px] drop-shadow-[0_1px_0.5px_rgba(255,255,255,1)]'>
+              <div className='absolute top-[0.5px] left-[0.5px] z-999 text-slate-900 text-[60px] font-outline'>
                 <TiWarningOutline />
               </div>
             )}

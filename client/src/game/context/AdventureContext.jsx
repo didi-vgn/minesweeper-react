@@ -1,10 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useState } from "react";
 import { generateStoryBoard } from "../logic/generateStoryBoard";
 import { leftClick } from "../logic/click";
 import { mapSkins, playerSprites } from "../utils/assets";
@@ -37,20 +31,23 @@ export function AdventureProvider({ children }) {
   const [getAdvStatsTrigger, setGetAdvStatsTrigger] = useState(0);
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(null);
+  const [availableScanners, setAvailableScanners] = useState(0);
 
-  const newGame = useCallback((levelData) => {
+  const newGame = (levelData) => {
     setGameOver(false);
     setCollectedGems(0);
     const newBoard = generateStoryBoard(
       levelData.width,
       9,
       levelData.bombs,
-      levelData.gems
+      levelData.gems,
+      levelData.scanners
     );
     setBoard(newBoard);
     setIsAdvGameActive(true);
     setAdvGameWin(false);
     setCurrentLevel(levelData.id);
+    setAvailableScanners(0);
     triggerEvent("normal");
 
     if (settings.character === "random") {
@@ -59,104 +56,102 @@ export function AdventureProvider({ children }) {
     if (settings.map === "random") {
       setMapSkin(randomProp(mapSkins));
     } else setMapSkin(mapSkins[settings.map]);
-  }, []);
+  };
 
   function triggerEvent(eventType) {
     setEvent(eventType);
     setTimeout(() => setEvent(null), 100);
   }
 
-  const movePlayer = useCallback(
-    (i, j) => {
-      const newBoard = leftClick(board, i, j);
+  const movePlayer = (i, j) => {
+    if (
+      board[i][j].clicked &&
+      board[i][j].gem.color === "" &&
+      !board[i][j].scanner
+    )
+      return;
+    const newBoard = leftClick(board, i, j);
 
-      if (newBoard[i][j].gem.color !== "" && !newBoard[i][j].gem.collected) {
-        newBoard[i][j] = {
-          ...newBoard[i][j],
-          gem: { ...newBoard[i][j].gem, collected: true },
-        };
+    if (newBoard[i][j].gem.color !== "" && !newBoard[i][j].gem.collected) {
+      newBoard[i][j] = {
+        ...newBoard[i][j],
+        gem: { ...newBoard[i][j].gem, collected: true },
+      };
 
-        triggerEvent(newBoard[i][j].gem.color);
-        setCollectedGems((prev) => prev + 1);
-      }
+      triggerEvent(newBoard[i][j].gem.color);
+      setCollectedGems((prev) => prev + 1);
+    }
 
-      if (newBoard[i][j].value === -1) {
-        triggerEvent("bomb");
-        setGameOver(true);
-        setIsAdvGameActive(false);
-      }
+    if (newBoard[i][j].scanner === true) {
+      newBoard[i][j] = {
+        ...newBoard[i][j],
+        scanner: false,
+      };
 
-      if (newBoard[i][j].gem.color === "golden") {
-        setAdvGameWin(true);
-        setIsAdvGameActive(false);
-        setGetAdvStatsTrigger((prev) => prev + 1);
-      }
+      triggerEvent("scanner");
+      setAvailableScanners((prev) => prev + 1);
+    }
 
-      setBoard(newBoard);
-    },
-    [board]
-  );
+    if (newBoard[i][j].value === -1) {
+      triggerEvent("bomb");
+      setGameOver(true);
+      setIsAdvGameActive(false);
+    }
 
-  const scan = useCallback(
-    (i, j) => {
-      const height = board.length;
-      const width = board[0].length;
-      const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
-      adjacentCells.forEach(([r, c]) => {
-        const newRow = r + i;
-        const newCol = c + j;
+    if (newBoard[i][j].gem.color === "golden") {
+      setAdvGameWin(true);
+      setIsAdvGameActive(false);
+      setGetAdvStatsTrigger((prev) => prev + 1);
+    }
 
-        if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
-          newBoard[newRow][newCol] = {
-            ...newBoard[newRow][newCol],
-            scanned: true,
-          };
-        }
+    setBoard(newBoard);
+  };
+
+  const scan = (i, j) => {
+    setTimeout(() => {
+      setBoard((prev) => {
+        const height = prev.length;
+        const width = prev[0].length;
+        const newBoard = prev.map((row) => row.map((cell) => ({ ...cell })));
+        adjacentCells.forEach(([r, c]) => {
+          const newRow = r + i;
+          const newCol = c + j;
+
+          if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
+            newBoard[newRow][newCol] = {
+              ...newBoard[newRow][newCol],
+              scanned: true,
+            };
+          }
+        });
+        return newBoard;
       });
-      setBoard(newBoard);
-    },
-    [board]
-  );
+    }, 500);
+    setAvailableScanners((prev) => prev - 1);
+    triggerEvent("scan");
+  };
 
-  const contextValue = useMemo(
-    () => ({
-      board,
-      newGame,
-      movePlayer,
-      collectedGems,
-      event,
-      gameOver,
-      playerSprite,
-      mapSkin,
-      settings,
-      setSettings,
-      isAdvGameActive,
-      advGameWin,
-      getAdvStatsTrigger,
-      setScore,
-      score,
-      currentLevel,
-      setCurrentLevel,
-      scan,
-    }),
-    [
-      board,
-      newGame,
-      movePlayer,
-      collectedGems,
-      event,
-      gameOver,
-      playerSprite,
-      mapSkin,
-      settings,
-      isAdvGameActive,
-      advGameWin,
-      getAdvStatsTrigger,
-      score,
-      currentLevel,
-      scan,
-    ]
-  );
+  const contextValue = {
+    board,
+    newGame,
+    movePlayer,
+    collectedGems,
+    event,
+    gameOver,
+    playerSprite,
+    mapSkin,
+    settings,
+    setSettings,
+    isAdvGameActive,
+    advGameWin,
+    getAdvStatsTrigger,
+    setScore,
+    score,
+    currentLevel,
+    setCurrentLevel,
+    scan,
+    availableScanners,
+  };
 
   return (
     <AdventureContext.Provider value={contextValue}>

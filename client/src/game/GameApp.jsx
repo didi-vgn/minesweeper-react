@@ -73,11 +73,13 @@ export default function GameApp() {
         <div className='custom-border-rev bg-white flex items-center justify-center gap-2'>
           {bombsLeft} <FaStar />
         </div>
-        <Stopwatch
-          active={isGameActive}
-          resetTrigger={resetTrigger}
-          callback={uploadGame}
-        />
+        <div className='custom-border-rev bg-white h-full flex justify-center items-center'>
+          <Stopwatch
+            active={isGameActive}
+            resetTrigger={resetTrigger}
+            callback={uploadGame}
+          />
+        </div>
         <select
           name='gameMode'
           id='difficulty'

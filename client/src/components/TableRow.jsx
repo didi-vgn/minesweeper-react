@@ -17,16 +17,29 @@ export default function TableRow({
   return (
     <>
       <div
-        className="cursor-pointer grid grid-cols-7 className='flex items-center bg-gray-300 w-full h-10 text-center hover:bg-gray-400 transition"
+        className={`cursor-pointer grid grid-cols-5 items-center ${
+          expand ? "bg-gray-400" : "bg-gray-300"
+        } w-8/10 m-auto h-10 text-center hover:bg-gray-400 border border-stone-100`}
         onClick={expandGame}
       >
-        <div className='col-start-2'>{nickname}</div>
+        <div>{nickname}</div>
         <div>{gameMode}</div>
         <div>{time}</div>
         <div>{bbbv}</div>
         <div>{score}</div>
       </div>
-      {expand && <ScoreGameBoard board={board} />}
+      {expand && (
+        <div className='bg-gray-100 w-8/10 m-auto flex justify-around items-center gap-10'>
+          <div className='flex flex-col gap-5'>
+            <div>Nickname: {nickname}</div>
+            <div>Game Mode: {gameMode}</div>
+            <div>Time: {time}</div>
+            <div>3BV: {bbbv}</div>
+            <div>Score: {score}</div>
+          </div>
+          <ScoreGameBoard board={board} />
+        </div>
+      )}
     </>
   );
 }

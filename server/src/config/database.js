@@ -72,11 +72,11 @@ exports.createGame = async (userId = null, mode, time, bbbv, points, board) => {
   }
 };
 
-exports.findManyGames = async (gameMode, sort, order, nickname) => {
+exports.findManyGames = async (gameMode, nickname, sort, order) => {
   try {
     return await prisma.game.findMany({
       where: {
-        mode: gameMode.toUpperCase(),
+        ...(gameMode && { mode: gameMode.toUpperCase() }),
         ...(nickname && { user: { nickname } }),
       },
       orderBy: { [sort]: order },
@@ -152,5 +152,32 @@ exports.findManyAdventureGames = async (userId) => {
   } catch (err) {
     console.error(err);
     throw new Error("Failed to fetch games.");
+  }
+};
+
+exports.createAchievement = async (title, description, icon, condition) => {
+  try {
+    return await prisma.achievement.create({
+      data: {
+        title,
+        description,
+        icon,
+        condition,
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to add achievement.");
+  }
+};
+
+exports.findManyAchievements = async () => {
+  try {
+    return await prisma.achievement.findMany({
+      orderBy: { icon: "asc" },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to fetch achievements.");
   }
 };

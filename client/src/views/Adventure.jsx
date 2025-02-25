@@ -9,7 +9,7 @@ export default function Story() {
         <ProfileButton />
       </Header>
       <div className='flex justify-center'>
-        <div className='m-10 p-3 custom-border bg-gray-300 h-[47rem] w-[72rem]'>
+        <div className='m-10 p-3 custom-border bg-gray-300 h-[42.5rem] w-[72rem]'>
           <div className='custom-border-rev h-full bg-gray-100 p-7'>
             <Outlet></Outlet>
           </div>

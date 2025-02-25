@@ -20,6 +20,7 @@ export default function Player() {
     overflow: "hidden",
     position: "absolute",
     zIndex: 99,
+
     transform: "scale(0.5) translateX(-64px) translateY(-384px)",
   };
 
