@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAdventureContext } from "./context/AdventureContext";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -9,6 +9,10 @@ import { useAuthContext } from "../context/AuthContext";
 import { postAdvGameStats } from "../services/postAdvGameService";
 import { GiFluffyCloud } from "react-icons/gi";
 import Overlay from "./components/Overlay";
+import { postStatsAndUnlockAchievements } from "../services/postStatsAndUnlockAchievements";
+import { countBombsScanned } from "./logic/countBombsScanned";
+import NewAchievementNotification from "./components/NewAchievementNotification";
+import Notifications from "./components/Notifications";
 
 export default function AdventureApp({ onClick, progress }) {
   const { user } = useAuthContext();
@@ -20,10 +24,14 @@ export default function AdventureApp({ onClick, progress }) {
     advGameWin,
     setScore,
     availableScanners,
+    playerSprite,
+    board,
+    gameOver,
   } = useAdventureContext();
   const [player, setPlayer] = useState({ x: 0, y: 4 });
   const [viewportStart, setViewportStart] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
+  const [newAchievements, setNewAchievements] = useState(null);
 
   function reset() {
     setPlayer({ x: 0, y: 4 });
@@ -40,6 +48,32 @@ export default function AdventureApp({ onClick, progress }) {
           20)
     );
   }
+
+  useEffect(() => {
+    const stats = {
+      userId: user.id,
+      totalGems: collectedGems,
+      bombsScanned: countBombsScanned(board),
+      characterUsed: playerSprite.split(".")[0].split("_")[2],
+      levelsCompleted: advGameWin ? 1 : 0,
+      deaths: gameOver ? 1 : 0,
+    };
+    async function postStats(stats) {
+      try {
+        const response = await postStatsAndUnlockAchievements(stats);
+        if (response.length > 0) {
+          console.log(response);
+          console.log("Stats updated!");
+          setNewAchievements(response);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (user && (advGameWin || gameOver)) {
+      postStats(stats);
+    }
+  }, [gameOver, advGameWin]);
 
   async function postGame(gameData) {
     try {
@@ -106,6 +140,11 @@ export default function AdventureApp({ onClick, progress }) {
 
   return (
     <div className='flex flex-col items-center gap-3'>
+      <Notifications>
+        {newAchievements?.map((a) => (
+          <NewAchievementNotification key={a.id} data={a} />
+        ))}
+      </Notifications>
       <div className='relative'>
         <Overlay>
           <div className='flex justify-between items-center bg-[rgba(0,0,0,0.3)] pt-2 pb-2'>
@@ -148,3 +187,26 @@ export default function AdventureApp({ onClick, progress }) {
     </div>
   );
 }
+
+// const mockData = [
+//   {
+//     achievement: {
+//       id: "engineer_1",
+//       title: "Newbie Engineer",
+//       description: "Reveal 15 bombs with the scanner.",
+//     },
+//     achievementId: "engineer_1",
+//     earnedAt: "2025-02-25T22:58:02.992Z",
+//     userId: "30e94f1c-e7d9-42b2-acba-e0a5cd7a56aa",
+//   },
+//   {
+//     achievement: {
+//       id: "engineer_4",
+//       title: "Master Engineer",
+//       description: "Reveal 15 bombs with the scanner.",
+//     },
+//     achievementId: "engineer_4",
+//     earnedAt: "2025-02-25T22:58:02.992Z",
+//     userId: "30e94f1c-e7d9-42b2-acba-e0a5cd7a56aa",
+//   },
+// ];

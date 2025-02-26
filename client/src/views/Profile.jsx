@@ -3,17 +3,20 @@ import { useAuthContext } from "../context/AuthContext";
 import LargeButton from "../components/LargeButton";
 import GamesTable from "../components/GamesTable";
 import Header from "../components/Header";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileButton from "../components/ProfileButton";
 import { RxTriangleDown } from "react-icons/rx";
 import { RxTriangleUp } from "react-icons/rx";
 import Achievement from "../components/Achievement";
+import { getUserAchievements } from "../services/getUserAchievements";
+
 export default function Profile() {
   const { user } = useAuthContext();
   const [gameMode, setGameMode] = useState("");
   const [sort, setSort] = useState("time");
   const [order, setOrder] = useState("asc");
   const [selectedTab, setSelectedTab] = useState("achievements");
+  const [achievements, setAchievements] = useState([]);
 
   const navigate = useNavigate();
 
@@ -25,32 +28,44 @@ export default function Profile() {
       setOrder("asc");
     }
   }
+
+  useEffect(() => {
+    async function fetchAchievements(userId) {
+      try {
+        const unlockedAchievements = await getUserAchievements(userId);
+
+        if (unlockedAchievements.length > 0) {
+          setAchievements(unlockedAchievements);
+        } else {
+          console.log("no achievements for this user yet");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    user && fetchAchievements(user.id);
+  }, [user]);
+
   return (
     <div>
       <Header>
         <ProfileButton />
+        {user && (
+          <div onClick={() => setSelectedTab("achievements")}>Achievements</div>
+        )}
+        {user && (
+          <div onClick={() => setSelectedTab("records")}>
+            Minesweeper Records
+          </div>
+        )}
       </Header>
       {user ? (
         <div>
-          <br />
-          <div className='container flex gap-5 items-center p-5'>
-            <div className='text-3xl text-bold text-gray-600'>
-              Welcome {user.nickname}!
-            </div>
-            <div
-              className='custom-border bg-gray-300 cursor-pointer'
-              onClick={() => setSelectedTab("achievements")}
-            >
-              Achievements
-            </div>
-            <div
-              className='custom-border bg-gray-300 cursor-pointer'
-              onClick={() => setSelectedTab("records")}
-            >
-              Minesweeper Records
-            </div>
+          <div className='text-3xl text-bold text-gray-600 text-center m-5'>
+            Welcome {user.nickname}!
           </div>
-          <br />
+
           {selectedTab === "records" && (
             <div>
               <div className='grid grid-cols-5 text-center items-center w-8/10 m-auto h-15 bg-gray-600 text-slate-100 text-xl'>
@@ -88,9 +103,19 @@ export default function Profile() {
           )}
           {selectedTab === "achievements" && (
             <div className='flex gap-5 flex-wrap w-8/10 m-auto'>
-              {mockAchievements.map((achievement, index) => (
-                <Achievement key={index} data={achievement} />
-              ))}
+              {achievements.map((a, i) => {
+                if (
+                  a.achievementId.substring(0, a.achievementId.length - 1) ===
+                  achievements[i + 1]?.achievementId.substring(
+                    0,
+                    a.achievementId.length - 1
+                  )
+                ) {
+                  return;
+                } else {
+                  return <Achievement key={a.achievementId} data={a} />;
+                }
+              })}
             </div>
           )}
         </div>
@@ -118,104 +143,3 @@ const triangleStyle = {
   right: 50,
   top: 0,
 };
-
-const mockAchievements = [
-  {
-    image: "/achievements/pink.png",
-    title: "Pink Buddy",
-    description: "Play 50 games with the Pink buddy.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/blue.png",
-    title: "Blue Buddy",
-    description: "Play 50 games with the Blue buddy.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/white.png",
-    title: "White Buddy",
-    description: "Play 50 games with the White buddy.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/yellow.png",
-    title: "Yellow Buddy",
-    description: "Play 50 games with the Yellow buddy.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/green.png",
-    title: "Green Buddy",
-    description: "Play 50 games with the Green buddy.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/team.png",
-    title: "Extrovert",
-    description: "Play at least one game with each character.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/collector1.png",
-    title: "Newbie Collector",
-    description: "Collect 50 gems.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/collector2.png",
-    title: "Skilled Collector",
-    description: "Collect 150 gems.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/collector3.png",
-    title: "Expert Collector",
-    description: "Collect 200 gems.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/collector4.png",
-    title: "Master Collector",
-    description: "Collect 500 gems.",
-    date: new Date().toString().split(" (")[0],
-  },
-
-  {
-    image: "/achievements/level1.png",
-    title: "Newbie Adventurer",
-    description: "Complete 5 levels.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/level2.png",
-    title: "Skilled Adventurer",
-    description: "Complete 15 levels.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/level3.png",
-    title: "Expert Adventurer",
-    description: "Complete 30 levels.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/level4.png",
-    title: "Master Adventurer",
-    description: "Complete 50 levels.",
-    date: new Date().toString().split(" (")[0],
-  },
-
-  {
-    image: "/achievements/scanner1.png",
-    title: "Engineer",
-    description: "Reveal 10 bombs with the scanner.",
-    date: new Date().toString().split(" (")[0],
-  },
-  {
-    image: "/achievements/heart.png",
-    title: "Never give up!",
-    description: "Stepped on 500 bombs. Oops!",
-    date: new Date().toString().split(" (")[0],
-  },
-];

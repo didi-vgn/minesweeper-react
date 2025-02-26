@@ -55,7 +55,7 @@ const overlayStyle = {
   flexDirection: "column",
   alignItems: "center",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 90,
+  zIndex: 30,
 };
 
 const gameOverStyle = {

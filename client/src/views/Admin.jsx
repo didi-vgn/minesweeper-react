@@ -52,6 +52,24 @@ export default function Admin() {
     }
   }
 
+  async function deleteAchievements() {
+    try {
+      const response = await fetch(`${API_HOST}achievements/delete-all`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.ok) {
+        console.log("All achievements deleted!");
+      } else {
+        console.error(response.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   async function addAchievement(data) {
     try {
       const response = await fetch(`${API_HOST}achievements/add-achievement`, {
@@ -104,6 +122,7 @@ export default function Admin() {
       <FormProvider {...methods}>
         <div className='text-3xl m-5 text-center'>Add new Achievements</div>
         <Form onClick={onSubmit} buttonText='New Achievement'>
+          <Input label='id' type='text' id='id' placeholder='id...' />
           <Input label='Title' type='text' id='title' placeholder='title...' />
           <Input
             label='Description'
@@ -111,36 +130,27 @@ export default function Admin() {
             id='description'
             placeholder='description...'
           />
-          <Input
-            label='Icon'
-            type='text'
-            id='icon'
-            placeholder='image path...'
-          />
-          <Input
-            label='Condition'
-            type='text'
-            id='condition'
-            placeholder='condition...'
-          />
         </Form>
       </FormProvider>
       <hr />
       <div className='text-3xl m-5 text-center'>List of Achievements</div>
+      <LargeButton
+        onClick={deleteAchievements}
+        text='Delete ALL Achievements'
+      />
       <div className='flex flex-col gap-5 m-5'>
         {achievements.map((achievement, index) => (
           <div
             key={index}
-            className='grid grid-cols-[5rem_1fr_1fr_1fr] bg-gray-100 shadow-sm gap-4 items-center w-8/10 m-auto rounded-lg p-2'
+            className='grid grid-cols-[5rem_1fr_1fr] bg-gray-100 shadow-sm gap-4 items-center w-8/10 m-auto rounded-lg p-2'
           >
             <img
-              src={`achievements/${achievement.icon}`}
-              alt=''
+              src={`achievements/${achievement.id}.png`}
+              alt={`${achievement.title}`}
               className='size-15'
             />
             <div className='font-bold'>{achievement.title}</div>
             <div>{achievement.description}</div>
-            <div>{achievement.condition}</div>
           </div>
         ))}
       </div>

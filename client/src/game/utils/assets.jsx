@@ -65,7 +65,7 @@ export const animation = {
 };
 
 export const colors = [
-  "text-stone-950",
+  "text-stone-900",
   "text-lime-600",
   "text-amber-400",
   "text-orange-500",

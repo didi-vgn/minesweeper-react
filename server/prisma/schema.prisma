@@ -50,11 +50,9 @@ model Adventure_Progress {
 }
 
 model Achievement {
-  id String @id @default(uuid())
+  id String @id @unique
   title String @unique
   description String
-  icon String
-  condition String
   users User_Achievement[]
 }
 

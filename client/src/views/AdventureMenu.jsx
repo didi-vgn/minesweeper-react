@@ -7,7 +7,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { getAdvGames } from "../services/getAdvGamesService";
 import AdventureApp from "../game/AdventureApp";
 
-export default function LevelSelection() {
+export default function AdventureMenu() {
   const { user } = useAuthContext();
   const { newGame } = useAdventureContext();
   const [selectedOption, setSelectedOption] = useState("survival");
@@ -36,7 +36,6 @@ export default function LevelSelection() {
       try {
         const localProgress = JSON.parse(localStorage.getItem("localProgress"));
         if (localProgress) {
-          // localStorage.clear();
           setProgress(localProgress);
         }
       } catch (err) {

@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: silkscreen;
+  src: url("/fonts/slkscr.ttf") format("truetype");
+}
+
+.silkscreen {
+  font-family: silkscreen;
+}
+
 .custom-border {
   box-sizing: border-box;
   border: 5px solid;

@@ -34,7 +34,7 @@ const overlayStyle = {
   justifyContent: "center",
   alignItems: "center",
   backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 80,
+  zIndex: 30,
 };
 
 const gameOverStyle = {

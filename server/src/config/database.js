@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { ACHIEVEMENT_CONDITIONS } = require("./achievementConditions");
 prisma = new PrismaClient();
 
 exports.createUser = async (username, password, nickname) => {
@@ -155,14 +156,13 @@ exports.findManyAdventureGames = async (userId) => {
   }
 };
 
-exports.createAchievement = async (title, description, icon, condition) => {
+exports.createAchievement = async (id, title, description) => {
   try {
     return await prisma.achievement.create({
       data: {
+        id,
         title,
         description,
-        icon,
-        condition,
       },
     });
   } catch (err) {
@@ -174,10 +174,124 @@ exports.createAchievement = async (title, description, icon, condition) => {
 exports.findManyAchievements = async () => {
   try {
     return await prisma.achievement.findMany({
-      orderBy: { icon: "asc" },
+      orderBy: { id: "asc" },
     });
   } catch (err) {
     console.error(err);
     throw new Error("Failed to fetch achievements.");
+  }
+};
+
+exports.deleteAllAchievements = async () => {
+  try {
+    await prisma.achievement.deleteMany({});
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete achievements.");
+  }
+};
+
+exports.upsertStats = async (
+  userId,
+  totalGems,
+  bombsScanned,
+  characterUsed,
+  levelsCompleted,
+  deaths
+) => {
+  try {
+    await prisma.stats.upsert({
+      where: {
+        userId,
+      },
+      update: {
+        totalGems: { increment: totalGems },
+        bombsScanned: { increment: bombsScanned },
+        [`${characterUsed}Games`]: { increment: 1 },
+        levelsCompleted: { increment: levelsCompleted },
+        deaths: { increment: deaths },
+      },
+      create: {
+        userId,
+        totalGems,
+        bombsScanned,
+        [`${characterUsed}Games`]: 1,
+        levelsCompleted,
+        deaths,
+      },
+    });
+
+    return await checkAndUnlockAchievements(userId);
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to update stats.");
+  }
+};
+
+const checkAndUnlockAchievements = async (userId) => {
+  try {
+    const stats = await prisma.stats.findUnique({ where: { userId } });
+
+    console.log(stats);
+
+    if (!stats) return [];
+
+    const unlockedAchievements = await prisma.user_Achievement.findMany({
+      where: { userId },
+      select: { achievementId: true },
+    });
+
+    const unlockedIds = unlockedAchievements.map((a) => a.achievementId);
+
+    const lockedAchievements = await prisma.achievement.findMany({
+      where: {
+        id: { notIn: unlockedIds },
+      },
+    });
+
+    const newAchievements = lockedAchievements
+      .filter((achievement) => checkAchievementCondition(achievement.id, stats))
+      .map((achievement) => ({ userId, achievementId: achievement.id }));
+
+    if (newAchievements.length > 0) {
+      await prisma.user_Achievement.createMany({
+        data: newAchievements,
+        skipDuplicates: true,
+      });
+    }
+
+    const newAchievementsData = lockedAchievements.filter((achievement) =>
+      checkAchievementCondition(achievement.id, stats)
+    );
+
+    return newAchievementsData;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to check and unlock achievements.");
+  }
+};
+
+const checkAchievementCondition = (achievementId, stats) => {
+  try {
+    return ACHIEVEMENT_CONDITIONS[achievementId]?.(stats) ?? false;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+};
+
+exports.findAchievementsByUserId = async (userId) => {
+  try {
+    const unlockedAchievements = await prisma.user_Achievement.findMany({
+      where: { userId },
+      include: {
+        achievement: true,
+      },
+      orderBy: { achievementId: "asc" },
+    });
+    return unlockedAchievements;
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to fetch achivements.");
   }
 };

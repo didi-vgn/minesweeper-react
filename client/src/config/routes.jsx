@@ -6,9 +6,7 @@ import SignUp from "../views/SignUp.jsx";
 import ErrorPage from "../views/ErrorPage.jsx";
 import App from "../App.jsx";
 import Admin from "../views/Admin.jsx";
-import LevelSelection from "../views/LevelSelection.jsx";
 import Adventure from "../views/Adventure.jsx";
-import AdventureApp from "../game/AdventureApp.jsx";
 
 const router = [
   {
@@ -32,16 +30,6 @@ const router = [
       {
         path: "adventure",
         element: <Adventure />,
-        children: [
-          {
-            index: true,
-            element: <LevelSelection />,
-          },
-          {
-            path: "play",
-            element: <AdventureApp />,
-          },
-        ],
       },
       {
         path: "admin",
