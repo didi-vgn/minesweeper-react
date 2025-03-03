@@ -1,20 +1,14 @@
 import { useState } from "react";
-import GamesTable from "../components/GamesTable";
-import Header from "../components/Header";
 import { RxTriangleDown } from "react-icons/rx";
 import { RxTriangleUp } from "react-icons/rx";
+import GamesTable from "../components/GamesTable";
+import { useAuthContext } from "../context/AuthContext";
 
-export default function Leaderboards() {
-  //need to work on this later
-  const [query, setQuery] = useState("");
+export default function ProfileMinesweeperRecords() {
+  const { user } = useAuthContext();
   const [gameMode, setGameMode] = useState("");
-  const [sort, setSort] = useState("time");
-  const [order, setOrder] = useState("asc");
-
-  function handleChange(e) {
-    const value = e.target.value;
-    setQuery(value);
-  }
+  const [sort, setSort] = useState("points");
+  const [order, setOrder] = useState("desc");
 
   function handleFilter(val) {
     setSort(val);
@@ -27,39 +21,6 @@ export default function Leaderboards() {
 
   return (
     <div>
-      <Header>
-        <input
-          type='text'
-          value={query}
-          onChange={handleChange}
-          className='m-1 font-medium border border-slate-600 bg-white'
-        />
-        <div
-          className='cursor-pointer hover:bg-gray-300'
-          onClick={() => setGameMode("begginer")}
-        >
-          Begginer
-        </div>
-        <div
-          className='cursor-pointer hover:bg-gray-300'
-          onClick={() => setGameMode("intermediate")}
-        >
-          Intermediate
-        </div>
-        <div
-          className='cursor-pointer hover:bg-gray-300'
-          onClick={() => setGameMode("expert")}
-        >
-          Expert
-        </div>
-        <div
-          className='cursor-pointer hover:bg-gray-300'
-          onClick={() => setGameMode("")}
-        >
-          All Games
-        </div>
-      </Header>
-      <br />
       <div className='grid grid-cols-5 text-center items-center w-8/10 m-auto h-15 bg-gray-600 text-slate-100 text-xl'>
         <div>Nickname</div>
         <div>Game Mode</div>
@@ -87,7 +48,7 @@ export default function Leaderboards() {
       </div>
       <GamesTable
         gameMode={gameMode}
-        nickname={query}
+        nickname={user.nickname}
         sort={sort}
         order={order}
       />

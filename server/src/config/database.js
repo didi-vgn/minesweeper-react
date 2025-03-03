@@ -17,16 +17,53 @@ exports.createUser = async (username, password, nickname) => {
   }
 };
 
+exports.updateNickname = async (id, nickname) => {
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: { nickname },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to update nickname");
+  }
+};
+
+exports.updatePassword = async (userId, password) => {
+  try {
+    return await prisma.password.update({
+      where: { userId },
+      data: { password },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to update password.");
+  }
+};
+
+exports.updateRole = async (id, role) => {
+  try {
+    return await prisma.user.update({
+      where: { id },
+      data: { role },
+    });
+  } catch (err) {
+    throw new Error("Failed to update role");
+  }
+};
+
+exports.deleteUser = async (id) => {
+  try {
+    return await prisma.user.delete({ where: { id } });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete user and related data.");
+  }
+};
+
 exports.findManyUsers = async () => {
   try {
-    return await prisma.user.findMany({
-      ////testing ---needs to be removed
-      include: {
-        password: {
-          select: { password: true },
-        },
-      },
-    });
+    return await prisma.user.findMany({});
   } catch (err) {
     console.error(err);
     throw new Error("Failed to fetch users.");
@@ -90,19 +127,6 @@ exports.findManyGames = async (gameMode, nickname, sort, order) => {
   } catch (err) {
     console.error(err);
     throw new Error("Failed to fetch games.");
-  }
-};
-
-exports.deleteManyGamesByUserId = async (id) => {
-  try {
-    await prisma.game.deleteMany({
-      where: {
-        userId: id,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    throw new Error("Failed to delete games.");
   }
 };
 
@@ -182,6 +206,15 @@ exports.findManyAchievements = async () => {
   }
 };
 
+exports.deleteAchievement = async (id) => {
+  try {
+    await prisma.achievement.delete({ where: { id } });
+  } catch (err) {
+    console.error(err);
+    throw new Error("Failed to delete achievement.");
+  }
+};
+
 exports.deleteAllAchievements = async () => {
   try {
     await prisma.achievement.deleteMany({});
@@ -231,9 +264,6 @@ exports.upsertStats = async (
 const checkAndUnlockAchievements = async (userId) => {
   try {
     const stats = await prisma.stats.findUnique({ where: { userId } });
-
-    console.log(stats);
-
     if (!stats) return [];
 
     const unlockedAchievements = await prisma.user_Achievement.findMany({

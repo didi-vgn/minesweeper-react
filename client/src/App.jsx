@@ -6,22 +6,17 @@ import { GameProvider } from "./game/context/GameContext";
 import { AdventureProvider } from "./game/context/AdventureContext";
 import React from "react";
 
-const MemoizedNav = React.memo(() => (
-  <nav className='flex items-center justify-center bg-gray-600 text-gray-50 text-3xl h-20'>
-    <ul className='flex gap-20'>
-      <CustomNavLink path='/' text='Play' />
-      <CustomNavLink path='leaderboards' text='Leaderboards' />
-      <CustomNavLink path='adventure' text='Adventure' />
-      <CustomNavLink path='profile' text='Profile' />
-      <CustomNavLink path='admin' text='Admin' />
-    </ul>
-  </nav>
-));
-
 function App() {
   return (
     <div className='silkscreen'>
-      <MemoizedNav />
+      <nav className='flex items-center justify-center bg-gray-600 text-gray-50 text-3xl h-20'>
+        <ul className='flex gap-20'>
+          <CustomNavLink path='/' text='Play' />
+          <CustomNavLink path='leaderboard' text='Leaderboard' />
+          <CustomNavLink path='adventure' text='Adventure' />
+          <CustomNavLink path='profile' text='Profile' />
+        </ul>
+      </nav>
       <div className=''>
         <AuthContextProvider>
           <GameProvider>

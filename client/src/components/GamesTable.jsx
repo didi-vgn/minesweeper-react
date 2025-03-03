@@ -40,8 +40,10 @@ export default function GamesTable({ gameMode, nickname = null, sort, order }) {
           ></TableRow>
         ))}
         {games.length === 0 && (
-          <div className='text-pink-600 text-2xl text-center m-10'>
-            No games yet...
+          <div className='bg-gray-100 w-8/10 mx-auto p-20'>
+            <div className='text-pink-600 text-2xl text-center'>
+              No games yet...
+            </div>
           </div>
         )}
       </div>

@@ -4,7 +4,8 @@ import LargeButton from "./LargeButton";
 export default function Form({ children, onClick, buttonText, errors = [] }) {
   return (
     <form onSubmit={(e) => e.preventDefault()} noValidate>
-      <div className='grid gap-5 grid-cols-2 m-15'>{children}</div>
+      <div className='flex flex-col items-center'>{children}</div>
+
       <LargeButton onClick={onClick} text={buttonText} />
       {errors &&
         errors.map((error, index) => {

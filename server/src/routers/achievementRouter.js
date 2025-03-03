@@ -10,6 +10,11 @@ router.post(
   achievementController.createAchievement
 );
 router.post(
+  "/delete/:id",
+  authenticateToken,
+  achievementController.deleteAchievement
+);
+router.post(
   "/delete-all",
   authenticateToken,
   achievementController.deleteAllAchievements
@@ -18,5 +23,5 @@ router.post(
   "/update-stats",
   achievementController.upsertStatsAndUnlockAchievements
 );
-router.get("/user", achievementController.findAchievementsByUserId);
+router.get("/user/:userId", achievementController.findAchievementsByUserId);
 module.exports = router;

@@ -1,8 +1,12 @@
-const prisma = require("../config/database");
+const validateUser = require("../utils/validation");
+const bcrypt = require("bcryptjs");
+const { validationResult } = require("express-validator");
+const db = require("../config/database");
+const { generateAccessToken } = require("../utils/jwt");
 
 exports.findManyUsers = async (req, res) => {
   try {
-    const users = await prisma.findManyUsers();
+    const users = await db.findManyUsers();
     if (users.length === 0) {
       return res.status(200).json({ message: "No users found.", users: [] });
     }
@@ -13,104 +17,126 @@ exports.findManyUsers = async (req, res) => {
   }
 };
 
-///needs to be separated
-// exports.findUsersByNickname = async (req, res) => {
-//   const query = req.query.nickname;
+exports.updateNickname = [
+  validateUser[1],
+  async (req, res) => {
+    const { nickname } = req.body;
+    const { userId } = req.params;
+    if (req.user.role !== "ADMIN" && req.user.id !== userId) {
+      return res.status(403).json({ error: "Forbidden." });
+    }
+    try {
+      const validationErrors = validationResult(req);
+      if (!validationErrors.isEmpty()) {
+        return res.status(400).json({
+          error: "Validation errors",
+          details: validationErrors.array(),
+        });
+      }
 
-//   try {
-//     const users = await prisma.user.findMany({
-//       where: {
-//         nickname: {
-//           contains: query || "",
-//           mode: "insensitive",
-//         },
-//       },
-//       select: {
-//         id: true,
-//         username: true,
-//         nickname: true,
-//         role: true,
-//       },
-//     });
+      const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
+      if (nicknameAlreadyExists) {
+        return res
+          .status(400)
+          .json({ errors: [{ error: "Nickname already exists." }] });
+      }
 
-//     if (users.length === 0) {
-//       return res.status(200).json({ message: "No users found.", users: [] });
-//     }
-//     return res.status(200).json({ users });
-//   } catch (err) {
-//     console.error(err.message);
-//     return res.status(500).json({ error: err.message });
-//   }
-// };
+      const user = await db.findUserBy("id", userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
 
-// ///everything below needs to be separated
-// exports.deleteUser = async (req, res) => {
-//   const { nickname } = req.params;
-//   try {
-//     const user = await prisma.user.findUnique({ where: { nickname } });
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found." });
-//     }
-//     await prisma.user.delete({
-//       where: {
-//         nickname,
-//       },
-//     });
-//     return res.status(200).json({ message: "User deleted." });
-//   } catch (err) {
-//     console.error(err.message);
-//     return res.status(500).json({ error: err.message });
-//   }
-// };
+      const updatedUser = await db.updateNickname(userId, nickname);
 
-// exports.updateUserNickname = async (req, res) => {
-//   const { nickname } = req.params;
-//   try {
-//     const user = await prisma.user.findUnique({ where: { nickname } });
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found." });
-//     }
+      const newAccessToken =
+        user.id === userId
+          ? generateAccessToken({
+              id: user.id,
+              username: user.username,
+              nickname: nickname,
+              role: user.role,
+            })
+          : null;
 
-//     const updatedUser = await prisma.user.update({
-//       where: {
-//         nickname,
-//       },
-//       data: {
-//         nickname: req.body.newNickname,
-//       },
-//     });
-//     return res
-//       .status(200)
-//       .json({ message: "Nickname updated.", user: updatedUser });
-//   } catch (err) {
-//     console.error(err.message);
-//     return res.status(500).json({ error: err.message });
-//   }
-// };
+      return res.status(200).json({
+        message: "Nickname updated!",
+        user: updatedUser,
+        token: newAccessToken,
+      });
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  },
+];
 
-// exports.updateUserPassword = async (req, res) => {
-//   const { nickname } = req.params;
-//   const { newPassword } = req.body;
+exports.updatePassword = [
+  validateUser[2],
+  async (req, res) => {
+    const { password } = req.body;
+    const { userId } = req.params;
+    if (req.user.id !== userId) {
+      return res.status(403).json({ error: "Forbidden." });
+    }
+    try {
+      const validationErrors = validationResult(req);
+      ////dev
+      if (!validationErrors.isEmpty()) {
+        return res.status(400).json({
+          error: "Validation errors",
+          details: validationErrors.array(),
+        });
+      }
 
-//   /////bcrypt password
+      /////prod
+      // if (!validationErrors.isEmpty()) {
+      //   return res.status(400).json({ error: "Failed to change password." });
+      // }
 
-//   try {
-//     const user = await prisma.user.findUnique({ where: { nickname } });
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found." });
-//     }
+      const user = await db.findUserBy("id", userId);
+      if (!user) {
+        return res.status(404).json({ error: "User not found." });
+      }
 
-//     await prisma.user.update({
-//       where: {
-//         nickname,
-//       },
-//       data: {
-//         password: newPassword,
-//       },
-//     });
-//     return res.status(200).json({ message: "Password updated." });
-//   } catch (err) {
-//     console.error(err.message);
-//     return res.status(500).json({ error: err.message });
-//   }
-// };
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await db.updatePassword(userId, hashedPassword);
+      return res.status(200).json({ message: "Password updated!" });
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  },
+];
+
+exports.updateRole = async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.body;
+  if (req.user.role !== "ADMIN") {
+    return res.status(403).json({ error: "Forbidden." });
+  }
+  try {
+    await db.updateRole(userId, role);
+    return res.status(200).json({ message: `Role updated to ${role}.` });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  const { userId } = req.params;
+  if (req.user.role !== "ADMIN" && req.user.id !== userId) {
+    return res.status(403).json({ error: "Forbidden." });
+  }
+  try {
+    const user = await db.findUserBy("id", userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    await db.deleteUser(userId);
+    return res.status(200).json({ message: "User and related data deleted." });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};

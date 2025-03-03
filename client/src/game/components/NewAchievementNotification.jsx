@@ -35,8 +35,8 @@ export default function NewAchievementNotification({ data }) {
           <div className='text-sm text-xl font-bold'>Achievement unlocked!</div>
           <div className='text-sm text-center'>{data?.title}</div>
           <div
-            className='text-sm text-center text-gray-500 mt-2 cursor-pointer'
-            onClick={() => navigate("/profile")}
+            className='text-sm text-center text-gray-500 mt-2 cursor-pointer hover:underline'
+            onClick={() => navigate("/profile/achievements")}
           >
             Click to view achievements
           </div>

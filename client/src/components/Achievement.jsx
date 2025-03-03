@@ -10,7 +10,7 @@ export default function Achievement({ data }) {
       {!click && (
         <div className='flex flex-col gap-1 items-center'>
           <img
-            src={`achievements/${data.achievement.id}.png`}
+            src={`/achievements/${data.achievement.id}.png`}
             alt={data.achievement.title}
             className='size-30 m-auto'
           />
@@ -23,7 +23,7 @@ export default function Achievement({ data }) {
         <div className='grid grid-rows-3 gap-1 items-center'>
           <div className='flex gap-2 items-center'>
             <img
-              src={`achievements/${data.achievement.id}.png`}
+              src={`/achievements/${data.achievement.id}.png`}
               alt={data.achievement.title}
               className='size-13'
             />

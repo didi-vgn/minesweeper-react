@@ -38,6 +38,11 @@ export default function AuthContextProvider({ children }) {
     }
   }, []);
 
+  function updateToken(token) {
+    localStorage.setItem("token", token);
+    setToken(token);
+  }
+
   function login(token) {
     localStorage.setItem("token", token);
     const decoded = JSON.parse(atob(token.split(".")[1]));
@@ -57,7 +62,7 @@ export default function AuthContextProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateToken }}>
       {children}
     </AuthContext.Provider>
   );

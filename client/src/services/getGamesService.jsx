@@ -3,8 +3,8 @@ import { API_HOST } from "../utils/variables";
 export const getGameStats = async (
   gameMode,
   nickname = "",
-  sort = "time",
-  order = "asc"
+  sort = "points",
+  order = "desc"
 ) => {
   try {
     const response = await fetch(

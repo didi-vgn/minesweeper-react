@@ -1,5 +1,4 @@
 export const ACHIEVEMENT_CONDITIONS = {
-  test: (stats) => stats.levelsCompleted > 0 || stats.deaths > 0,
   adventurer_1: (stats) => stats.levelsCompleted >= 5,
   adventurer_2: (stats) => stats.levelsCompleted >= 15,
   adventurer_3: (stats) => stats.levelsCompleted >= 30,

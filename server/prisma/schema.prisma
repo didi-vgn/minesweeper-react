@@ -21,15 +21,14 @@ model User {
 
 model Password {
   id Int @id @default(autoincrement())
-  user User @relation(fields: [userId], references: [id]) 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) 
   userId String @unique
   password String @db.VarChar(255)
-
 }
 
 model Game{
   id Int @id @default(autoincrement())
-  user User? @relation(fields: [userId], references: [id])
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
   mode GameMode
   time String 
@@ -41,7 +40,7 @@ model Game{
 model Adventure_Progress {
   id Int @id @default(autoincrement())
   levelId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
   collectedGems Int
   points Int
@@ -57,9 +56,9 @@ model Achievement {
 }
 
 model User_Achievement {
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  achievement Achievement @relation(fields: [achievementId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
   achievementId String
   earnedAt DateTime @default(now())
 
@@ -78,7 +77,7 @@ model Stats {
   yellowGames Int @default(0)
   greenGames Int @default(0)
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum GameMode{

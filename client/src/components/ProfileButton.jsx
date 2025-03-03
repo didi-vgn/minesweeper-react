@@ -30,13 +30,13 @@ export default function ProfileButton() {
       {user ? (
         <>
           <div
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-            onClick={() => navigate("/account-settings")}
+            className='block px-4 py-2 text-sm hover:bg-gray-100'
+            onClick={() => navigate("/profile/settings")}
           >
             Settings
           </div>
           <div
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+            className='block px-4 py-2 text-sm hover:bg-gray-100'
             onClick={logout}
           >
             Log Out
@@ -45,13 +45,13 @@ export default function ProfileButton() {
       ) : (
         <>
           <div
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+            className='block px-4 py-2 text-sm hover:bg-gray-100'
             onClick={() => navigate("/login")}
           >
             Log In
           </div>
           <div
-            className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+            className='block px-4 py-2 text-sm hover:bg-gray-100'
             onClick={() => navigate("/signup")}
           >
             Sign Up

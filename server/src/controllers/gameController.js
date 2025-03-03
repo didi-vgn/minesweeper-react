@@ -29,22 +29,6 @@ exports.findManyGames = async (req, res) => {
   }
 };
 
-exports.deleteGamesByNickname = async (req, res) => {
-  const { nickname } = req.params;
-  try {
-    const user = await db.findUserBy("nickname", nickname);
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    await db.deleteManyGamesByUserId(user.id);
-    return res.status(200).json({ message: "All games removed for the user." });
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
-  }
-};
-
 exports.deleteAllGames = async (req, res) => {
   if (req.user.role === "ADMIN") {
     console.log("Admin request approved.");

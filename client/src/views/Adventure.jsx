@@ -8,7 +8,7 @@ export default function Adventure() {
       <Header>
         <ProfileButton />
       </Header>
-      <div className='flex justify-center relative'>
+      <div className='flex justify-center relative select-none'>
         <div className='m-10 p-3 custom-border bg-gray-300 h-[42.5rem] w-[72rem]'>
           <div className='custom-border-rev h-full bg-gray-100 p-7'>
             <AdventureMenu />

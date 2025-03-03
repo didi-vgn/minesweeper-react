@@ -19,9 +19,7 @@ export default function SignUp() {
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       const response = await signUpUser(data);
-
       if (response === 201) {
-        alert("Successfully signed up!");
         setServerErrors([]);
         navigate("/profile");
       } else {
@@ -33,28 +31,30 @@ export default function SignUp() {
   });
 
   return (
-    <div className='w-4/5 m-auto'>
-      <FormProvider {...methods}>
-        <Form onClick={onSubmit} buttonText='Sign Up' errors={serverErrors}>
-          <Input {...username_validation} />
-          <Input {...nickname_validation} />
-          <Input {...password_validation} />
-          <Input
-            label='confirm password:'
-            type='password'
-            id='confirmPassword'
-            placeholder='confirm password...'
-            validation={{
-              required: {
-                value: true,
-                message: "Required",
-              },
-              validate: (value) =>
-                value === password || "Passwords don't match",
-            }}
-          />
-        </Form>
-      </FormProvider>
+    <div className='custom-border bg-gray-300 mx-auto p-2 w-2/5 m-10'>
+      <div className='custom-border-rev bg-gray-100 h-full flex justify-center items-center p-10'>
+        <FormProvider {...methods}>
+          <Form onClick={onSubmit} buttonText='Sign Up' errors={serverErrors}>
+            <Input {...username_validation} />
+            <Input {...nickname_validation} />
+            <Input {...password_validation} />
+            <Input
+              label='confirm password:'
+              type='password'
+              id='confirmPassword'
+              placeholder='confirm password...'
+              validation={{
+                required: {
+                  value: true,
+                  message: "Required",
+                },
+                validate: (value) =>
+                  value === password || "Passwords don't match",
+              }}
+            />
+          </Form>
+        </FormProvider>
+      </div>
     </div>
   );
 }

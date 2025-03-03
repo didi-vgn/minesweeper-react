@@ -21,19 +21,29 @@ exports.findManyAchievements = async (req, res) => {
   }
 };
 
-exports.deleteAllAchievements = async (req, res) => {
-  if (req.user.role === "ADMIN") {
-    console.log("Admin request approved.");
-    try {
-      await db.deleteAllAchievements();
-      return res.status(200).json({ message: "All achievements deleted." });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
-    }
-  } else if (req.user.role === "USER") {
-    console.log("Only admin can make this request");
+exports.deleteAchievement = async (req, res) => {
+  if (req.user.role !== "ADMIN") {
     return res.status(403).json("Forbidden.");
+  }
+  const { id } = req.params;
+  try {
+    await db.deleteAchievement(id);
+    return res.status(200).json({ message: `Achievement ${id} deleted.` });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteAllAchievements = async (req, res) => {
+  if (req.user.role !== "ADMIN") {
+    return res.status(403).json("Forbidden.");
+  }
+  try {
+    await db.deleteAllAchievements();
+    return res.status(200).json({ message: "All achievements deleted." });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -64,9 +74,9 @@ exports.upsertStatsAndUnlockAchievements = async (req, res) => {
 };
 
 exports.findAchievementsByUserId = async (req, res) => {
-  const { id } = req.query;
+  const { userId } = req.params;
   try {
-    const achievements = await db.findAchievementsByUserId(id);
+    const achievements = await db.findAchievementsByUserId(userId);
     return res.status(200).json({ achievements });
   } catch (err) {
     console.error(err);

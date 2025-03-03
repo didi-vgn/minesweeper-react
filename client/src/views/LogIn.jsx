@@ -29,25 +29,27 @@ export default function LogIn() {
   });
 
   return (
-    <div className='w-4/5 m-auto'>
-      <FormProvider {...methods}>
-        <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
-          <Input
-            label='username'
-            type='text'
-            id='username'
-            placeholder='username...'
-            {...login_validation}
-          />
-          <Input
-            label='password'
-            type='password'
-            id='password'
-            placeholder='password...'
-            {...login_validation}
-          />
-        </Form>
-      </FormProvider>
+    <div className='custom-border bg-gray-300 mx-auto p-2 w-2/5 m-10'>
+      <div className='custom-border-rev bg-gray-100 h-full flex justify-center items-center p-10'>
+        <FormProvider {...methods}>
+          <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
+            <Input
+              label='username'
+              type='text'
+              id='username'
+              placeholder='username...'
+              {...login_validation}
+            />
+            <Input
+              label='password'
+              type='password'
+              id='password'
+              placeholder='password...'
+              {...login_validation}
+            />
+          </Form>
+        </FormProvider>
+      </div>
     </div>
   );
 }

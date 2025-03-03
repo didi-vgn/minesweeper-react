@@ -13,7 +13,7 @@ export default function BaseGameBoard() {
   }[width];
 
   return (
-    <div className={`${gridStyle} m-5 custom-border-rev`}>
+    <div className={`${gridStyle} m-5 custom-border-rev select-none`}>
       {board.map((row, i) =>
         row.map((cell, j) => (
           <Cell

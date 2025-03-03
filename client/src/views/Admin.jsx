@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import LargeButton from "../components/LargeButton";
 import { API_HOST } from "../utils/variables";
 import Form from "../components/Form";
 import Input from "../components/Input";
 import { FormProvider, useForm } from "react-hook-form";
+import LargeButton from "../components/LargeButton";
+import { useNavigate } from "react-router-dom";
+import AdminUserInfo from "../components/AdminUserInfo";
+import Button from "../components/Button";
 
 export default function Admin() {
+  const { user } = useAuthContext();
+  const [selectedTab, setSelectedTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [achievements, setAchievements] = useState([]);
-
-  const { user, token } = useAuthContext();
+  const { token } = useAuthContext();
   const methods = useForm();
+  const navigate = useNavigate();
+
+  if (user.role !== "ADMIN") {
+    navigate("/forbidden");
+  }
 
   useEffect(() => {
     async function fetchUsers() {
@@ -52,16 +61,17 @@ export default function Admin() {
     }
   }
 
-  async function deleteAchievements() {
+  async function deleteAchievement(id) {
     try {
-      const response = await fetch(`${API_HOST}achievements/delete-all`, {
+      const response = await fetch(`${API_HOST}achievements/delete/${id}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      const responseData = await response.json();
       if (response.ok) {
-        console.log("All achievements deleted!");
+        console.log(responseData.message);
       } else {
         console.error(response.error);
       }
@@ -118,58 +128,100 @@ export default function Admin() {
   }, []);
 
   return (
-    <div>
-      <FormProvider {...methods}>
-        <div className='text-3xl m-5 text-center'>Add new Achievements</div>
-        <Form onClick={onSubmit} buttonText='New Achievement'>
-          <Input label='id' type='text' id='id' placeholder='id...' />
-          <Input label='Title' type='text' id='title' placeholder='title...' />
-          <Input
-            label='Description'
-            type='text'
-            id='description'
-            placeholder='description...'
-          />
-        </Form>
-      </FormProvider>
-      <hr />
-      <div className='text-3xl m-5 text-center'>List of Achievements</div>
-      <LargeButton
-        onClick={deleteAchievements}
-        text='Delete ALL Achievements'
-      />
-      <div className='flex flex-col gap-5 m-5'>
-        {achievements.map((achievement, index) => (
-          <div
-            key={index}
-            className='grid grid-cols-[5rem_1fr_1fr] bg-gray-100 shadow-sm gap-4 items-center w-8/10 m-auto rounded-lg p-2'
-          >
-            <img
-              src={`achievements/${achievement.id}.png`}
-              alt={`${achievement.title}`}
-              className='size-15'
-            />
-            <div className='font-bold'>{achievement.title}</div>
-            <div>{achievement.description}</div>
-          </div>
-        ))}
+    <div className='grid grid-cols-5'>
+      <div className='flex flex-col'>
+        <LargeButton onClick={() => setSelectedTab("users")} text='Users' />
+        <LargeButton
+          onClick={() => setSelectedTab("achievements")}
+          text='All Achievements'
+        />
+        <LargeButton
+          onClick={() => setSelectedTab("newAchievement")}
+          text='Add New Achievement'
+        />
+        <LargeButton
+          onClick={() => setSelectedTab("games")}
+          text='Minesweeper Games'
+        />
       </div>
-      <hr />
-      <div className='text-3xl m-5 text-center'>
-        Delete all games from database
-      </div>
-      <LargeButton onClick={deleteGames} text='Delete ALL Games' />
-      <hr />
-      <div className='text-3xl m-5 text-center'>List of all users</div>
-      {users.map((user) => (
-        <div key={user.id}>
-          {user.id} ||
-          {user.username} ||
-          {user.nickname} ||
-          {user.role} ||
-          {user.password.password}
+      <div className='custom-border bg-gray-300 h-[45rem] p-2 col-span-3'>
+        <div className='custom-border-rev bg-gray-100 h-full p-2 overflow-scroll overflow-x-hidden'>
+          {selectedTab === "users" && (
+            <div>
+              <div className='grid grid-cols-[2fr_1fr_1fr_1fr] items-center my-1 p-1 border-b font-bold'>
+                <div>UUID</div>
+                <div>Username</div>
+                <div>Nickname</div>
+                <div>Role</div>
+              </div>
+              {users.map((user) => (
+                <AdminUserInfo key={user.id} user={user} />
+              ))}
+            </div>
+          )}
+          {selectedTab === "achievements" && (
+            <div>
+              <div className='grid grid-cols-[70px_1fr_1fr_1fr_170px] gap-2 items-center my-1 p-1 border-b font-bold'>
+                <div>Icon</div>
+                <div>Title</div>
+                <div>Description</div>
+                <div>ID</div>
+              </div>
+              {achievements.map((achievement, index) => (
+                <div
+                  key={index}
+                  className='grid grid-cols-[70px_1fr_1fr_1fr_170px] gap-2 items-center my-1 bg-white p-1 shadow-sm'
+                >
+                  <img
+                    src={`/achievements/${achievement.id}.png`}
+                    alt={`${achievement.title}`}
+                    className='size-15'
+                  />
+                  <div className='font-bold'>{achievement.title}</div>
+                  <div className='text-gray-500'>{achievement.description}</div>
+                  <div>{achievement.id}</div>
+                  <Button
+                    onClick={() => deleteAchievement(achievement.id)}
+                    text='Delete'
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedTab === "newAchievement" && (
+            <div className='my-15'>
+              <FormProvider {...methods}>
+                <div className='text-4xl m-5 text-center'>
+                  Add New Achievements
+                </div>
+                <Form onClick={onSubmit} buttonText='Add'>
+                  <Input label='ID:' type='text' id='id' placeholder='id...' />
+                  <Input
+                    label='Title:'
+                    type='text'
+                    id='title'
+                    placeholder='title...'
+                  />
+                  <Input
+                    label='Description:'
+                    type='text'
+                    id='description'
+                    placeholder='description...'
+                  />
+                </Form>
+              </FormProvider>
+            </div>
+          )}
+          {selectedTab === "games" && (
+            <div className='my-50'>
+              <div className='text-4xl my-5 text-center'>
+                Delete all games from the database
+              </div>
+              <LargeButton onClick={deleteGames} text='Delete ALL Games' />
+            </div>
+          )}
         </div>
-      ))}
+      </div>
     </div>
   );
 }

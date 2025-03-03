@@ -62,8 +62,6 @@ export default function AdventureApp({ onClick, progress }) {
       try {
         const response = await postStatsAndUnlockAchievements(stats);
         if (response.length > 0) {
-          console.log(response);
-          console.log("Stats updated!");
           setNewAchievements(response);
         }
       } catch (err) {
@@ -77,12 +75,7 @@ export default function AdventureApp({ onClick, progress }) {
 
   async function postGame(gameData) {
     try {
-      const response = await postAdvGameStats(gameData);
-      if (response === 201) {
-        console.log("Game saved!");
-      } else {
-        console.log(response);
-      }
+      await postAdvGameStats(gameData);
     } catch (err) {
       console.error(err);
     }
@@ -187,26 +180,3 @@ export default function AdventureApp({ onClick, progress }) {
     </div>
   );
 }
-
-// const mockData = [
-//   {
-//     achievement: {
-//       id: "engineer_1",
-//       title: "Newbie Engineer",
-//       description: "Reveal 15 bombs with the scanner.",
-//     },
-//     achievementId: "engineer_1",
-//     earnedAt: "2025-02-25T22:58:02.992Z",
-//     userId: "30e94f1c-e7d9-42b2-acba-e0a5cd7a56aa",
-//   },
-//   {
-//     achievement: {
-//       id: "engineer_4",
-//       title: "Master Engineer",
-//       description: "Reveal 15 bombs with the scanner.",
-//     },
-//     achievementId: "engineer_4",
-//     earnedAt: "2025-02-25T22:58:02.992Z",
-//     userId: "30e94f1c-e7d9-42b2-acba-e0a5cd7a56aa",
-//   },
-// ];

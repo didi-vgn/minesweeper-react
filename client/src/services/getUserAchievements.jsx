@@ -2,7 +2,7 @@ import { API_HOST } from "../utils/variables";
 
 export const getUserAchievements = async (userId) => {
   try {
-    const response = await fetch(`${API_HOST}achievements/user?id=${userId}`);
+    const response = await fetch(`${API_HOST}achievements/user/${userId}`);
     const responseData = await response.json();
 
     if (response.ok) {
