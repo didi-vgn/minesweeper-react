@@ -6,10 +6,11 @@ import Stopwatch from "./components/Stopwatch";
 import { adventureLevels } from "./utils/levelsData";
 import AdventureBoard from "./components/AdventureBoard";
 import { useAuthContext } from "../context/AuthContext";
-import { postAdvGameStats } from "../services/postAdvGameService";
-import { GiFluffyCloud } from "react-icons/gi";
+import {
+  postAdvGameStats,
+  postStatsAndUnlockAchievements,
+} from "../services/adventureGamesServices";
 import Overlay from "./components/Overlay";
-import { postStatsAndUnlockAchievements } from "../services/postStatsAndUnlockAchievements";
 import { countBombsScanned } from "./logic/countBombsScanned";
 import NewAchievementNotification from "./components/NewAchievementNotification";
 import Notifications from "./components/Notifications";
@@ -50,6 +51,7 @@ export default function AdventureApp({ onClick, progress }) {
   }
 
   useEffect(() => {
+    if (!user) return;
     const stats = {
       userId: user.id,
       totalGems: collectedGems,
@@ -132,7 +134,7 @@ export default function AdventureApp({ onClick, progress }) {
   );
 
   return (
-    <div className='flex flex-col items-center gap-3'>
+    <div className='flex flex-col items-center gap-3 mt-5'>
       <Notifications>
         {newAchievements?.map((a) => (
           <NewAchievementNotification key={a.id} data={a} />
@@ -160,7 +162,7 @@ export default function AdventureApp({ onClick, progress }) {
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
               {availableScanners}
-              <GiFluffyCloud />
+              <img src='/gem/scanner.png' alt='' className='size-10' />
             </div>
             <div
               className='flex justify-center items-center size-12 bg-gray-100 text-2xl rounded-l-xl hover:bg-gray-200 cursor-pointer'

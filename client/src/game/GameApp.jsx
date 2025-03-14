@@ -41,6 +41,7 @@ export default function GameApp() {
 
   const uploadGame = useCallback(
     (time) => {
+      if (time === 0) return;
       if (gameWin) {
         const stats = {
           bombs: bombs,
@@ -51,6 +52,7 @@ export default function GameApp() {
         async function postGame() {
           try {
             const gameData = processStats(stats, user);
+
             const response = await postGameStats(gameData);
             if (response === 201) {
               console.log("Game saved!");

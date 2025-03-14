@@ -22,7 +22,7 @@ export default function NewAchievementNotification({ data }) {
 
   return (
     <div
-      className='bg-gray-100 p-2 rounded-lg shadow-md grid grid-cols-[1fr_20px]'
+      className='bg-gray-100 p-2 rounded-lg shadow-md grid grid-cols-[1fr_20px] font-mono'
       style={visible ? visibleStyle : hiddenStyle}
     >
       <div className='flex items-center gap-1 justify-center'>

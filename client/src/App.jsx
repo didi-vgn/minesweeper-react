@@ -8,7 +8,7 @@ import React from "react";
 
 function App() {
   return (
-    <div className='silkscreen'>
+    <div className='font-mono'>
       <nav className='flex items-center justify-center bg-gray-600 text-gray-50 text-3xl h-20'>
         <ul className='flex gap-20'>
           <CustomNavLink path='/' text='Play' />

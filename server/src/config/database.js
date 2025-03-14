@@ -215,15 +215,6 @@ exports.deleteAchievement = async (id) => {
   }
 };
 
-exports.deleteAllAchievements = async () => {
-  try {
-    await prisma.achievement.deleteMany({});
-  } catch (err) {
-    console.error(err);
-    throw new Error("Failed to delete achievements.");
-  }
-};
-
 exports.upsertStats = async (
   userId,
   totalGems,

@@ -44,8 +44,8 @@ export default function Admin() {
 
   async function deleteGames() {
     try {
-      const response = await fetch(`${API_HOST}games/delete-all`, {
-        method: "POST",
+      const response = await fetch(`${API_HOST}games/`, {
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -63,8 +63,8 @@ export default function Admin() {
 
   async function deleteAchievement(id) {
     try {
-      const response = await fetch(`${API_HOST}achievements/delete/${id}`, {
-        method: "POST",
+      const response = await fetch(`${API_HOST}achievements/${id}`, {
+        method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -82,7 +82,7 @@ export default function Admin() {
 
   async function addAchievement(data) {
     try {
-      const response = await fetch(`${API_HOST}achievements/add-achievement`, {
+      const response = await fetch(`${API_HOST}achievements/`, {
         method: "POST",
         body: JSON.stringify(data),
         headers: {

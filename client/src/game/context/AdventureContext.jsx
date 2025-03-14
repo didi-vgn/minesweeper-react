@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from "react";
 import { generateStoryBoard } from "../logic/generateStoryBoard";
 import { leftClick } from "../logic/click";
-import { mapSkins, playerSprites } from "../utils/assets";
+import { mapSkins, playerSprites, playSoundEffect } from "../utils/assets";
 import { adjacentCells } from "../utils/variables";
 
 const AdventureContext = createContext(null);
@@ -24,11 +24,11 @@ export function AdventureProvider({ children }) {
   const [settings, setSettings] = useState({
     character: "random",
     map: "random",
+    volume: 0.3,
   });
   const [mapSkin, setMapSkin] = useState(null);
   const [playerSprite, setPlayerSprite] = useState(null);
   const [advGameWin, setAdvGameWin] = useState(false);
-  const [getAdvStatsTrigger, setGetAdvStatsTrigger] = useState(0);
   const [score, setScore] = useState(0);
   const [currentLevel, setCurrentLevel] = useState(null);
   const [availableScanners, setAvailableScanners] = useState(0);
@@ -70,6 +70,12 @@ export function AdventureProvider({ children }) {
       !board[i][j].scanner
     )
       return;
+
+    !board[i][j].clicked &&
+      playSoundEffect(
+        mapSkin.cover.split("_")[0].split("/")[2],
+        settings.volume
+      );
     const newBoard = leftClick(board, i, j);
 
     if (newBoard[i][j].gem.color !== "" && !newBoard[i][j].gem.collected) {
@@ -80,6 +86,9 @@ export function AdventureProvider({ children }) {
 
       triggerEvent(newBoard[i][j].gem.color);
       setCollectedGems((prev) => prev + 1);
+      if (newBoard[i][j].gem.color !== "golden") {
+        playSoundEffect("collectGem", settings.volume);
+      }
     }
 
     if (newBoard[i][j].scanner === true) {
@@ -90,24 +99,27 @@ export function AdventureProvider({ children }) {
 
       triggerEvent("scanner");
       setAvailableScanners((prev) => prev + 1);
+      playSoundEffect("collectGem", settings.volume);
     }
 
     if (newBoard[i][j].value === -1) {
       triggerEvent("bomb");
       setGameOver(true);
       setIsAdvGameActive(false);
+      playSoundEffect("bomb", settings.volume);
     }
 
     if (newBoard[i][j].gem.color === "golden") {
       setAdvGameWin(true);
       setIsAdvGameActive(false);
-      setGetAdvStatsTrigger((prev) => prev + 1);
+      playSoundEffect("win", settings.volume);
     }
 
     setBoard(newBoard);
   };
 
   const scan = (i, j) => {
+    playSoundEffect("smoke", settings.volume);
     setTimeout(() => {
       setBoard((prev) => {
         const height = prev.length;
@@ -144,7 +156,6 @@ export function AdventureProvider({ children }) {
     setSettings,
     isAdvGameActive,
     advGameWin,
-    getAdvStatsTrigger,
     setScore,
     score,
     currentLevel,

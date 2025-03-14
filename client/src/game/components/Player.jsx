@@ -9,7 +9,7 @@ export default function Player() {
 
   const spriteStyle = {
     height: "256px",
-    width: "2816px",
+    width: "3200px",
     backgroundImage: `url(${playerSprite})`,
     backgroundRepeat: "no-repeat",
   };
@@ -67,6 +67,9 @@ export default function Player() {
     } else if (event === "golden") {
       setCurrentSprite(animation.pickUpGolden);
       setPos(animation.pickUpGolden[0]);
+    } else if (event === "scanner") {
+      setCurrentSprite(animation.pickUpScanner);
+      setPos(animation.pickUpScanner[0]);
     }
   }, [event]);
 

@@ -34,19 +34,6 @@ exports.deleteAchievement = async (req, res) => {
   }
 };
 
-exports.deleteAllAchievements = async (req, res) => {
-  if (req.user.role !== "ADMIN") {
-    return res.status(403).json("Forbidden.");
-  }
-  try {
-    await db.deleteAllAchievements();
-    return res.status(200).json({ message: "All achievements deleted." });
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
-  }
-};
-
 exports.upsertStatsAndUnlockAchievements = async (req, res) => {
   const {
     userId,

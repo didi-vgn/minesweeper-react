@@ -5,7 +5,7 @@ import { useInterval } from "../hooks/useInterval";
 export default function GameWinScreen() {
   const [pos, setPos] = useState(0);
   const { score } = useAdventureContext();
-  // const [points, setPoints] = useState(0);
+  const [points, setPoints] = useState(0);
 
   const handleImageChange = useCallback(() => {
     const newPos = pos + 512;
@@ -17,19 +17,16 @@ export default function GameWinScreen() {
     return () => clearInterval(interval);
   }, [handleImageChange]);
 
-  // useInterval(
-  //   () => {
-  //     const newPoints =
-  //       points +
-  //       (score > 5000
-  //         ? Math.floor(Math.random() * 100 + 1)
-  //         : Math.floor(Math.random() * 10 + 1));
-  //     if (newPoints > score) {
-  //       setPoints(score);
-  //     } else setPoints(newPoints);
-  //   },
-  //   points < score ? 5 : null
-  // );
+  useInterval(
+    () => {
+      const newPoints = points + Math.ceil(Math.random() * 100);
+
+      if (newPoints > score) {
+        setPoints(score);
+      } else setPoints(newPoints);
+    },
+    points < score ? 5 : null
+  );
 
   return (
     <div style={overlayStyle}>
@@ -39,7 +36,7 @@ export default function GameWinScreen() {
         ></div>
       </div>
       <div className='text-6xl text-slate-100 translate-y-[-10rem]'>
-        {score} points!
+        {points} points!
       </div>
     </div>
   );

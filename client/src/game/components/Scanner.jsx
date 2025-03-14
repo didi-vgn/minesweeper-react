@@ -1,19 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
-import { smoke } from "../utils/assets";
+import { cloud, smoke } from "../utils/assets";
 import { useAdventureContext } from "../context/AdventureContext";
 
 export default function Scanner({ x, y }) {
   const { event } = useAdventureContext();
   const [pos, setPos] = useState(0);
   const [active, setActive] = useState(false);
-  const [initialPos, setInitialPos] = useState({ x: null, y: null });
 
   const handleAnimationChange = useCallback(() => {
     const newPos = pos + 256;
-    if (pos >= 2304) {
+    if (pos >= 1536) {
       setActive(false);
       setPos(0);
-      setInitialPos({ x: null, y: null });
     } else {
       setPos(newPos);
     }
@@ -21,7 +19,7 @@ export default function Scanner({ x, y }) {
 
   useEffect(() => {
     if (active) {
-      const interval = setInterval(handleAnimationChange, 80);
+      const interval = setInterval(handleAnimationChange, 100);
       return () => clearInterval(interval);
     }
   }, [active, handleAnimationChange]);
@@ -29,15 +27,15 @@ export default function Scanner({ x, y }) {
   useEffect(() => {
     if (event === "scan" && !active) {
       setActive(true);
-      setInitialPos({ x, y });
     }
   }, [[event, x, y, active]]);
 
   const spriteStyle = {
     height: "256px",
-    width: "2560px",
-    backgroundImage: `url(${smoke})`,
+    width: "1536px",
+    backgroundImage: `url(${cloud})`,
     backgroundRepeat: "no-repeat",
+    backgroundSize: "contain",
   };
 
   const containerStyle = {

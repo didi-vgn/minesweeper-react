@@ -7,18 +7,20 @@ export default function Form({ children, onClick, buttonText, errors = [] }) {
       <div className='flex flex-col items-center'>{children}</div>
 
       <LargeButton onClick={onClick} text={buttonText} />
-      {errors &&
-        errors.map((error, index) => {
-          return (
-            <div
-              key={index}
-              className='flex justify-center items-center text-pink-600 text-4xl font-bold m-10 gap-3'
-            >
-              <MdOutlineErrorOutline />
-              {error.error}
-            </div>
-          );
-        })}
+      <div className='h-10 mt-5'>
+        {errors &&
+          errors.map((error, index) => {
+            return (
+              <div
+                key={index}
+                className='flex justify-center items-center text-pink-600 text-3xl font-bold gap-3'
+              >
+                <MdOutlineErrorOutline />
+                {error.error}
+              </div>
+            );
+          })}
+      </div>
     </form>
   );
 }

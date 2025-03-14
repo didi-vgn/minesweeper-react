@@ -20,22 +20,24 @@ const AdvCell = React.memo(({ cell, player }) => {
                 <img
                   src={gemColors[cell.gem.color]}
                   alt=''
-                  className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
+                  className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
                 />
               )) ||
                 (cell.scanner && (
-                  <div className='absolute top-4 left-3 text-4xl font-outline'>
-                    <GiFluffyCloud />
-                  </div>
+                  <img
+                    src={gemColors["scanner"]}
+                    alt=''
+                    className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+                  />
                 )) || (
-                  <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-outline-black'>
+                  <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-outline-black'>
                     <div className={`${colors[cell.value]}`}>
                       {cell.value === 0 ? "" : cell.value}
                     </div>
                   </div>
                 ))) ||
               (cell.value === -1 && (
-                <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl'>
+                <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl'>
                   💣
                 </div>
               ))}

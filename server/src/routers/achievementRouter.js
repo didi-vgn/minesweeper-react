@@ -4,24 +4,13 @@ const { authenticateToken } = require("../middleware/auth");
 const router = express.Router();
 
 router.get("/", achievementController.findManyAchievements);
-router.post(
-  "/add-achievement",
-  authenticateToken,
-  achievementController.createAchievement
-);
-router.post(
-  "/delete/:id",
+router.post("/", authenticateToken, achievementController.createAchievement);
+router.delete(
+  "/:id",
   authenticateToken,
   achievementController.deleteAchievement
 );
-router.post(
-  "/delete-all",
-  authenticateToken,
-  achievementController.deleteAllAchievements
-);
-router.post(
-  "/update-stats",
-  achievementController.upsertStatsAndUnlockAchievements
-);
+router.put("/", achievementController.upsertStatsAndUnlockAchievements);
 router.get("/user/:userId", achievementController.findAchievementsByUserId);
+
 module.exports = router;

@@ -5,21 +5,17 @@ const { Router } = require("express");
 const router = new Router();
 
 router.get("/", userController.findManyUsers);
-router.post("/delete/:userId", authenticateToken, userController.deleteUser);
-router.post(
-  "/update-password/:userId",
+router.delete("/:userId", authenticateToken, userController.deleteUser);
+router.put(
+  "/password/:userId",
   authenticateToken,
   userController.updatePassword
 );
-router.post(
-  "/update-nickname/:userId",
+router.put(
+  "/nickname/:userId",
   authenticateToken,
   userController.updateNickname
 );
-router.post(
-  "/update-role/:userId",
-  authenticateToken,
-  userController.updateRole
-);
+router.put("/role/:userId", authenticateToken, userController.updateRole);
 
 module.exports = router;

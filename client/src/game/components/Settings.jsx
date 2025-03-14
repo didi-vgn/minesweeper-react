@@ -3,69 +3,81 @@ import { MdMusicOff } from "react-icons/md";
 import { useAdventureContext } from "../context/AdventureContext";
 import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
 import { icons } from "../utils/assets";
+import PrettyTitle from "./PrettyTitle";
+import { useState } from "react";
+import Select from "./Select";
 
-export default function Settings() {
+export default function Settings({ back }) {
   const { settings, setSettings } = useAdventureContext();
 
-  function handleCharacterChange(e) {
-    setSettings((prev) => ({ ...prev, character: e.target.value }));
+  const characters = [
+    { name: "Random", value: "random" },
+    { name: "Lola", value: "pink" },
+    { name: "Luma", value: "blue" },
+    { name: "Rilo", value: "green" },
+    { name: "Milio", value: "yellow" },
+    { name: "Inka", value: "white" },
+  ];
+
+  const maps = [
+    { name: "Random", value: "random" },
+    { name: "Snow", value: "snow" },
+    { name: "Cave", value: "cave" },
+    { name: "Forest", value: "forest" },
+  ];
+
+  function handleCharacterChange(val) {
+    setSettings((prev) => ({ ...prev, character: val }));
   }
 
-  function handleMapChange(e) {
-    setSettings((prev) => ({ ...prev, map: e.target.value }));
+  function handleMapChange(val) {
+    setSettings((prev) => ({ ...prev, map: val }));
+  }
+
+  function handleVolumeChange(e) {
+    setSettings((prev) => ({ ...prev, volume: e.target.value }));
   }
 
   return (
-    <div className='m-10 flex flex-col gap-20 items-center'>
-      <div className='flex gap-30'>
-        <div>
-          Character:
-          {(settings.character === "random" && (
-            <div className='flex items-center justify-center size-20 text-7xl'>
-              <GiPerspectiveDiceSixFacesRandom />
-            </div>
-          )) || (
-            <img src={icons[settings.character]} alt='' className='size-20' />
-          )}
-          <select
-            name='character'
-            id='character'
-            defaultValue={settings.character}
-            onChange={handleCharacterChange}
-          >
-            <option value='pink'>Zaya</option>
-            <option value='blue'>Luma</option>
-            <option value='green'>Rilo</option>
-            <option value='yellow'>Milio</option>
-            <option value='white'>Inka</option>
-            <option value='random'>Random</option>
-          </select>
+    <div>
+      <div className='grid grid-cols-3 mb-10'>
+        <div
+          className='custom-border bg-gray-300 place-self-start w-17 text-center cursor-pointer'
+          onClick={back}
+        >
+          Back
         </div>
-        <div>
-          Map:
-          {(settings.map === "random" && (
-            <div className='flex items-center justify-center size-20 text-7xl'>
-              <GiPerspectiveDiceSixFacesRandom />
-            </div>
-          )) || <img src={icons[settings.map]} alt='' className='size-20' />}
-          <select
-            name='map'
-            id='map'
-            defaultValue={settings.map}
-            onChange={handleMapChange}
-          >
-            <option value='cave'>Cave</option>
-            <option value='snow'>Snow</option>
-            <option value='forest'>Forest</option>
-            <option value='random'>Random</option>
-          </select>
+        <div className='text-5xl place-self-center'>
+          <PrettyTitle string='Settings' />
         </div>
       </div>
+      <div className='grid grid-cols-2 gap-10 text-2xl m-20'>
+        <div className='flex flex-col items-center gap-3'>
+          <div className='text-3xl'>Character</div>
+          <Select
+            init={settings.character}
+            arr={characters}
+            callback={handleCharacterChange}
+          />
+        </div>
+        <div className='flex flex-col items-center gap-3'>
+          <div className='text-3xl'>Map</div>
+          <Select init={settings.map} arr={maps} callback={handleMapChange} />
+        </div>
 
-      <div className='flex gap-5 text-4xl'>
-        <MdMusicOff />
-        <input type='range' min={0} max={100} step={10} className='w-80' />
-        <MdMusicNote />
+        <div className='flex gap-5 text-4xl mt-7 col-span-2 place-self-center'>
+          <MdMusicOff />
+          <input
+            type='range'
+            min={0}
+            max={1}
+            step={0.1}
+            value={settings.volume}
+            className='w-80'
+            onChange={handleVolumeChange}
+          />
+          <MdMusicNote />
+        </div>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import {
   updateNickname,
   updatePassword,
 } from "../services/userServices";
+import { MdOutlineErrorOutline } from "react-icons/md";
 
 export default function ProfileSettings() {
   const { user, token, logout, updateToken } = useAuthContext();
@@ -94,7 +95,15 @@ export default function ProfileSettings() {
                 {message
                   ? message
                   : errors
-                  ? errors.map((err, i) => <div key={i}>{err.error}</div>)
+                  ? errors.map((err, i) => (
+                      <div
+                        key={i}
+                        className='flex justify-center items-center text-pink-600 text-3xl font-bold gap-3'
+                      >
+                        <MdOutlineErrorOutline />
+                        {err.error}
+                      </div>
+                    ))
                   : ""}
               </div>
             </div>

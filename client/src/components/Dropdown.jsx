@@ -23,7 +23,7 @@ export default function Dropdown({ text, children }) {
         <div
           className='absolute top-full w-40 
               shadow-lg bg-white ring-1 ring-black ring-opacity-5
-              focus:outline-none'
+              focus:outline-none z-100'
         >
           {children}
         </div>

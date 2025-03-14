@@ -116,7 +116,7 @@ exports.updateRole = async (req, res) => {
   }
   try {
     await db.updateRole(userId, role);
-    return res.status(200).json({ message: `Role updated to ${role}.` });
+    return res.status(200).json({ message: `Role changed to ${role}.` });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
