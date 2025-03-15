@@ -11,92 +11,90 @@ export function useGameContext() {
 }
 
 export function GameProvider({ children }) {
-  const [board, setBoard] = useState(() => generateBoard(16, 16, 40));
-  const [bombs, setBombs] = useState(40);
-  const [bombsLeft, setBombsLeft] = useState(bombs);
-  const [isGameActive, setIsGameActive] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [gameWin, setGameWin] = useState(false);
+  const [config, setConfig] = useState({
+    width: 16,
+    height: 16,
+    bombs: 40,
+  });
+  const [gameState, setGameState] = useState({
+    board: generateBoard(config.width, config.height, config.bombs),
+    bombsLeft: 40,
+    status: "notStarted",
+  });
 
-  const resetGame = (w, h, b) => {
-    setBoard(generateBoard(w, h, b));
-    setBombs(b);
-    setIsGameActive(false);
-    setGameOver(false);
-    setBombsLeft(b);
-    setGameWin(false);
+  const resetGame = (w = config.width, h = config.height, b = config.bombs) => {
+    setGameState((prev) => ({
+      ...prev,
+      board: generateBoard(w, h, b),
+      bombsLeft: b,
+      status: "notStarted",
+    }));
   };
 
   const handleLeftClick = (i, j) => {
-    if (gameOver || gameWin) return;
+    if (gameState.status === "won" || gameState.status === "lost") return;
 
-    if (!isGameActive) {
-      setIsGameActive(true);
-      if (board[i][j].value === -1) {
-        const gameMode = {
-          10: {
-            w: 9,
-            h: 9,
-          },
-          40: {
-            w: 16,
-            h: 16,
-          },
-          99: {
-            w: 30,
-            h: 16,
-          },
-        }[bombs];
-        const unluckyClick = generateBoard(gameMode.w, gameMode.h, bombs, [
-          i,
-          j,
-        ]);
+    if (gameState.status === "notStarted") {
+      setGameState((prev) => ({
+        ...prev,
+        status: "active",
+      }));
+
+      if (gameState.board[i][j].value === -1) {
+        const unluckyClick = generateBoard(
+          config.width,
+          config.height,
+          config.bombs,
+          [[i, j]]
+        );
         const newBoard = leftClick(unluckyClick, i, j);
-        setBoard(newBoard);
+        setGameState((prev) => ({
+          ...prev,
+          board: newBoard,
+        }));
         return;
       }
     }
 
-    const newBoard = leftClick(board, i, j);
-    setBoard(newBoard);
+    const newBoard = leftClick(gameState.board, i, j);
+    setGameState((prev) => ({ ...prev, board: newBoard }));
 
     if (checkWin(newBoard)) {
-      setIsGameActive(false);
-      setGameWin(true);
-    }
-
-    if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
-      setIsGameActive(false);
-      setGameOver(true);
+      setGameState((prev) => ({ ...prev, status: "won" }));
+    } else if (!newBoard[i][j].flagged && newBoard[i][j].value === -1) {
+      setGameState((prev) => ({ ...prev, status: "lost" }));
     }
   };
 
   const handleRightClick = (e, i, j) => {
     e.preventDefault();
-    if (gameOver || gameWin) return;
-    !isGameActive && setIsGameActive(true);
+    if (gameState.status === "won" || gameState.status === "lost") return;
+    if (gameState.status === "notStarted") {
+      setGameState((prev) => ({
+        ...prev,
+        status: "active",
+      }));
+    }
 
-    const newBoard = rightClick(board, i, j);
+    const newBoard = rightClick(gameState.board, i, j);
 
-    setBoard(newBoard);
-    setBombsLeft(bombs - countFlags(newBoard));
+    setGameState((prev) => ({
+      ...prev,
+      board: newBoard,
+      bombsLeft: config.bombs - countFlags(newBoard),
+    }));
   };
 
   const contextValue = {
-    board,
-    setBoard,
-    bombs,
-    bombsLeft,
-    setBombsLeft,
-    isGameActive,
-    setIsGameActive,
-    gameOver,
-    setGameOver,
+    gameState,
+    setGameState,
     handleLeftClick,
     handleRightClick,
     resetGame,
-    gameWin,
+    config,
+    setConfig,
   };
+
   return (
     <GameContext.Provider value={contextValue}>{children}</GameContext.Provider>
   );

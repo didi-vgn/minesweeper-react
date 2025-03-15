@@ -1,24 +1,26 @@
 import { useAdventureContext } from "../context/AdventureContext";
 import { TiWarningOutline } from "react-icons/ti";
-import { GiFluffyCloud } from "react-icons/gi";
-
 import { gemColors, colors } from "../utils/assets";
 import Player from "./Player";
 import React from "react";
 
 const AdvCell = React.memo(({ cell, player }) => {
-  const { mapSkin } = useAdventureContext();
+  const { preferences } = useAdventureContext();
 
   return (
     <div>
       <div className='w-[64px] h-[64px]'>
         {(cell.clicked && (
           <div className='relative'>
-            <img src={mapSkin.tile} alt='tile' className='w-full h-full' />
+            <img
+              src={preferences.mapSkin?.tile}
+              alt='tile'
+              className='w-full h-full'
+            />
             {(cell.value >= 0 &&
-              ((cell.gem.color !== "" && !cell.gem.collected && (
+              ((cell.gem && (
                 <img
-                  src={gemColors[cell.gem.color]}
+                  src={gemColors[cell.gem]}
                   alt=''
                   className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
                 />
@@ -44,7 +46,7 @@ const AdvCell = React.memo(({ cell, player }) => {
           </div>
         )) || (
           <div className='relative'>
-            <img src={mapSkin.cover} alt='' />
+            <img src={preferences.mapSkin?.cover} alt='' />
             {cell.scanned && cell.value === -1 && (
               <div className='absolute top-[0.5px] left-[0.5px] z-999 text-slate-900 text-[60px] font-outline'>
                 <TiWarningOutline />

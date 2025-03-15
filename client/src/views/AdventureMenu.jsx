@@ -1,6 +1,6 @@
 import LevelIcon from "../game/components/LevelIcon";
 import { useAdventureContext } from "../game/context/AdventureContext";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Settings from "../game/components/Settings";
 import { adventureLevels } from "../game/utils/levelsData";
 import { useAuthContext } from "../context/AuthContext";
@@ -16,8 +16,22 @@ export default function AdventureMenu() {
   const { newGame, settings } = useAdventureContext();
   const [progress, setProgress] = useState([]);
   const [currentTab, setCurrentTab] = useState("menu");
-  const [music] = useState(new Audio(audio.music.main));
+  const musicRef = useRef(new Audio(audio.music.main));
   const location = useLocation();
+  const [interact, setInteract] = useState(false);
+
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setInteract(true);
+      document.removeEventListener("click", handleUserInteraction);
+    };
+
+    document.addEventListener("click", handleUserInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleUserInteraction);
+    };
+  }, []);
 
   function handleSelectLevel(levelData) {
     newGame(levelData);
@@ -29,13 +43,14 @@ export default function AdventureMenu() {
   }
 
   useEffect(() => {
+    const music = musicRef.current;
     if (location.pathname === "/adventure") {
-      music.volume = settings.volume;
-      music.loop = true;
-      music.play();
-    } else if (location.pathname !== "/adventure" || settings.volume === 0) {
-      console.log("pause");
-
+      if (music.paused) {
+        music.volume = settings.music;
+        music.loop = true;
+        music.play().catch((err) => console.log("Autoplay blocked:", err));
+      }
+    } else {
       music.pause();
       music.currentTime = 0;
     }
@@ -43,7 +58,7 @@ export default function AdventureMenu() {
     return () => {
       music.pause();
     };
-  }, [location.pathname, music, settings.volume]);
+  }, [interact, location.pathname, settings.music]);
 
   useEffect(() => {
     async function fetchData() {
@@ -79,7 +94,7 @@ export default function AdventureMenu() {
           play={() => setCurrentTab("levels")}
           settings={() => setCurrentTab("settings")}
           info={() => setCurrentTab("info")}
-          volume={settings.volume}
+          sfx={settings.sfx}
         />
       )}
       {currentTab === "levels" && (
@@ -101,7 +116,7 @@ export default function AdventureMenu() {
   );
 }
 
-function Menu({ play, settings, info, volume }) {
+function Menu({ play, settings, info, sfx }) {
   return (
     <div className='flex flex-col items-center'>
       <div className='text-8xl m-15'>
@@ -110,21 +125,21 @@ function Menu({ play, settings, info, volume }) {
       <div
         className='text-6xl m-3 cursor-pointer hover:scale-150'
         onClick={play}
-        onMouseEnter={() => playSoundEffect("click", volume)}
+        onMouseEnter={() => playSoundEffect("click", sfx)}
       >
         Play
       </div>
       <div
         className='text-4xl m-3 cursor-pointer hover:scale-150'
         onClick={settings}
-        onMouseEnter={() => playSoundEffect("click", volume)}
+        onMouseEnter={() => playSoundEffect("click", sfx)}
       >
         Settings
       </div>
       <div
         className='text-4xl m-3 cursor-pointer hover:scale-150'
         onClick={info}
-        onMouseEnter={() => playSoundEffect("click", volume)}
+        onMouseEnter={() => playSoundEffect("click", sfx)}
       >
         How to Play
       </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAdventureContext } from "./context/AdventureContext";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -17,18 +17,8 @@ import Notifications from "./components/Notifications";
 
 export default function AdventureApp({ onClick, progress }) {
   const { user } = useAuthContext();
-  const {
-    collectedGems,
-    newGame,
-    isAdvGameActive,
-    currentLevel,
-    advGameWin,
-    setScore,
-    availableScanners,
-    playerSprite,
-    board,
-    gameOver,
-  } = useAdventureContext();
+  const { newGame, preferences, gameState, setGameState } =
+    useAdventureContext();
   const [player, setPlayer] = useState({ x: 0, y: 4 });
   const [viewportStart, setViewportStart] = useState(0);
   const [resetTrigger, setResetTrigger] = useState(0);
@@ -36,16 +26,16 @@ export default function AdventureApp({ onClick, progress }) {
 
   function reset() {
     setPlayer({ x: 0, y: 4 });
-    newGame(adventureLevels[currentLevel - 1]);
+    newGame(adventureLevels[gameState.level - 1]);
     setViewportStart(0);
     setResetTrigger((prev) => prev + 1);
   }
 
   function calculateScore(time) {
     return Math.floor(
-      ((collectedGems * 100) / (1 + Math.log(time))) *
-        ((adventureLevels[currentLevel - 1].width +
-          adventureLevels[currentLevel - 1].bombs) /
+      ((gameState.gems * 100) / (1 + Math.log(time))) *
+        ((adventureLevels[gameState.level - 1].width +
+          adventureLevels[gameState.level - 1].bombs) /
           20)
     );
   }
@@ -54,11 +44,11 @@ export default function AdventureApp({ onClick, progress }) {
     if (!user) return;
     const stats = {
       userId: user.id,
-      totalGems: collectedGems,
-      bombsScanned: countBombsScanned(board),
-      characterUsed: playerSprite.split(".")[0].split("_")[2],
-      levelsCompleted: advGameWin ? 1 : 0,
-      deaths: gameOver ? 1 : 0,
+      totalGems: gameState.gems,
+      bombsScanned: countBombsScanned(gameState.board),
+      characterUsed: preferences.playerSkin.split(".")[0].split("_")[2],
+      levelsCompleted: gameState.status === "won" ? 1 : 0,
+      deaths: gameState.status === "lost" ? 1 : 0,
     };
     async function postStats(stats) {
       try {
@@ -70,10 +60,10 @@ export default function AdventureApp({ onClick, progress }) {
         console.error(err);
       }
     }
-    if (user && (advGameWin || gameOver)) {
+    if (user && (gameState.status === "won" || gameState.status === "lost")) {
       postStats(stats);
     }
-  }, [gameOver, advGameWin]);
+  }, [gameState.status]);
 
   async function postGame(gameData) {
     try {
@@ -103,35 +93,32 @@ export default function AdventureApp({ onClick, progress }) {
     }
   }
 
-  const uploadGame = useCallback(
-    (time) => {
-      if (!advGameWin) return;
-      const score = calculateScore(time);
-      setScore(score);
+  function uploadGame(time) {
+    if (gameState.status !== "won") return;
+    const currScore = calculateScore(time);
+    setGameState((prev) => ({ ...prev, score: currScore }));
 
-      const existingGameIndex = progress.findIndex(
-        (level) => level.levelId === currentLevel
-      );
+    const existingGameIndex = progress.findIndex(
+      (level) => level.levelId === gameState.level
+    );
 
-      if (
-        existingGameIndex >= 0 &&
-        (collectedGems < progress[existingGameIndex].collectedGems ||
-          (collectedGems === progress[existingGameIndex].collectedGems &&
-            score < progress[existingGameIndex].points))
-      ) {
-        return;
-      }
-      const gameData = {
-        userId: user?.id,
-        levelId: currentLevel,
-        collectedGems: collectedGems,
-        points: score,
-      };
+    if (
+      existingGameIndex >= 0 &&
+      (gameState.gems < progress[existingGameIndex].collectedGems ||
+        (gameState.gems === progress[existingGameIndex].collectedGems &&
+          gameState.score < progress[existingGameIndex].points))
+    ) {
+      return;
+    }
+    const gameData = {
+      userId: user?.id,
+      levelId: gameState.level,
+      collectedGems: gameState.gems,
+      points: currScore,
+    };
 
-      user ? postGame(gameData) : saveToLocalStorage(gameData);
-    },
-    [advGameWin]
-  );
+    user ? postGame(gameData) : saveToLocalStorage(gameData);
+  }
 
   return (
     <div className='flex flex-col items-center gap-3 mt-5'>
@@ -150,18 +137,18 @@ export default function AdventureApp({ onClick, progress }) {
               <IoMdArrowRoundBack />
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
-              {collectedGems}
+              {gameState.gems}
               <img src='/gem/gem_rainbow.png' alt='' className='size-10' />
             </div>
             <div className='text-3xl font-outline'>
               <Stopwatch
-                active={isAdvGameActive}
+                active={gameState.status === "active"}
                 resetTrigger={resetTrigger}
                 callback={uploadGame}
               />
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
-              {availableScanners}
+              {gameState.scanners}
               <img src='/gem/scanner.png' alt='' className='size-10' />
             </div>
             <div

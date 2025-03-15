@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { cloud, smoke } from "../utils/assets";
+import { cloud } from "../utils/assets";
 import { useAdventureContext } from "../context/AdventureContext";
 
 export default function Scanner({ x, y }) {

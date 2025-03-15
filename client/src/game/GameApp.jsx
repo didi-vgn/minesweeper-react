@@ -2,7 +2,7 @@ import { useGameContext } from "./context/GameContext";
 import { RiResetLeftLine } from "react-icons/ri";
 import { FaStar } from "react-icons/fa";
 import Stopwatch from "./components/Stopwatch";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import BaseGameBoard from "./components/BaseGameBoard";
 import { processStats } from "../utils/processGameStats";
 import { postGameStats } from "../services/postGameService";
@@ -12,18 +12,12 @@ import { useAuthContext } from "../context/AuthContext";
 
 export default function GameApp() {
   const { user } = useAuthContext();
-  const { resetGame, bombsLeft, gameWin, board, bombs, isGameActive } =
-    useGameContext();
+  const { gameState, resetGame, config, setConfig } = useGameContext();
   const [resetTrigger, setResetTrigger] = useState(0);
-  const [gameConfig, setGameConfig] = useState({
-    width: 16,
-    height: 16,
-    bombs: 40,
-  });
 
   function handleReset() {
     setResetTrigger((prev) => prev + 1);
-    resetGame(gameConfig.width, gameConfig.height, gameConfig.bombs);
+    resetGame();
   }
 
   function handleChangeGameMode(e) {
@@ -34,50 +28,47 @@ export default function GameApp() {
       c: { width: 30, height: 16, bombs: 99 },
     }[value];
 
-    setGameConfig(newConfig);
+    setConfig(newConfig);
     setResetTrigger((prev) => prev + 1);
     resetGame(newConfig.width, newConfig.height, newConfig.bombs);
   }
 
-  const uploadGame = useCallback(
-    (time) => {
-      if (time === 0) return;
-      if (gameWin) {
-        const stats = {
-          bombs: bombs,
-          bbbv: calculateDifficulty(board),
-          board: JSON.stringify(boardToArray(board)),
-          time: time,
-        };
-        async function postGame() {
-          try {
-            const gameData = processStats(stats, user);
+  function uploadGame(time) {
+    if (time === 0) return;
+    if (gameState.status === "won") {
+      const stats = {
+        bombs: config.bombs,
+        bbbv: calculateDifficulty(gameState.board),
+        board: JSON.stringify(boardToArray(gameState.board)),
+        time: time,
+      };
+      async function postGame() {
+        try {
+          const gameData = processStats(stats, user);
 
-            const response = await postGameStats(gameData);
-            if (response === 201) {
-              console.log("Game saved!");
-            } else {
-              console.log(response);
-            }
-          } catch (err) {
-            console.error(err);
+          const response = await postGameStats(gameData);
+          if (response === 201) {
+            console.log("Game saved!");
+          } else {
+            console.log(response);
           }
+        } catch (err) {
+          console.error(err);
         }
-        postGame();
       }
-    },
-    [gameWin]
-  );
+      postGame();
+    }
+  }
 
   return (
     <div>
-      <div className='custom-border bg-gray-300 p-3 w-full grid grid-cols-4 gap-2 text-center'>
+      <div className='custom-border bg-gray-300 p-3 grid grid-cols-4 gap-2 text-center'>
         <div className='custom-border-rev bg-white flex items-center justify-center gap-2'>
-          {bombsLeft} <FaStar />
+          {gameState.bombsLeft} <FaStar />
         </div>
-        <div className='custom-border-rev bg-white h-full flex justify-center items-center'>
+        <div className='custom-border-rev bg-white flex justify-center items-center'>
           <Stopwatch
-            active={isGameActive}
+            active={gameState.status === "active"}
             resetTrigger={resetTrigger}
             callback={uploadGame}
           />

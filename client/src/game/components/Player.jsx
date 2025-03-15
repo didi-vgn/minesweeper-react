@@ -5,12 +5,12 @@ import { animation } from "../utils/assets";
 export default function Player() {
   const [currentSprite, setCurrentSprite] = useState(animation.movement);
   const [pos, setPos] = useState(currentSprite[0]);
-  const { event, playerSprite } = useAdventureContext();
+  const { event, preferences } = useAdventureContext();
 
   const spriteStyle = {
     height: "256px",
     width: "3200px",
-    backgroundImage: `url(${playerSprite})`,
+    backgroundImage: `url(${preferences.playerSkin})`,
     backgroundRepeat: "no-repeat",
   };
 
@@ -20,13 +20,11 @@ export default function Player() {
     overflow: "hidden",
     position: "absolute",
     zIndex: 99,
-
     transform: "scale(0.5) translateX(-64px) translateY(-384px)",
   };
 
   const handleSpriteChange = useCallback(() => {
     const newPos = pos + 128;
-
     if (currentSprite.includes(newPos)) {
       setPos(newPos);
     } else if (currentSprite === animation.explode) {
@@ -43,7 +41,7 @@ export default function Player() {
   }, [handleSpriteChange]);
 
   useEffect(() => {
-    if (event === "normal") {
+    if (event === "base") {
       setCurrentSprite(animation.movement);
       setPos(animation.movement[0]);
     } else if (event === "bomb") {

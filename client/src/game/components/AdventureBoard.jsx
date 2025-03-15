@@ -11,40 +11,37 @@ export default function AdventureBoard({
   player,
   setPlayer,
 }) {
-  const { board, movePlayer, gameOver, advGameWin, scan, availableScanners } =
-    useAdventureContext();
-
+  const { gameState, movePlayer, scan } = useAdventureContext();
   const viewportWidth = 16;
 
   useEffect(() => {
     function handleKeyPress(e) {
       e.preventDefault();
-      if (!gameOver && !advGameWin) {
+      if (gameState.status === "active") {
         setPlayer((prev) => {
           let { x, y } = prev;
 
           if (e.key === "ArrowUp" && y > 0) y--;
           if (e.key === "ArrowLeft" && x > viewportStart) x--;
-          if (e.key === "ArrowDown" && y < board.length - 1) y++;
-          if (e.key === "ArrowRight" && x < board[0].length - 1) x++;
+          if (e.key === "ArrowDown" && y < gameState.board.length - 1) y++;
+          if (e.key === "ArrowRight" && x < gameState.board[0].length - 1) x++;
           return { x, y };
         });
 
-        if (e.key === " " && availableScanners > 0) {
+        if (e.key === " " && gameState.scanners > 0) {
           scan(player.y, player.x);
         }
       }
     }
-
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [viewportStart, gameOver, advGameWin, player]);
+  }, [viewportStart, gameState.status, player]);
 
   useEffect(() => {
     movePlayer(player.y, player.x);
     if (player.x > viewportStart + 8) {
       setViewportStart((prev) =>
-        Math.min(prev + 1, board[0].length - viewportWidth)
+        Math.min(prev + 1, gameState.board[0].length - viewportWidth)
       );
     }
   }, [player, viewportStart]);
@@ -60,7 +57,7 @@ export default function AdventureBoard({
             transition: "transform 0.3s ease-in-out",
           }}
         >
-          {board?.map((row, i) => (
+          {gameState.board?.map((row, i) => (
             <div key={i} className='flex'>
               {row.map((cell, j) => (
                 <AdvCell
@@ -72,7 +69,8 @@ export default function AdventureBoard({
             </div>
           ))}
         </div>
-        {(gameOver && <GameOverScreen />) || (advGameWin && <GameWinScreen />)}
+        {(gameState.status === "lost" && <GameOverScreen />) ||
+          (gameState.status === "won" && <GameWinScreen />)}
       </div>
     </div>
   );

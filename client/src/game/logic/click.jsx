@@ -13,7 +13,7 @@ export const leftClick = (board, row, col) => {
       const [r, c] = stack.pop();
       if (newBoard[r][c].clicked) continue;
 
-      newBoard[r][c] = { ...newBoard[r][c], clicked: true };
+      newBoard[r][c].clicked = true;
 
       if (newBoard[r][c].value === 0) {
         adjacentCells.forEach(([i, j]) => {
@@ -33,7 +33,7 @@ export const leftClick = (board, row, col) => {
       newBoard.forEach((row, i) =>
         row.forEach((cell, j) => {
           if (cell.value === -1 && !cell.flagged) {
-            newBoard[i][j] = { ...newBoard[i][j], clicked: true };
+            newBoard[i][j].clicked = true;
           }
         })
       );
@@ -54,10 +54,7 @@ export const leftClick = (board, row, col) => {
 export const rightClick = (board, row, col) => {
   if (!board[row][col].clicked) {
     const newBoard = board.map((row) => row.map((cell) => ({ ...cell })));
-    newBoard[row][col] = {
-      ...newBoard[row][col],
-      flagged: !newBoard[row][col].flagged,
-    };
+    newBoard[row][col].flagged = !newBoard[row][col].flagged;
     return newBoard;
   }
   return board;

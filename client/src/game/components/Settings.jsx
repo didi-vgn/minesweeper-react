@@ -1,10 +1,7 @@
 import { MdMusicNote } from "react-icons/md";
 import { MdMusicOff } from "react-icons/md";
 import { useAdventureContext } from "../context/AdventureContext";
-import { GiPerspectiveDiceSixFacesRandom } from "react-icons/gi";
-import { icons } from "../utils/assets";
 import PrettyTitle from "./PrettyTitle";
-import { useState } from "react";
 import Select from "./Select";
 
 export default function Settings({ back }) {
@@ -34,8 +31,12 @@ export default function Settings({ back }) {
     setSettings((prev) => ({ ...prev, map: val }));
   }
 
-  function handleVolumeChange(e) {
-    setSettings((prev) => ({ ...prev, volume: e.target.value }));
+  function handleMusicVolume(e) {
+    setSettings((prev) => ({ ...prev, music: e.target.value }));
+  }
+
+  function handleSfxVolume(e) {
+    setSettings((prev) => ({ ...prev, sfx: e.target.value }));
   }
 
   return (
@@ -66,15 +67,30 @@ export default function Settings({ back }) {
         </div>
 
         <div className='flex gap-5 text-4xl mt-7 col-span-2 place-self-center'>
+          <div className='w-30 text-end'>Music</div>
           <MdMusicOff />
           <input
             type='range'
             min={0}
             max={1}
             step={0.1}
-            value={settings.volume}
+            value={settings.music}
             className='w-80'
-            onChange={handleVolumeChange}
+            onChange={handleMusicVolume}
+          />
+          <MdMusicNote />
+        </div>
+        <div className='flex gap-5 text-4xl mt-7 col-span-2 place-self-center'>
+          <div className='w-30 text-end'>SFX</div>
+          <MdMusicOff />
+          <input
+            type='range'
+            min={0}
+            max={1}
+            step={0.1}
+            value={settings.sfx}
+            className='w-80'
+            onChange={handleSfxVolume}
           />
           <MdMusicNote />
         </div>

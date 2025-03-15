@@ -2,28 +2,21 @@ import { useGameContext } from "../context/GameContext";
 import Cell from "./Cell";
 
 export default function BaseGameBoard() {
-  const { board, handleLeftClick, handleRightClick } = useGameContext();
-
-  const width = board[0].length;
-
-  const gridStyle = {
-    9: "grid grid-cols-9",
-    16: "grid grid-cols-16",
-    30: "grid grid-cols-30",
-  }[width];
-
+  const { gameState, handleLeftClick, handleRightClick } = useGameContext();
   return (
-    <div className={`${gridStyle} m-5 custom-border-rev select-none`}>
-      {board.map((row, i) =>
-        row.map((cell, j) => (
-          <Cell
-            key={`${i}-${j}`}
-            cell={cell}
-            onClick={() => handleLeftClick(i, j)}
-            onRightClick={(e) => handleRightClick(e, i, j)}
-          />
-        ))
-      )}
+    <div className={`flex flex-col m-5 custom-border-rev select-none`}>
+      {gameState.board.map((row, i) => (
+        <div className='flex' key={i}>
+          {row.map((cell, j) => (
+            <Cell
+              key={`${i}-${j}`}
+              cell={cell}
+              onClick={() => handleLeftClick(i, j)}
+              onRightClick={(e) => handleRightClick(e, i, j)}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }

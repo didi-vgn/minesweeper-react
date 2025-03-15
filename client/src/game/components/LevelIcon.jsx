@@ -17,7 +17,7 @@ export default function LevelIcon({ onClick, level, data }) {
       onClick={onClick}
       onMouseEnter={() => {
         setHover(true);
-        playSoundEffect("click", settings.volume);
+        playSoundEffect("click", settings.sfx);
       }}
       onMouseLeave={() => setHover(false)}
     >

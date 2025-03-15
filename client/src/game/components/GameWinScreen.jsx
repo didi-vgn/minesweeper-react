@@ -4,7 +4,7 @@ import { useInterval } from "../hooks/useInterval";
 
 export default function GameWinScreen() {
   const [pos, setPos] = useState(0);
-  const { score } = useAdventureContext();
+  const { gameState } = useAdventureContext();
   const [points, setPoints] = useState(0);
 
   const handleImageChange = useCallback(() => {
@@ -21,11 +21,11 @@ export default function GameWinScreen() {
     () => {
       const newPoints = points + Math.ceil(Math.random() * 100);
 
-      if (newPoints > score) {
-        setPoints(score);
+      if (newPoints > gameState.score) {
+        setPoints(gameState.score);
       } else setPoints(newPoints);
     },
-    points < score ? 5 : null
+    points < gameState.score ? 5 : null
   );
 
   return (
