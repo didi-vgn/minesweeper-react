@@ -14,11 +14,14 @@ export const getAdvGames = async (userId) => {
   }
 };
 
-export const postAdvGameStats = async (data) => {
+export const postAdvGameStats = async (data, token) => {
   try {
     const response = await fetch(`${API_HOST}games/adventure/`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify(data),
     });
 
@@ -33,13 +36,14 @@ export const postAdvGameStats = async (data) => {
   }
 };
 
-export async function postStatsAndUnlockAchievements(data) {
+export async function postStatsAndUnlockAchievements(data, token) {
   try {
     const response = await fetch(`${API_HOST}achievements/`, {
       method: "PUT",
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 

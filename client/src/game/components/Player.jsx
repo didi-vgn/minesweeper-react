@@ -3,8 +3,8 @@ import { useAdventureContext } from "../context/AdventureContext";
 import { animation } from "../utils/assets";
 
 export default function Player() {
-  const [currentSprite, setCurrentSprite] = useState(animation.movement);
-  const [pos, setPos] = useState(currentSprite[0]);
+  const [currentAnimation, setCurrentAnimation] = useState(animation.movement);
+  const [frameIndex, setFrameIndex] = useState(currentAnimation[0]);
   const { event, preferences } = useAdventureContext();
 
   const spriteStyle = {
@@ -24,16 +24,16 @@ export default function Player() {
   };
 
   const handleSpriteChange = useCallback(() => {
-    const newPos = pos + 128;
-    if (currentSprite.includes(newPos)) {
-      setPos(newPos);
-    } else if (currentSprite === animation.explode) {
-      setPos(animation.explode[0]);
+    const newFrameIndex = frameIndex + 128;
+    if (currentAnimation.includes(newFrameIndex)) {
+      setFrameIndex(newFrameIndex);
+    } else if (currentAnimation === animation.explode) {
+      setFrameIndex(animation.explode[0]);
     } else {
-      setCurrentSprite(animation.movement);
-      setPos(animation.movement[0]);
+      setCurrentAnimation(animation.movement);
+      setFrameIndex(animation.movement[0]);
     }
-  }, [pos, currentSprite]);
+  }, [frameIndex, currentAnimation]);
 
   useEffect(() => {
     const interval = setInterval(handleSpriteChange, 300);
@@ -42,32 +42,32 @@ export default function Player() {
 
   useEffect(() => {
     if (event === "base") {
-      setCurrentSprite(animation.movement);
-      setPos(animation.movement[0]);
+      setCurrentAnimation(animation.movement);
+      setFrameIndex(animation.movement[0]);
     } else if (event === "bomb") {
-      setCurrentSprite(animation.explode);
-      setPos(animation.explode[0]);
+      setCurrentAnimation(animation.explode);
+      setFrameIndex(animation.explode[0]);
     } else if (event === "green") {
-      setCurrentSprite(animation.pickUpGreen);
-      setPos(animation.pickUpGreen[0]);
+      setCurrentAnimation(animation.pickUpGreen);
+      setFrameIndex(animation.pickUpGreen[0]);
     } else if (event === "pink") {
-      setCurrentSprite(animation.pickUpPink);
-      setPos(animation.pickUpPink[0]);
+      setCurrentAnimation(animation.pickUpPink);
+      setFrameIndex(animation.pickUpPink[0]);
     } else if (event === "blue") {
-      setCurrentSprite(animation.pickUpBlue);
-      setPos(animation.pickUpBlue[0]);
+      setCurrentAnimation(animation.pickUpBlue);
+      setFrameIndex(animation.pickUpBlue[0]);
     } else if (event === "yellow") {
-      setCurrentSprite(animation.pickUpYellow);
-      setPos(animation.pickUpYellow[0]);
+      setCurrentAnimation(animation.pickUpYellow);
+      setFrameIndex(animation.pickUpYellow[0]);
     } else if (event === "white") {
-      setCurrentSprite(animation.pickUpWhite);
-      setPos(animation.pickUpWhite[0]);
+      setCurrentAnimation(animation.pickUpWhite);
+      setFrameIndex(animation.pickUpWhite[0]);
     } else if (event === "golden") {
-      setCurrentSprite(animation.pickUpGolden);
-      setPos(animation.pickUpGolden[0]);
+      setCurrentAnimation(animation.pickUpGolden);
+      setFrameIndex(animation.pickUpGolden[0]);
     } else if (event === "scanner") {
-      setCurrentSprite(animation.pickUpScanner);
-      setPos(animation.pickUpScanner[0]);
+      setCurrentAnimation(animation.pickUpScanner);
+      setFrameIndex(animation.pickUpScanner[0]);
     }
   }, [event]);
 
@@ -76,7 +76,7 @@ export default function Player() {
       <div
         style={{
           ...spriteStyle,
-          transform: `translateX(-${pos}px)`,
+          transform: `translateX(-${frameIndex}px)`,
         }}
       />
     </div>

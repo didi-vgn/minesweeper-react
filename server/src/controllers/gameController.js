@@ -1,7 +1,8 @@
 const db = require("../config/database");
 
 exports.createGame = async (req, res) => {
-  const { userId, mode, time, bbbv, points, board } = req.body;
+  const userId = req.user?.id || null;
+  const { mode, time, bbbv, points, board } = req.body;
   try {
     await db.createGame(userId, mode, time, bbbv, points, board);
     return res
@@ -30,23 +31,21 @@ exports.findManyGames = async (req, res) => {
 };
 
 exports.deleteAllGames = async (req, res) => {
-  if (req.user.role === "ADMIN") {
-    console.log("Admin request approved.");
-    try {
-      await db.deleteAllGames();
-      return res.status(200).json({ message: "All games deleted." });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
-    }
-  } else if (req.user.role === "USER") {
-    console.log("Only admin can make this request");
-    return res.status(403).json("Forbidden.");
+  try {
+    await db.deleteAllGames();
+    return res.status(200).json({ message: "All games deleted." });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
   }
 };
 
 exports.upsertAdventureGame = async (req, res) => {
-  const { userId, levelId, collectedGems, points } = req.body;
+  if (!req.user) {
+    return res.status(401).json({ error: "Not authenticated." });
+  }
+  const userId = req.user.id;
+  const { levelId, collectedGems, points } = req.body;
   try {
     await db.upsertAdventureGame(userId, levelId, collectedGems, points);
     return res.status(201).json({ message: "Game data created/updated." });

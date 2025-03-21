@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useInterval } from "../hooks/useInterval";
 
-export default function Stopwatch({ active, resetTrigger, callback }) {
+export default function Stopwatch({ status, resetTrigger, onWin }) {
   const [display, setDisplay] = useState("00:00");
   const stopwatchRef = useRef(0);
 
@@ -11,8 +11,10 @@ export default function Stopwatch({ active, resetTrigger, callback }) {
   }, [resetTrigger]);
 
   useEffect(() => {
-    callback(stopwatchRef.current);
-  }, [active]);
+    if (status === "won") {
+      onWin(stopwatchRef.current);
+    }
+  }, [status]);
 
   useInterval(
     () => {
@@ -26,7 +28,7 @@ export default function Stopwatch({ active, resetTrigger, callback }) {
       const stopwatch = `${min}:${sec}`;
       setDisplay(stopwatch);
     },
-    active ? 1000 : null
+    status === "active" ? 1000 : null
   );
   return <div>{display}</div>;
 }

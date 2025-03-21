@@ -1,4 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
+const {
+  PrismaClient,
+  PrismaClientKnownRequestError,
+} = require("@prisma/client");
 const { ACHIEVEMENT_CONDITIONS } = require("./achievementConditions");
 prisma = new PrismaClient();
 

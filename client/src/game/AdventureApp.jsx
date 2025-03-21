@@ -16,7 +16,7 @@ import NewAchievementNotification from "./components/NewAchievementNotification"
 import Notifications from "./components/Notifications";
 
 export default function AdventureApp({ onClick, progress }) {
-  const { user } = useAuthContext();
+  const { user, token } = useAuthContext();
   const { newGame, preferences, gameState, setGameState } =
     useAdventureContext();
   const [player, setPlayer] = useState({ x: 0, y: 4 });
@@ -43,7 +43,6 @@ export default function AdventureApp({ onClick, progress }) {
   useEffect(() => {
     if (!user) return;
     const stats = {
-      userId: user.id,
       totalGems: gameState.gems,
       bombsScanned: countBombsScanned(gameState.board),
       characterUsed: preferences.playerSkin.split(".")[0].split("_")[2],
@@ -52,7 +51,7 @@ export default function AdventureApp({ onClick, progress }) {
     };
     async function postStats(stats) {
       try {
-        const response = await postStatsAndUnlockAchievements(stats);
+        const response = await postStatsAndUnlockAchievements(stats, token);
         if (response.length > 0) {
           setNewAchievements(response);
         }
@@ -67,7 +66,10 @@ export default function AdventureApp({ onClick, progress }) {
 
   async function postGame(gameData) {
     try {
-      await postAdvGameStats(gameData);
+      const response = await postAdvGameStats(gameData, token);
+      if (response !== 201) {
+        console.error(response);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -94,7 +96,6 @@ export default function AdventureApp({ onClick, progress }) {
   }
 
   function uploadGame(time) {
-    if (gameState.status !== "won") return;
     const currScore = calculateScore(time);
     setGameState((prev) => ({ ...prev, score: currScore }));
 
@@ -111,7 +112,6 @@ export default function AdventureApp({ onClick, progress }) {
       return;
     }
     const gameData = {
-      userId: user?.id,
       levelId: gameState.level,
       collectedGems: gameState.gems,
       points: currScore,
@@ -142,9 +142,9 @@ export default function AdventureApp({ onClick, progress }) {
             </div>
             <div className='text-3xl font-outline'>
               <Stopwatch
-                active={gameState.status === "active"}
+                status={gameState.status}
                 resetTrigger={resetTrigger}
-                callback={uploadGame}
+                onWin={uploadGame}
               />
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>

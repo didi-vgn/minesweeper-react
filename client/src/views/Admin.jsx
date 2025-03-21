@@ -18,9 +18,11 @@ export default function Admin() {
   const methods = useForm();
   const navigate = useNavigate();
 
-  if (user.role !== "ADMIN") {
-    navigate("/forbidden");
-  }
+  useEffect(() => {
+    if (user.role !== "ADMIN") {
+      navigate("/forbidden");
+    }
+  }, [user]);
 
   useEffect(() => {
     async function fetchUsers() {

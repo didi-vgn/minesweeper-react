@@ -1,6 +1,5 @@
-export function processStats(data, user = null) {
+export function processStats(data) {
   const stats = {
-    userId: user ? user.id : null,
     mode:
       data.bombs === 10
         ? "BEGGINER"

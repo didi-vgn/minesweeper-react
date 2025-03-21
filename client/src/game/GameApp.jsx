@@ -5,13 +5,13 @@ import Stopwatch from "./components/Stopwatch";
 import { useState } from "react";
 import BaseGameBoard from "./components/BaseGameBoard";
 import { processStats } from "../utils/processGameStats";
-import { postGameStats } from "../services/postGameService";
+import { postGameStats, postGameStatsGuest } from "../services/postGameService";
 import { calculateDifficulty } from "./logic/calculateDifficulty";
 import { boardToArray } from "./utils/boardToArray";
 import { useAuthContext } from "../context/AuthContext";
 
 export default function GameApp() {
-  const { user } = useAuthContext();
+  const { token } = useAuthContext();
   const { gameState, resetGame, config, setConfig } = useGameContext();
   const [resetTrigger, setResetTrigger] = useState(0);
 
@@ -35,29 +35,29 @@ export default function GameApp() {
 
   function uploadGame(time) {
     if (time === 0) return;
-    if (gameState.status === "won") {
-      const stats = {
-        bombs: config.bombs,
-        bbbv: calculateDifficulty(gameState.board),
-        board: JSON.stringify(boardToArray(gameState.board)),
-        time: time,
-      };
-      async function postGame() {
-        try {
-          const gameData = processStats(stats, user);
-
-          const response = await postGameStats(gameData);
-          if (response === 201) {
-            console.log("Game saved!");
-          } else {
-            console.log(response);
-          }
-        } catch (err) {
-          console.error(err);
+    const stats = {
+      bombs: config.bombs,
+      bbbv: calculateDifficulty(gameState.board),
+      board: JSON.stringify(boardToArray(gameState.board)),
+      time: time,
+    };
+    async function postGame() {
+      try {
+        const gameData = processStats(stats);
+        let response;
+        if (token) {
+          response = await postGameStats(gameData, token);
+        } else {
+          response = await postGameStatsGuest(gameData);
         }
+        if (response !== 201) {
+          console.log(response);
+        }
+      } catch (err) {
+        console.error(err);
       }
-      postGame();
     }
+    postGame();
   }
 
   return (
@@ -68,9 +68,9 @@ export default function GameApp() {
         </div>
         <div className='custom-border-rev bg-white flex justify-center items-center'>
           <Stopwatch
-            active={gameState.status === "active"}
+            status={gameState.status}
             resetTrigger={resetTrigger}
-            callback={uploadGame}
+            onWin={uploadGame}
           />
         </div>
         <select

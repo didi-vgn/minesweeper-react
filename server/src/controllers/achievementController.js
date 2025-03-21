@@ -22,9 +22,6 @@ exports.findManyAchievements = async (req, res) => {
 };
 
 exports.deleteAchievement = async (req, res) => {
-  if (req.user.role !== "ADMIN") {
-    return res.status(403).json("Forbidden.");
-  }
   const { id } = req.params;
   try {
     await db.deleteAchievement(id);
@@ -35,14 +32,9 @@ exports.deleteAchievement = async (req, res) => {
 };
 
 exports.upsertStatsAndUnlockAchievements = async (req, res) => {
-  const {
-    userId,
-    totalGems,
-    bombsScanned,
-    characterUsed,
-    levelsCompleted,
-    deaths,
-  } = req.body;
+  const userId = req.user.id;
+  const { totalGems, bombsScanned, characterUsed, levelsCompleted, deaths } =
+    req.body;
 
   try {
     const newAchievements = await db.upsertStats(

@@ -1,51 +1,39 @@
 const db = require("../config/database");
 const bcrypt = require("bcryptjs");
-const validateUser = require("../utils/validation");
 const { validationResult } = require("express-validator");
 const { generateAccessToken } = require("../utils/jwt");
 
-exports.signup = [
-  validateUser,
-  async (req, res) => {
-    try {
-      const { username, nickname, password } = req.body;
-      let errors = [];
+exports.signup = async (req, res) => {
+  const validationErrors = validationResult(req);
+  if (!validationErrors.isEmpty()) {
+    return res.status(400).json({ error: "Failed to sign up." });
+  }
+  try {
+    const { username, nickname, password } = req.body;
+    let errors = [];
 
-      const usernameAlreadyExists = await db.findUserBy("username", username);
-      const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
+    const usernameAlreadyExists = await db.findUserBy("username", username);
+    const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
 
-      if (usernameAlreadyExists) {
-        errors.push({ error: "Username already exists." });
-      }
-      if (nicknameAlreadyExists) {
-        errors.push({ error: "Nickname already exists." });
-      }
-
-      if (errors.length > 0) {
-        return res.status(400).json({ errors });
-      }
-
-      const validationErrors = validationResult(req);
-      ////dev
-      if (!validationErrors.isEmpty()) {
-        return res
-          .status(400)
-          .json({ error: "Validation errors", details: errors.array() });
-      }
-      /////prod
-      // if (!validationErrors.isEmpty()) {
-      //   return res.status(400).json({ error: "Failed to sign up." });
-      // }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await db.createUser(username, hashedPassword, nickname);
-      return res.status(201).json({ message: "Sign up successful." });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
+    if (usernameAlreadyExists) {
+      errors.push({ error: "Username already exists." });
     }
-  },
-];
+    if (nicknameAlreadyExists) {
+      errors.push({ error: "Nickname already exists." });
+    }
+
+    if (errors.length > 0) {
+      return res.status(400).json({ errors });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.createUser(username, hashedPassword, nickname);
+    return res.status(201).json({ message: "Sign up successful." });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 exports.login = async (req, res) => {
   try {

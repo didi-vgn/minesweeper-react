@@ -59,19 +59,25 @@ export default function ProfileSettings() {
     }
   }
 
+  function handleChangeTab(val) {
+    setMessage("");
+    setErrors([]);
+    setSelectedTab(val);
+  }
+
   return (
     <div className='grid grid-cols-5'>
       <div className='flex flex-col'>
         <LargeButton
-          onClick={() => setSelectedTab("nickname")}
+          onClick={() => handleChangeTab("nickname")}
           text='Change Nickname'
         />
         <LargeButton
-          onClick={() => setSelectedTab("password")}
+          onClick={() => handleChangeTab("password")}
           text='Change Password'
         />
         <LargeButton
-          onClick={() => setSelectedTab("delete")}
+          onClick={() => handleChangeTab("delete")}
           text='Delete Account'
         />
       </div>
@@ -91,14 +97,14 @@ export default function ProfileSettings() {
                   <Input {...nickname_validation} />
                 </Form>
               </FormProvider>
-              <div className='h-10 text-center text-pink-600 m-3 text-xl'>
+              <div className='h-10 text-center text-pink-600 m-3 text-3xl font-bold'>
                 {message
                   ? message
                   : errors
                   ? errors.map((err, i) => (
                       <div
                         key={i}
-                        className='flex justify-center items-center text-pink-600 text-3xl font-bold gap-3'
+                        className='flex justify-center items-center text-pink-600 gap-3'
                       >
                         <MdOutlineErrorOutline />
                         {err.error}
@@ -137,11 +143,19 @@ export default function ProfileSettings() {
                   />
                 </Form>
               </FormProvider>
-              <div className='h-10 text-center text-pink-600 m-3 text-2xl'>
+              <div className='h-10 text-center text-pink-600 m-3 text-3xl font-bold'>
                 {message
                   ? message
                   : errors
-                  ? errors.map((err, i) => <div key={i}>{err.error}</div>)
+                  ? errors.map((err, i) => (
+                      <div
+                        key={i}
+                        className='flex justify-center items-center text-pink-600 gap-3'
+                      >
+                        <MdOutlineErrorOutline />
+                        {err.error}
+                      </div>
+                    ))
                   : ""}
               </div>
             </div>

@@ -1,4 +1,3 @@
-const validateUser = require("../utils/validation");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const db = require("../config/database");
@@ -17,103 +16,78 @@ exports.findManyUsers = async (req, res) => {
   }
 };
 
-exports.updateNickname = [
-  validateUser[1],
-  async (req, res) => {
-    const { nickname } = req.body;
-    const { userId } = req.params;
-    if (req.user.role !== "ADMIN" && req.user.id !== userId) {
-      return res.status(403).json({ error: "Forbidden." });
+exports.updateNickname = async (req, res) => {
+  const validationErrors = validationResult(req);
+  if (!validationErrors.isEmpty()) {
+    return res.status(400).json({ error: "Failed to change nickname." });
+  }
+  const { nickname } = req.body;
+  const { userId } = req.params;
+  if (req.user.role !== "ADMIN" && req.user.id !== userId) {
+    return res.status(403).json({ error: "Forbidden." });
+  }
+  try {
+    const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
+    if (nicknameAlreadyExists) {
+      return res
+        .status(400)
+        .json({ errors: [{ error: "Nickname already exists." }] });
     }
-    try {
-      const validationErrors = validationResult(req);
-      if (!validationErrors.isEmpty()) {
-        return res.status(400).json({
-          error: "Validation errors",
-          details: validationErrors.array(),
-        });
-      }
 
-      const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
-      if (nicknameAlreadyExists) {
-        return res
-          .status(400)
-          .json({ errors: [{ error: "Nickname already exists." }] });
-      }
-
-      const user = await db.findUserBy("id", userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found." });
-      }
-
-      const updatedUser = await db.updateNickname(userId, nickname);
-
-      const newAccessToken =
-        user.id === userId
-          ? generateAccessToken({
-              id: user.id,
-              username: user.username,
-              nickname: nickname,
-              role: user.role,
-            })
-          : null;
-
-      return res.status(200).json({
-        message: "Nickname updated!",
-        user: updatedUser,
-        token: newAccessToken,
-      });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
+    const user = await db.findUserBy("id", userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
     }
-  },
-];
 
-exports.updatePassword = [
-  validateUser[2],
-  async (req, res) => {
-    const { password } = req.body;
-    const { userId } = req.params;
-    if (req.user.id !== userId) {
-      return res.status(403).json({ error: "Forbidden." });
+    const updatedUser = await db.updateNickname(userId, nickname);
+    const newAccessToken =
+      user.id === userId
+        ? generateAccessToken({
+            id: user.id,
+            username: user.username,
+            nickname: nickname,
+            role: user.role,
+          })
+        : null;
+
+    return res.status(200).json({
+      message: "Nickname updated!",
+      user: updatedUser,
+      token: newAccessToken,
+    });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
+exports.updatePassword = async (req, res) => {
+  const validationErrors = validationResult(req);
+  if (!validationErrors.isEmpty()) {
+    return res.status(400).json({ error: "Failed to change password." });
+  }
+  const { password } = req.body;
+  const { userId } = req.params;
+  if (req.user.id !== userId) {
+    return res.status(403).json({ error: "Forbidden." });
+  }
+  try {
+    const user = await db.findUserBy("id", userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
     }
-    try {
-      const validationErrors = validationResult(req);
-      ////dev
-      if (!validationErrors.isEmpty()) {
-        return res.status(400).json({
-          error: "Validation errors",
-          details: validationErrors.array(),
-        });
-      }
 
-      /////prod
-      // if (!validationErrors.isEmpty()) {
-      //   return res.status(400).json({ error: "Failed to change password." });
-      // }
-
-      const user = await db.findUserBy("id", userId);
-      if (!user) {
-        return res.status(404).json({ error: "User not found." });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await db.updatePassword(userId, hashedPassword);
-      return res.status(200).json({ message: "Password updated!" });
-    } catch (err) {
-      console.error(err.message);
-      return res.status(500).json({ error: err.message });
-    }
-  },
-];
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.updatePassword(userId, hashedPassword);
+    return res.status(200).json({ message: "Password updated!" });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 exports.updateRole = async (req, res) => {
   const { userId } = req.params;
   const { role } = req.body;
-  if (req.user.role !== "ADMIN") {
-    return res.status(403).json({ error: "Forbidden." });
-  }
   try {
     await db.updateRole(userId, role);
     return res.status(200).json({ message: `Role changed to ${role}.` });
