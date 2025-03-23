@@ -10,14 +10,14 @@ import {
   changeUserRole,
   deleteUser,
   updateNickname,
-} from "../services/userServices";
+} from "../services/accountServices";
+import errorHandler from "../utils/errorHandler";
+import { toast } from "react-toastify";
 
 export default function AdminUserInfo({ user }) {
   const { token } = useAuthContext();
   const [expand, setExpand] = useState(false);
   const methods = useForm();
-  const [errors, setErrors] = useState([]);
-  const [message, setMessage] = useState("");
 
   function expandInfo() {
     setExpand(!expand);
@@ -25,38 +25,36 @@ export default function AdminUserInfo({ user }) {
 
   async function changeRole() {
     try {
-      const response = await changeUserRole(token, user.id, {
+      await changeUserRole(token, user.id, {
         role: user.role === "ADMIN" ? "USER" : "ADMIN",
       });
-
-      if (response.message) {
-        setMessage(response.message);
-        setErrors([]);
-      } else {
-        console.log(response);
-
-        setErrors(response.errors);
-      }
-    } catch (error) {}
+      toast.success(
+        `${user.nickname}'s role was changed to ${
+          user.role === "ADMIN" ? "USER" : "ADMIN"
+        }`
+      );
+    } catch (err) {
+      errorHandler(err);
+    }
   }
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
-      const response = await updateNickname(token, user.id, data);
-      if (response.message) {
-        setMessage(response.message);
-        setErrors([]);
-      } else {
-        setErrors(response.errors);
-      }
-    } catch (error) {}
+      await updateNickname(token, user.id, data);
+      toast.success(
+        `${user.nickname}'s nickname was updated to ${data.nickname}`
+      );
+    } catch (err) {
+      errorHandler(err);
+    }
   });
 
   async function deleteUserById() {
     try {
-      deleteUser(token, user.id);
+      await deleteUser(token, user.id);
+      toast.success(`${user.nickname}'s account was deleted.`);
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   }
   return (
@@ -76,7 +74,7 @@ export default function AdminUserInfo({ user }) {
         </div>
       </div>
       {expand && (
-        <div className='flex justify-around bg-white shadow-sm'>
+        <div className='grid grid-cols-2 bg-white shadow-sm p-5'>
           <div>
             <FormProvider {...methods}>
               <form onSubmit={onSubmit}>
@@ -85,13 +83,6 @@ export default function AdminUserInfo({ user }) {
                   <Button text='Update Name' />
                 </div>
               </form>
-              <div className='h-10 text-center text-pink-600 m-5 text-xl'>
-                {message
-                  ? message
-                  : errors
-                  ? errors.map((err, i) => <div key={i}>{err.error}</div>)
-                  : ""}
-              </div>
             </FormProvider>
           </div>
           <div className='flex flex-col'>

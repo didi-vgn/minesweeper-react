@@ -1,23 +1,19 @@
 import { useEffect, useState } from "react";
 import TableRow from "./TableRow";
-import { getGameStats } from "../services/getGamesService";
+import { getGameStats } from "../services/baseGameServices";
 
-export default function GamesTable({ gameMode, nickname = null, sort, order }) {
+export default function GamesTable({ gameMode, nickname = "", sort, order }) {
   const [games, setGames] = useState([]);
 
   useEffect(() => {
     async function fetchGames() {
       try {
         const response = await getGameStats(gameMode, nickname, sort, order);
-        if (response.status === 200) {
-          const gamesData = response.games.map((game) => ({
-            ...game,
-            board: JSON.parse(game.board),
-          }));
-          setGames(gamesData);
-        } else {
-          console.error("failed to fetch games.");
-        }
+        const gamesData = response.games.map((game) => ({
+          ...game,
+          board: JSON.parse(game.board),
+        }));
+        setGames(gamesData);
       } catch (err) {
         console.error(err);
       }

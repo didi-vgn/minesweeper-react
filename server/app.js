@@ -8,7 +8,7 @@ const achievementRouter = require("./src/routers/achievementRouter");
 
 const app = express();
 const cors = require("cors");
-const errorHandler = require("./src/middleware/errorHandler");
+const errorHandler = require("./src/errors/errorHandler");
 app.use(cors());
 
 app.use(express.json());
@@ -18,8 +18,6 @@ app.use("/users", userRouter);
 app.use("/games", gameRouter);
 app.use("/auth", authRouter);
 app.use("/achievements", achievementRouter);
-
-// console.log(require("crypto").randomBytes(32).toString("hex"));
 
 process.on("SIGTERM", async () => {
   console.log("Disconnecting from database...");
@@ -33,7 +31,6 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-// console.log(prisma);
 app.use(errorHandler);
 
 app.listen(3000, () => {

@@ -17,10 +17,11 @@ export const ACHIEVEMENT_CONDITIONS = {
   team_yellow: (stats) => stats.yellowGames >= 20,
   team_white: (stats) => stats.whiteGames >= 20,
   team_player: (stats) =>
-    stats.blueGames >= 5 &&
-    stats.pinkGames >= 5 &&
-    stats.greenGames >= 5 &&
-    stats.yellowGames >= 5 &&
-    stats.whiteGames >= 5,
+    stats.blueGames >= 10 &&
+    stats.pinkGames >= 10 &&
+    stats.greenGames >= 10 &&
+    stats.yellowGames >= 10 &&
+    stats.whiteGames >= 10,
   perseverance: (stats) => stats.deaths >= 500,
+  test: (stats) => stats.levelsCompleted >= 1,
 };

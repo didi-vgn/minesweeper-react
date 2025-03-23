@@ -5,6 +5,7 @@ import AuthContextProvider from "./context/AuthContext";
 import { GameProvider } from "./game/context/GameContext";
 import { AdventureProvider } from "./game/context/AdventureContext";
 import React from "react";
+import { Slide, ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -18,6 +19,19 @@ function App() {
         </ul>
       </nav>
       <div className=''>
+        <ToastContainer
+          position='top-right'
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme='light'
+          transition={Slide}
+        />
         <AuthContextProvider>
           <GameProvider>
             <AdventureProvider>

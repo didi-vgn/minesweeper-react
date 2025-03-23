@@ -25,9 +25,7 @@ export default function AdventureMenu() {
       setInteract(true);
       document.removeEventListener("click", handleUserInteraction);
     };
-
     document.addEventListener("click", handleUserInteraction);
-
     return () => {
       document.removeEventListener("click", handleUserInteraction);
     };
@@ -61,19 +59,16 @@ export default function AdventureMenu() {
   }, [interact, location.pathname, settings.music]);
 
   useEffect(() => {
-    async function fetchData() {
+    if (currentTab !== "levels") return;
+    async function fetchGameProgress() {
       try {
         const response = await getAdvGames(user.id);
-        if (response.status === 200) {
-          setProgress(response.games);
-        } else {
-          console.error("Failed to fetch progress.");
-        }
+        setProgress(response.games);
       } catch (err) {
         console.error(err);
       }
     }
-    function fetchLocalData() {
+    function fetchLocalGameProgress() {
       try {
         const localProgress = JSON.parse(localStorage.getItem("localProgress"));
         if (localProgress) {
@@ -84,7 +79,7 @@ export default function AdventureMenu() {
       }
     }
 
-    (user && fetchData()) || fetchLocalData();
+    (user && fetchGameProgress()) || fetchLocalGameProgress();
   }, [user, currentTab]);
 
   return (

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import Form from "../components/Form";
@@ -8,25 +7,22 @@ import {
   nickname_validation,
   password_validation,
 } from "../utils/validations";
-import { signUpUser } from "../services/signUpService";
+import { signUpUser } from "../services/authServices";
+import errorHandler from "../utils/errorHandler";
+import { toast } from "react-toastify";
 
 export default function SignUp() {
-  const [serverErrors, setServerErrors] = useState([]);
   const methods = useForm();
   const navigate = useNavigate();
   const password = methods.watch("password");
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
-      const response = await signUpUser(data);
-      if (response === 201) {
-        setServerErrors([]);
-        navigate("/profile");
-      } else {
-        setServerErrors(response);
-      }
+      await signUpUser(data);
+      navigate("/profile");
+      toast.success("Account created successfully!");
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   });
 
@@ -34,7 +30,7 @@ export default function SignUp() {
     <div className='custom-border bg-gray-300 mx-auto p-2 w-2/5 m-10'>
       <div className='custom-border-rev bg-gray-100 h-full flex justify-center items-center p-10'>
         <FormProvider {...methods}>
-          <Form onClick={onSubmit} buttonText='Sign Up' errors={serverErrors}>
+          <Form onClick={onSubmit} buttonText='Sign Up'>
             <Input {...username_validation} />
             <Input {...nickname_validation} />
             <Input {...password_validation} />

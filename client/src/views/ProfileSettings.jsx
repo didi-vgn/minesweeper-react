@@ -9,44 +9,32 @@ import {
   deleteUser,
   updateNickname,
   updatePassword,
-} from "../services/userServices";
-import { MdOutlineErrorOutline } from "react-icons/md";
+} from "../services/accountServices";
+import { toast } from "react-toastify";
+import errorHandler from "../utils/errorHandler";
 
 export default function ProfileSettings() {
   const { user, token, logout, updateToken } = useAuthContext();
   const [selectedTab, setSelectedTab] = useState("nickname");
-  const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState([]);
   const nicknameMethods = useForm();
   const passwordMethods = useForm();
 
   const nicknameOnSubmit = nicknameMethods.handleSubmit(async (data) => {
     try {
       const response = await updateNickname(token, user.id, data);
-
-      if (response.token) {
-        updateToken(response.token);
-        setMessage(response.message);
-        setErrors([]);
-      } else {
-        setErrors(response.errors);
-      }
+      updateToken(response.token);
+      toast.success("Your nickname was updated!");
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   });
 
   const passwordOnSubmit = passwordMethods.handleSubmit(async (data) => {
     try {
-      const response = await updatePassword(token, user.id, data);
-      if (!response.errors) {
-        setMessage(response.message);
-        setErrors([]);
-      } else {
-        setErrors(response.errors);
-      }
+      await updatePassword(token, user.id, data);
+      toast.success("Your password was updated!");
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   });
 
@@ -54,14 +42,13 @@ export default function ProfileSettings() {
     try {
       deleteUser(token, user.id);
       logout();
+      toast.success("Account was deleted.");
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   }
 
   function handleChangeTab(val) {
-    setMessage("");
-    setErrors([]);
     setSelectedTab(val);
   }
 
@@ -89,29 +76,10 @@ export default function ProfileSettings() {
                 Change your nickname
               </div>
               <FormProvider {...nicknameMethods}>
-                <Form
-                  onClick={nicknameOnSubmit}
-                  buttonText='Confirm'
-                  errors={[]}
-                >
+                <Form onClick={nicknameOnSubmit} buttonText='Confirm'>
                   <Input {...nickname_validation} />
                 </Form>
               </FormProvider>
-              <div className='h-10 text-center text-pink-600 m-3 text-3xl font-bold'>
-                {message
-                  ? message
-                  : errors
-                  ? errors.map((err, i) => (
-                      <div
-                        key={i}
-                        className='flex justify-center items-center text-pink-600 gap-3'
-                      >
-                        <MdOutlineErrorOutline />
-                        {err.error}
-                      </div>
-                    ))
-                  : ""}
-              </div>
             </div>
           )}
           {selectedTab === "password" && (
@@ -120,11 +88,7 @@ export default function ProfileSettings() {
                 Change your password
               </div>
               <FormProvider {...passwordMethods}>
-                <Form
-                  onClick={passwordOnSubmit}
-                  buttonText='Confirm'
-                  errors={[]}
-                >
+                <Form onClick={passwordOnSubmit} buttonText='Confirm'>
                   <Input {...password_validation} />
                   <Input
                     label='confirm password:'
@@ -143,21 +107,6 @@ export default function ProfileSettings() {
                   />
                 </Form>
               </FormProvider>
-              <div className='h-10 text-center text-pink-600 m-3 text-3xl font-bold'>
-                {message
-                  ? message
-                  : errors
-                  ? errors.map((err, i) => (
-                      <div
-                        key={i}
-                        className='flex justify-center items-center text-pink-600 gap-3'
-                      >
-                        <MdOutlineErrorOutline />
-                        {err.error}
-                      </div>
-                    ))
-                  : ""}
-              </div>
             </div>
           )}
           {selectedTab === "delete" && (

@@ -36,7 +36,7 @@ export default function Profile() {
             Settings
           </div>
         )}
-        {user?.role === "ADMIN" && (
+        {user && (
           <div
             onClick={() => navigate("/profile/admin")}
             className='cursor-pointer hover:bg-gray-300'

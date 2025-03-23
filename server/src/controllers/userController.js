@@ -1,52 +1,50 @@
 const bcrypt = require("bcryptjs");
-const { validationResult } = require("express-validator");
 const db = require("../config/database");
+const AppError = require("../errors/AppError");
+const { validationResult } = require("express-validator");
 const { generateAccessToken } = require("../utils/jwt");
+const { PrismaClientKnownRequestError } = require("@prisma/client");
+const { prismaErrorHandler } = require("../errors/prismaErrorHandler");
 
-exports.findManyUsers = async (req, res) => {
+exports.findManyUsers = async (req, res, next) => {
   try {
     const users = await db.findManyUsers();
-    if (users.length === 0) {
-      return res.status(200).json({ message: "No users found.", users: [] });
-    }
     return res.status(200).json({ users });
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
   }
 };
 
-exports.updateNickname = async (req, res) => {
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    return res.status(400).json({ error: "Failed to change nickname." });
-  }
+exports.updateNickname = async (req, res, next) => {
   const { nickname } = req.body;
   const { userId } = req.params;
   if (req.user.role !== "ADMIN" && req.user.id !== userId) {
-    return res.status(403).json({ error: "Forbidden." });
+    return next(
+      new AppError(
+        "You are not authorized to make this request.",
+        "FORBIDDEN",
+        403
+      )
+    );
+  }
+  const validationErrors = validationResult(req);
+  if (!validationErrors.isEmpty()) {
+    return next(
+      new AppError("Failed to change nickname.", "VALIDATION_ERRORS", 400)
+    );
   }
   try {
-    const nicknameAlreadyExists = await db.findUserBy("nickname", nickname);
-    if (nicknameAlreadyExists) {
-      return res
-        .status(400)
-        .json({ errors: [{ error: "Nickname already exists." }] });
-    }
-
-    const user = await db.findUserBy("id", userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
     const updatedUser = await db.updateNickname(userId, nickname);
     const newAccessToken =
-      user.id === userId
+      req.user.id === userId
         ? generateAccessToken({
-            id: user.id,
-            username: user.username,
+            id: req.user.id,
+            username: req.user.username,
             nickname: nickname,
-            role: user.role,
+            role: req.user.role,
           })
         : null;
 
@@ -56,61 +54,75 @@ exports.updateNickname = async (req, res) => {
       token: newAccessToken,
     });
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
   }
 };
-exports.updatePassword = async (req, res) => {
-  const validationErrors = validationResult(req);
-  if (!validationErrors.isEmpty()) {
-    return res.status(400).json({ error: "Failed to change password." });
-  }
+
+exports.updatePassword = async (req, res, next) => {
   const { password } = req.body;
   const { userId } = req.params;
   if (req.user.id !== userId) {
-    return res.status(403).json({ error: "Forbidden." });
+    return next(
+      new AppError(
+        "You are not authorized to make this request.",
+        "FORBIDDEN",
+        403
+      )
+    );
+  }
+  const validationErrors = validationResult(req);
+  if (!validationErrors.isEmpty()) {
+    return next(
+      new AppError("Failed to change password.", "VALIDATION_ERRORS", 400)
+    );
   }
   try {
-    const user = await db.findUserBy("id", userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.updatePassword(userId, hashedPassword);
     return res.status(200).json({ message: "Password updated!" });
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
   }
 };
 
-exports.updateRole = async (req, res) => {
+exports.updateRole = async (req, res, next) => {
   const { userId } = req.params;
   const { role } = req.body;
   try {
     await db.updateRole(userId, role);
     return res.status(200).json({ message: `Role changed to ${role}.` });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
   }
 };
 
-exports.deleteUser = async (req, res) => {
+exports.deleteUser = async (req, res, next) => {
   const { userId } = req.params;
   if (req.user.role !== "ADMIN" && req.user.id !== userId) {
-    return res.status(403).json({ error: "Forbidden." });
+    return next(
+      new AppError(
+        "You are not authorized to make this request.",
+        "FORBIDDEN",
+        403
+      )
+    );
   }
   try {
-    const user = await db.findUserBy("id", userId);
-    if (!user) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
     await db.deleteUser(userId);
     return res.status(200).json({ message: "User and related data deleted." });
   } catch (err) {
-    console.error(err.message);
-    return res.status(500).json({ error: err.message });
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
   }
 };

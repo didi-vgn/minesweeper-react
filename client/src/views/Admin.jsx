@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../context/AuthContext";
-import { API_HOST } from "../utils/variables";
 import Form from "../components/Form";
 import Input from "../components/Input";
 import { FormProvider, useForm } from "react-hook-form";
@@ -8,6 +7,15 @@ import LargeButton from "../components/LargeButton";
 import { useNavigate } from "react-router-dom";
 import AdminUserInfo from "../components/AdminUserInfo";
 import Button from "../components/Button";
+import { getAllUsers } from "../services/accountServices";
+import { deleteAllGames } from "../services/baseGameServices";
+import {
+  addAchievement,
+  deleteAchievementId,
+  getAllAchievements,
+} from "../services/adventureGamesServices";
+import errorHandler from "../utils/errorHandler";
+import { toast } from "react-toastify";
 
 export default function Admin() {
   const { user } = useAuthContext();
@@ -18,27 +26,19 @@ export default function Admin() {
   const methods = useForm();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (user.role !== "ADMIN") {
-      navigate("/forbidden");
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user.role !== "ADMIN") {
+  //     navigate("/forbidden");
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await fetch("http://localhost:3000/users", {
-          method: "GET",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data.users);
-        } else {
-          const errorData = await response.json();
-          console.log(errorData);
-        }
+        const response = await getAllUsers();
+        setUsers(response.users);
       } catch (err) {
-        console.log(err);
+        errorHandler(err);
       }
     }
     fetchUsers();
@@ -46,84 +46,38 @@ export default function Admin() {
 
   async function deleteGames() {
     try {
-      const response = await fetch(`${API_HOST}games/`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        console.log("All games deleted");
-      } else {
-        const errorData = await response.json();
-        console.error(errorData);
-      }
+      await deleteAllGames(token);
+      toast.success("All games deleted from database.");
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   }
 
   async function deleteAchievement(id) {
     try {
-      const response = await fetch(`${API_HOST}achievements/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const responseData = await response.json();
-      if (response.ok) {
-        console.log(responseData.message);
-      } else {
-        console.error(response.error);
-      }
+      await deleteAchievementId(id, token);
+      toast.success(`Achievement ID ${id} deteled.`);
     } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function addAchievement(data) {
-    try {
-      const response = await fetch(`${API_HOST}achievements/`, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (response.ok) {
-        console.log("New achievement added!");
-      } else {
-        const errorData = await response.json();
-        console.error(errorData);
-      }
-    } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   }
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
-      await addAchievement(data);
+      await addAchievement(data, token);
+      toast.success(`Achevement ID ${data.id} was added!`);
     } catch (err) {
-      console.error(err);
+      errorHandler(err);
     }
   });
 
   useEffect(() => {
     async function fetchAchievements() {
       try {
-        const response = await fetch(`${API_HOST}achievements`);
-        if (response.ok) {
-          const data = await response.json();
-          setAchievements(data.achievements);
-        } else {
-          const errorData = await response.json();
-          console.error(errorData);
-        }
+        const response = await getAllAchievements();
+        setAchievements(response.achievements);
       } catch (err) {
-        console.error(err);
+        errorHandler(err);
       }
     }
     fetchAchievements();

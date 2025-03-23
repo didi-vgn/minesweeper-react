@@ -5,7 +5,10 @@ import Stopwatch from "./components/Stopwatch";
 import { useState } from "react";
 import BaseGameBoard from "./components/BaseGameBoard";
 import { processStats } from "../utils/processGameStats";
-import { postGameStats, postGameStatsGuest } from "../services/postGameService";
+import {
+  postGameStats,
+  postGameStatsGuest,
+} from "../services/baseGameServices";
 import { calculateDifficulty } from "./logic/calculateDifficulty";
 import { boardToArray } from "./utils/boardToArray";
 import { useAuthContext } from "../context/AuthContext";
@@ -49,9 +52,6 @@ export default function GameApp() {
           response = await postGameStats(gameData, token);
         } else {
           response = await postGameStatsGuest(gameData);
-        }
-        if (response !== 201) {
-          console.log(response);
         }
       } catch (err) {
         console.error(err);

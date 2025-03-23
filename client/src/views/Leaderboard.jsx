@@ -5,7 +5,6 @@ import { RxTriangleDown } from "react-icons/rx";
 import { RxTriangleUp } from "react-icons/rx";
 
 export default function Leaderboard() {
-  //need to work on this later
   const [query, setQuery] = useState("");
   const [gameMode, setGameMode] = useState("");
   const [sort, setSort] = useState("points");

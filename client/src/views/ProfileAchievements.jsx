@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getUserAchievements } from "../services/getUserAchievements";
+import { getUserAchievements } from "../services/adventureGamesServices";
 import { useNavigate } from "react-router-dom";
 import Achievement from "../components/Achievement";
 import { useAuthContext } from "../context/AuthContext";
@@ -12,8 +12,8 @@ export default function ProfileAchievements() {
   useEffect(() => {
     async function fetchAchievements(userId) {
       try {
-        const unlockedAchievements = await getUserAchievements(userId);
-        setAchievements(unlockedAchievements);
+        const response = await getUserAchievements(userId);
+        setAchievements(response.achievements);
       } catch (err) {
         console.error(err);
       }

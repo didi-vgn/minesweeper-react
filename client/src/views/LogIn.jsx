@@ -3,28 +3,22 @@ import { login_validation } from "../utils/validations";
 import { useNavigate } from "react-router-dom";
 import Form from "../components/Form";
 import Input from "../components/Input";
-import { useState } from "react";
-import { logInUser } from "../services/logInService";
 import { useAuthContext } from "../context/AuthContext";
+import { logInUser } from "../services/authServices";
+import errorHandler from "../utils/errorHandler";
 
 export default function LogIn() {
   const methods = useForm();
   const navigate = useNavigate();
-  const [serverErrors, setServerErrors] = useState([]);
   const { login } = useAuthContext();
 
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       const response = await logInUser(data);
-
-      if (response.status === 200) {
-        login(response.accessToken);
-        navigate("/profile");
-      } else {
-        setServerErrors(response);
-      }
+      login(response);
+      navigate("/profile");
     } catch (err) {
-      console.log(err);
+      errorHandler(err);
     }
   });
 
@@ -32,7 +26,7 @@ export default function LogIn() {
     <div className='custom-border bg-gray-300 mx-auto p-2 w-2/5 m-10'>
       <div className='custom-border-rev bg-gray-100 h-full flex justify-center items-center p-10'>
         <FormProvider {...methods}>
-          <Form onClick={onSubmit} buttonText='Log In' errors={serverErrors}>
+          <Form onClick={onSubmit} buttonText='Log In'>
             <Input
               label='username'
               type='text'
