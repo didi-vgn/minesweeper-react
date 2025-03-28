@@ -1,6 +1,6 @@
 import { API_HOST } from "../utils/variables";
 
-export const getGameStats = async (
+export const getGameScores = async (
   gameMode,
   nickname,
   sort = "points",
@@ -54,6 +54,15 @@ export const postGameStatsGuest = async (data) => {
     },
     body: JSON.stringify(data),
   });
+  const responseData = await response.json();
+  if (!response.ok) {
+    throw responseData;
+  }
+  return responseData;
+};
+
+export const getMinesweeperStats = async () => {
+  const response = await fetch(`${API_HOST}games/stats`);
   const responseData = await response.json();
   if (!response.ok) {
     throw responseData;

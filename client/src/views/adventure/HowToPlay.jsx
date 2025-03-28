@@ -1,4 +1,4 @@
-import PrettyTitle from "./PrettyTitle";
+import PrettyTitle from "../../game/components/PrettyTitle";
 
 export default function HowToPlay({ back }) {
   return (

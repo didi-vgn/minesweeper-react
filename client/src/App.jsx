@@ -10,15 +10,15 @@ import { Slide, ToastContainer } from "react-toastify";
 function App() {
   return (
     <div className='font-mono'>
-      <nav className='flex items-center justify-center bg-gray-600 text-gray-50 text-3xl h-20'>
-        <ul className='flex gap-20'>
+      <nav className='bg-gray-600 text-gray-100 text-3xl h-20'>
+        <ul className='grid grid-cols-4 gap-10 w-4/5 mx-auto h-full'>
           <CustomNavLink path='/' text='Play' />
           <CustomNavLink path='leaderboard' text='Leaderboard' />
           <CustomNavLink path='adventure' text='Adventure' />
           <CustomNavLink path='profile' text='Profile' />
         </ul>
       </nav>
-      <div className=''>
+      <div>
         <ToastContainer
           position='top-right'
           autoClose={5000}

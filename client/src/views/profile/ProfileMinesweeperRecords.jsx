@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { RxTriangleDown } from "react-icons/rx";
 import { RxTriangleUp } from "react-icons/rx";
-import GamesTable from "../components/GamesTable";
-import { useAuthContext } from "../context/AuthContext";
+import GamesTable from "../../components/GamesTable";
+import { useAuthContext } from "../../context/AuthContext";
 
 export default function ProfileMinesweeperRecords() {
   const { user } = useAuthContext();

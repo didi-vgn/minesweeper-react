@@ -1,20 +1,56 @@
-import { useState } from "react";
-import Button from "./Button";
+import { useEffect, useState } from "react";
+import Input from "../../components/Input";
 import { FormProvider, useForm } from "react-hook-form";
-import Input from "./Input";
-import { nickname_validation } from "../utils/validations";
+import Button from "../../components/Button";
+import { getAllUsers } from "../../services/accountServices";
+import errorHandler from "../../utils/errorHandler";
+import { useAuthContext } from "../../context/AuthContext";
 import { RxTriangleDown } from "react-icons/rx";
 import { RxTriangleUp } from "react-icons/rx";
-import { useAuthContext } from "../context/AuthContext";
 import {
   changeUserRole,
   deleteUser,
   updateNickname,
-} from "../services/accountServices";
-import errorHandler from "../utils/errorHandler";
+} from "../../services/accountServices";
 import { toast } from "react-toastify";
+import { nickname_validation } from "../../utils/validations";
 
-export default function AdminUserInfo({ user }) {
+export default function AccountManagement() {
+  const [users, setUsers] = useState([]);
+  const [trigger, setTrigger] = useState(0);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const response = await getAllUsers();
+        setUsers(response.users);
+      } catch (err) {
+        errorHandler(err);
+      }
+    }
+    fetchUsers();
+  }, [trigger]);
+
+  function refresh() {
+    setTrigger((prev) => prev + 1);
+  }
+
+  return (
+    <div>
+      <div className='grid grid-cols-[2fr_1fr_1fr_1fr] items-center my-1 p-1 border-b font-bold'>
+        <div>UUID</div>
+        <div>Username</div>
+        <div>Nickname</div>
+        <div>Role</div>
+      </div>
+      {users.map((user) => (
+        <AccountInfo key={user.id} user={user} refresh={refresh} />
+      ))}
+    </div>
+  );
+}
+
+function AccountInfo({ user, refresh }) {
   const { token } = useAuthContext();
   const [expand, setExpand] = useState(false);
   const methods = useForm();
@@ -33,6 +69,7 @@ export default function AdminUserInfo({ user }) {
           user.role === "ADMIN" ? "USER" : "ADMIN"
         }`
       );
+      refresh();
     } catch (err) {
       errorHandler(err);
     }
@@ -44,6 +81,7 @@ export default function AdminUserInfo({ user }) {
       toast.success(
         `${user.nickname}'s nickname was updated to ${data.nickname}`
       );
+      refresh();
     } catch (err) {
       errorHandler(err);
     }
@@ -53,6 +91,7 @@ export default function AdminUserInfo({ user }) {
     try {
       await deleteUser(token, user.id);
       toast.success(`${user.nickname}'s account was deleted.`);
+      refresh();
     } catch (err) {
       errorHandler(err);
     }

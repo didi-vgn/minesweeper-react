@@ -1,8 +1,8 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { useAuthContext } from "../context/AuthContext";
-import LargeButton from "../components/LargeButton";
-import Header from "../components/Header";
-import ProfileButton from "../components/ProfileButton";
+import LargeButton from "../../components/LargeButton";
+import Header from "../../components/Header";
+import ProfileButton from "../../components/ProfileButton";
+import { useAuthContext } from "../../context/AuthContext";
 
 export default function Profile() {
   const { user } = useAuthContext();
@@ -14,7 +14,7 @@ export default function Profile() {
         <ProfileButton />
         {user && (
           <div
-            onClick={() => navigate("/profile/achievements")}
+            onClick={() => navigate("/profile")}
             className='cursor-pointer hover:bg-gray-300'
           >
             Achievements

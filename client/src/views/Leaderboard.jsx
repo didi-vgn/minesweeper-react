@@ -32,6 +32,7 @@ export default function Leaderboard() {
           value={query}
           onChange={handleChange}
           className='m-1 font-medium border border-slate-600 bg-white'
+          placeholder='search user...'
         />
         <div
           className='cursor-pointer hover:bg-gray-300'

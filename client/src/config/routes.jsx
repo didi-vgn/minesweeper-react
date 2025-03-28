@@ -1,17 +1,23 @@
 import Play from "../views/Play.jsx";
-import Profile from "../views/Profile.jsx";
 import Leaderboard from "../views/Leaderboard.jsx";
 import LogIn from "../views/LogIn.jsx";
 import SignUp from "../views/SignUp.jsx";
 import ErrorPage from "../views/ErrorPage.jsx";
 import App from "../App.jsx";
-import Admin from "../views/Admin.jsx";
-import Adventure from "../views/Adventure.jsx";
-import ProfileAchievements from "../views/ProfileAchievements.jsx";
-import ProfileMinesweeperRecords from "../views/ProfileMinesweeperRecords.jsx";
-import ProfileSettings from "../views/ProfileSettings.jsx";
-import ProfileMainPage from "../views/ProfileMainPage.jsx";
 import ForbiddenPage from "../views/ForbiddenPage.jsx";
+import Profile from "../views/profile/Profile.jsx";
+import ProfileAchievements from "../views/profile/ProfileAchievements.jsx";
+import ProfileMinesweeperRecords from "../views/profile/ProfileMinesweeperRecords.jsx";
+import ProfileSettings from "../views/profile/ProfileSettings.jsx";
+import Admin from "../views/admin/Admin.jsx";
+import AccountManagement from "../views/admin/AccounManagement.jsx";
+import Achievements from "../views/admin/Achievements.jsx";
+import AchievementForm from "../views/admin/AchievementForm.jsx";
+import MinesweeperGames from "../views/admin/MinesweeperGames.jsx";
+import SettingsNickname from "../views/profile/SettingsNickname.jsx";
+import SettingsPassword from "../views/profile/SettingsPassword.jsx";
+import SettingsDeleteAccount from "../views/profile/SettingsDeleteAccount.jsx";
+import Adventure from "../views/adventure/Adventure.jsx";
 
 const router = [
   {
@@ -21,7 +27,6 @@ const router = [
     children: [
       {
         index: true,
-        path: "/",
         element: <Play />,
       },
       {
@@ -30,25 +35,51 @@ const router = [
         children: [
           {
             index: true,
-            path: "/profile",
-            element: <ProfileMainPage />,
-          },
-          {
-            index: true,
-            path: "/profile/achievements",
             element: <ProfileAchievements />,
           },
           {
-            path: "/profile/minesweeper-records",
+            path: "minesweeper-records",
             element: <ProfileMinesweeperRecords />,
           },
           {
-            path: "/profile/settings",
+            path: "settings",
             element: <ProfileSettings />,
+            children: [
+              {
+                index: true,
+                element: <SettingsPassword />,
+              },
+              {
+                path: "nickname",
+                element: <SettingsNickname />,
+              },
+              {
+                path: "delete",
+                element: <SettingsDeleteAccount />,
+              },
+            ],
           },
           {
-            path: "/profile/admin",
+            path: "admin",
             element: <Admin />,
+            children: [
+              {
+                index: true,
+                element: <AccountManagement />,
+              },
+              {
+                path: "achievements",
+                element: <Achievements />,
+              },
+              {
+                path: "create-achievement",
+                element: <AchievementForm />,
+              },
+              {
+                path: "minesweeper-games",
+                element: <MinesweeperGames />,
+              },
+            ],
           },
         ],
       },

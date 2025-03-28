@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getUserAchievements } from "../services/adventureGamesServices";
+import { getUserAchievements } from "../../services/adventureGamesServices";
 import { useNavigate } from "react-router-dom";
-import Achievement from "../components/Achievement";
-import { useAuthContext } from "../context/AuthContext";
+import Achievement from "../../components/Achievement";
+import { useAuthContext } from "../../context/AuthContext";
 
 export default function ProfileAchievements() {
   const { user } = useAuthContext();

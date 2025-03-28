@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
 import TableRow from "./TableRow";
-import { getGameStats } from "../services/baseGameServices";
+import { getGameScores } from "../services/baseGameServices";
+import { useInterval } from "../game/hooks/useInterval";
 
 export default function GamesTable({ gameMode, nickname = "", sort, order }) {
   const [games, setGames] = useState([]);
 
-  useEffect(() => {
-    async function fetchGames() {
-      try {
-        const response = await getGameStats(gameMode, nickname, sort, order);
-        const gamesData = response.games.map((game) => ({
-          ...game,
-          board: JSON.parse(game.board),
-        }));
-        setGames(gamesData);
-      } catch (err) {
-        console.error(err);
-      }
+  async function fetchGames() {
+    try {
+      const response = await getGameScores(gameMode, nickname, sort, order);
+      const gamesData = response.games.map((game) => ({
+        ...game,
+        board: JSON.parse(game.board),
+      }));
+      setGames(gamesData);
+    } catch (err) {
+      console.error(err);
     }
+  }
+
+  useEffect(() => {
     fetchGames();
   }, [gameMode, nickname, sort, order]);
+
+  useInterval(fetchGames, 60 * 1000);
 
   return (
     <div>

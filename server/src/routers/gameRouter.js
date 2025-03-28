@@ -5,6 +5,7 @@ const { authorizeAdmin } = require("../middleware/admin");
 const router = new Router();
 
 router.get("/", gameController.findManyGames);
+router.get("/stats", gameController.minesweeperStats);
 router.put(
   "/adventure/",
   authenticateToken,
@@ -19,5 +20,4 @@ router.delete(
   authorizeAdmin,
   gameController.deleteAllGames
 );
-
 module.exports = router;

@@ -4,11 +4,11 @@ export default function Achievement({ data }) {
   const [click, setClick] = useState(false);
   return (
     <div
-      className='flex flex-col items-center gap-3 w-60 h-50 bg-gray-100 rounded-3xl shadow-md p-2 cursor-pointer'
+      className='flex justify-center w-60 h-50 bg-gray-100 rounded-3xl shadow-md p-2 cursor-pointer'
       onClick={() => setClick(!click)}
     >
-      {!click && (
-        <div className='flex flex-col gap-1 items-center'>
+      {!click ? (
+        <div className='grid grid-rows-[1fr_3rem] gap-1 items-center'>
           <img
             src={`/achievements/${data.achievement.id}.png`}
             alt={data.achievement.title}
@@ -18,9 +18,8 @@ export default function Achievement({ data }) {
             {data.achievement.title}
           </div>
         </div>
-      )}
-      {click && (
-        <div className='grid grid-rows-3 gap-1 items-center'>
+      ) : (
+        <div className='grid grid-rows-[1fr_0.5fr_0.5fr] gap-1 items-center'>
           <div className='flex gap-2 items-center'>
             <img
               src={`/achievements/${data.achievement.id}.png`}

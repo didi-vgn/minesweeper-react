@@ -69,3 +69,15 @@ exports.findManyAdventureGames = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.minesweeperStats = async (req, res, next) => {
+  try {
+    const stats = await db.findMinesweeperStats();
+    return res.status(200).json({ stats });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
+  }
+};

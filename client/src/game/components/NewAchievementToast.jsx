@@ -18,7 +18,7 @@ export default function NewAchievementToast({ data, closeToast }) {
           <div
             className='text-sm text-center text-gray-500 mt-2 cursor-pointer hover:underline'
             onClick={() => {
-              navigate("/profile/achievements");
+              navigate("/profile");
               closeToast();
             }}
           >
