@@ -55,6 +55,7 @@ export default function AdventureBoard({
           style={{
             transform: `translateX(-${viewportStart * 4}rem)`,
             transition: "transform 0.3s ease-in-out",
+            willChange: "transform",
           }}
         >
           {gameState.board?.map((row, i) => (

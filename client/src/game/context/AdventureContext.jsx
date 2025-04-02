@@ -1,8 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { generateAdventureBoard } from "../logic/generateAdventureBoard";
+import { generateAdventureBoard } from "../logic/campaignBoard";
 import { leftClick } from "../logic/click";
 import { mapSkins, playerSprites, playSoundEffect } from "../utils/assets";
 import { adjacentCells } from "../utils/variables";
+import { generateDungeonBoard } from "../logic/dungeonBoard";
 
 const AdventureContext = createContext(null);
 
@@ -23,10 +24,6 @@ export function AdventureProvider({ children }) {
     scanners: 0,
     level: 0,
     score: 0,
-    skins: {
-      map: null,
-      player: null,
-    },
   });
   const [settings, setSettings] = useState({
     character: "random",
@@ -67,6 +64,37 @@ export function AdventureProvider({ children }) {
       score: 0,
     });
     triggerEvent("base");
+  };
+
+  ////test
+  const newDungeon = () => {
+    setPreferences({
+      mapSkin:
+        settings.map === "random"
+          ? randomProp(mapSkins)
+          : mapSkins[settings.map],
+      playerSkin:
+        settings.character === "random"
+          ? randomProp(playerSprites)
+          : playerSprites[settings.character],
+    });
+    setGameState({
+      board: generateDungeonBoard(1, 59, 26),
+      status: "active",
+      gems: 0,
+      scanners: 0,
+      level: 1,
+      score: 0,
+    });
+    triggerEvent("base");
+  };
+
+  const teleport = () => {
+    setGameState((prev) => ({
+      ...prev,
+      board: generateDungeonBoard(prev.level + 1, 59, 26),
+      level: prev.level + 1,
+    }));
   };
 
   function triggerEvent(eventType) {
@@ -142,7 +170,13 @@ export function AdventureProvider({ children }) {
       adjacentCells.forEach(([r, c]) => {
         const newRow = r + i;
         const newCol = c + j;
-        if (newRow >= 0 && newRow < height && newCol >= 0 && newCol < width) {
+        if (
+          newRow >= 0 &&
+          newRow < height &&
+          newCol >= 0 &&
+          newCol < width &&
+          newBoard[newRow][newCol].value === -1
+        ) {
           newBoard[newRow][newCol].scanned = true;
         }
       });
@@ -163,6 +197,8 @@ export function AdventureProvider({ children }) {
     newGame,
     movePlayer,
     scan,
+    newDungeon,
+    teleport,
   };
 
   return (

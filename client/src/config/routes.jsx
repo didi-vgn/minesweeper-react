@@ -18,6 +18,7 @@ import SettingsNickname from "../views/profile/SettingsNickname.jsx";
 import SettingsPassword from "../views/profile/SettingsPassword.jsx";
 import SettingsDeleteAccount from "../views/profile/SettingsDeleteAccount.jsx";
 import Adventure from "../views/adventure/Adventure.jsx";
+import Sandbox from "../views/Sandbox.jsx";
 
 const router = [
   {
@@ -91,6 +92,7 @@ const router = [
         path: "adventure",
         element: <Adventure />,
       },
+      { path: "sandbox", element: <Sandbox /> },
       {
         path: "login",
         element: <LogIn />,

@@ -11,6 +11,8 @@ export const addNumbers = (board) => {
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
       if (board[i][j].value === -1) continue;
+      if (board[i][j].value === -2) continue;
+
       let number = 0;
       adjacentCells.forEach(([row, col]) => {
         const newRow = i + row;

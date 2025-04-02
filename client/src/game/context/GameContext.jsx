@@ -1,8 +1,8 @@
 import { createContext, useContext, useState } from "react";
-import { generateBoard } from "../logic/generateBoard";
 import { leftClick, rightClick } from "../logic/click";
 import { checkWin } from "../logic/checkWin";
 import { countFlags } from "../logic/countFlags";
+import { generateClassicBoard } from "../logic/classicBoard";
 
 const GameContext = createContext(null);
 
@@ -17,7 +17,7 @@ export function GameProvider({ children }) {
     bombs: 40,
   });
   const [gameState, setGameState] = useState({
-    board: generateBoard(config.width, config.height, config.bombs),
+    board: generateClassicBoard(config.width, config.height, config.bombs),
     bombsLeft: 40,
     status: "notStarted",
   });
@@ -25,7 +25,7 @@ export function GameProvider({ children }) {
   const resetGame = (w = config.width, h = config.height, b = config.bombs) => {
     setGameState((prev) => ({
       ...prev,
-      board: generateBoard(w, h, b),
+      board: generateClassicBoard(w, h, b),
       bombsLeft: b,
       status: "notStarted",
     }));
@@ -41,7 +41,7 @@ export function GameProvider({ children }) {
       }));
 
       if (gameState.board[i][j].value === -1) {
-        const unluckyClick = generateBoard(
+        const unluckyClick = generateClassicBoard(
           config.width,
           config.height,
           config.bombs,

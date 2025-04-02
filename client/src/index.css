@@ -28,6 +28,8 @@
 }
 
 .game-container {
+  /* transform: scale(1.3); */
+  image-rendering: crisp-edges;
   max-width: 64rem;
   overflow: hidden;
 }
@@ -35,6 +37,29 @@
 .board {
   transition: transform 0.3s ease-in-out;
   width: max-content;
+}
+
+.game-container-zoomed-out {
+  position: fixed;
+  image-rendering: crisp-edges;
+  transform: scale(0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 80;
+}
+
+.game-container-zoomed-in {
+  position: fixed;
+  overflow: hidden;
+  width: 112rem;
+  height: 48rem;
+  border: 2px;
+}
+
+.hidden {
+  display: none;
 }
 
 .font-outline {
