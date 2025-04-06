@@ -16,13 +16,13 @@ export default function AdventureLevelSelection({ back, progress, play }) {
     <div className='text-xl'>
       <div className='grid grid-cols-3'>
         <div
-          className='custom-border bg-gray-300 place-self-start px-3 cursor-pointer'
+          className='custom-border bg-gray-300 place-self-start w-23 cursor-pointer text-center'
           onClick={back}
         >
           Back
         </div>
         <div className='text-5xl place-self-center'>
-          <PrettyTitle string='Play' />
+          <PrettyTitle string='Adventure' />
         </div>
         <div className='grid grid-rows-2 place-self-end'>
           <div>
@@ -34,7 +34,7 @@ export default function AdventureLevelSelection({ back, progress, play }) {
           </div>
         </div>
       </div>
-      <div className='grid grid-cols-7 gap-3 m-5'>
+      <div className='grid grid-cols-10 gap-3 m-5'>
         {adventureLevels.map((level, index) => (
           <LevelIcon
             key={index + 1}
@@ -58,7 +58,7 @@ function LevelIcon({ onClick, level, data }) {
 
   return (
     <div
-      className={`flex flex-col justify-around items-center size-25 cursor-pointer ${style}`}
+      className={`flex flex-col justify-around items-center size-30 cursor-pointer ${style}`}
       onClick={onClick}
       onMouseEnter={() => {
         setHover(true);
@@ -76,7 +76,7 @@ function LevelIcon({ onClick, level, data }) {
           <div className='flex flex-col items-center'>
             <div className='text-xl font-bold'>Replay</div>
             <div className='text-sm'>
-              {data.collectedGems}/{adventureLevels[level - 1].gems} G
+              {data.collectedGems}/{adventureLevels[level - 1].gems + 1} G
             </div>
             <div className='text-sm'>{data.points} P</div>
           </div>

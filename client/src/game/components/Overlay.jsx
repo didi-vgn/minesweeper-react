@@ -1,12 +1,5 @@
 export default function Overlay({ children }) {
-  return <div style={overlayStyle}>{children}</div>;
+  return (
+    <div className='absolute top-0 left-0 h-full w-full z-90'>{children}</div>
+  );
 }
-
-const overlayStyle = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  zIndex: 40,
-};

@@ -2,10 +2,10 @@ import PrettyTitle from "../../game/components/PrettyTitle";
 
 export default function HowToPlay({ back }) {
   return (
-    <div>
+    <div className='text-xl'>
       <div className='grid grid-cols-3'>
         <div
-          className='custom-border bg-gray-300 place-self-start px-3 cursor-pointer'
+          className='custom-border bg-gray-300 place-self-start w-23 cursor-pointer text-center'
           onClick={back}
         >
           Back

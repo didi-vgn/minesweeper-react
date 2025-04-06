@@ -39,7 +39,7 @@ export function generateDungeonBoard(depth, width, height) {
       map[i][j].gem = colors[random(colors.length)];
     }
   }
-  const { x, y } = randomWalker(map, center, 100);
+  const { x, y } = randomWalker(map, center, 200);
   map[y][x].portal = true;
 
   addNumbers(map);

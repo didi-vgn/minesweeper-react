@@ -1,20 +1,22 @@
 import Header from "../../components/Header";
 import ProfileButton from "../../components/ProfileButton";
-import AdventureMenu from "./AdventureMenu";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import { useAdventureContext } from "../../game/context/AdventureContext";
-import AdventureSettings from "./AdventureSettings";
 import { getAdvGames } from "../../services/adventureGamesServices";
 import AdventureApp from "../../game/AdventureApp";
 import { audio } from "../../game/utils/assets";
 import AdventureLevelSelection from "./AdventureLevelSelection";
 import HowToPlay from "./HowToPlay";
+import ClassicApp from "../../game/ClassicApp";
+import DungenApp from "../../game/DungeonApp";
+import GameMenu from "./GameMenu";
+import GameSettings from "./GameSettings";
 
-export default function Adventure() {
+export default function Game() {
   const { user } = useAuthContext();
-  const { settings } = useAdventureContext();
+  const { settings, newDungeon } = useAdventureContext();
   const [progress, setProgress] = useState([]);
   const [currentTab, setCurrentTab] = useState("menu");
   const musicRef = useRef(new Audio(audio.music.main));
@@ -34,6 +36,11 @@ export default function Adventure() {
 
   function back() {
     setCurrentTab("menu");
+  }
+
+  function startDungeon() {
+    newDungeon();
+    setCurrentTab("dungeon");
   }
 
   useEffect(() => {
@@ -83,36 +90,34 @@ export default function Adventure() {
       <Header>
         <ProfileButton />
       </Header>
-      <div className='flex justify-center relative select-none silkscreen'>
-        <div className='m-10 p-3 custom-border bg-gray-300 h-[45rem] w-[72rem]'>
-          <div className='custom-border-rev h-full bg-gray-100 p-7'>
-            <div>
-              {currentTab === "menu" && (
-                <AdventureMenu
-                  play={() => setCurrentTab("levels")}
-                  settings={() => setCurrentTab("settings")}
-                  info={() => setCurrentTab("info")}
-                  sfx={settings.sfx}
-                />
-              )}
-              {currentTab === "levels" && (
-                <AdventureLevelSelection
-                  back={back}
-                  progress={progress}
-                  play={() => setCurrentTab("play")}
-                />
-              )}
-              {currentTab === "settings" && <AdventureSettings back={back} />}
-              {currentTab === "info" && <HowToPlay back={back} />}
-              {currentTab === "play" && (
-                <AdventureApp
-                  onClick={() => setCurrentTab("levels")}
-                  progress={progress}
-                />
-              )}
-            </div>
-          </div>
-        </div>
+      <div className='silkscreen h-fit p-5'>
+        {currentTab === "menu" && (
+          <GameMenu
+            classic={() => setCurrentTab("classic")}
+            adventure={() => setCurrentTab("levels")}
+            dungeon={startDungeon}
+            settings={() => setCurrentTab("settings")}
+            info={() => setCurrentTab("info")}
+            sfx={settings.sfx}
+          />
+        )}
+        {currentTab === "levels" && (
+          <AdventureLevelSelection
+            back={back}
+            progress={progress}
+            play={() => setCurrentTab("adventure")}
+          />
+        )}
+        {currentTab === "settings" && <GameSettings back={back} />}
+        {currentTab === "info" && <HowToPlay back={back} />}
+        {currentTab === "classic" && <ClassicApp back={back} />}
+        {currentTab === "adventure" && (
+          <AdventureApp
+            onClick={() => setCurrentTab("levels")}
+            progress={progress}
+          />
+        )}
+        {currentTab === "dungeon" && <DungenApp back={back} />}
       </div>
     </div>
   );

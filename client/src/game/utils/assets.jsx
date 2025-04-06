@@ -6,7 +6,6 @@ export const gemColors = {
   rainbow: "/gem/gem_rainbow.png",
   white: "/gem/gem_white.png",
   yellow: "/gem/gem_yellow.png",
-  scanner: "/gem/scanner.png",
 };
 
 export const mapSkins = {
@@ -41,31 +40,28 @@ export const icons = {
   snow: "/icon/icon_snow.png",
   forest: "/icon/icon_forest.png",
   cave: "/icon/icon_cave.png",
+  random: "/icon/icon_random.png",
 };
 
-export const smoke = "/smoke.png";
-export const cloud = "/cloud.png";
-
-const movement = [0, 128];
-const explode = [128 * 2, 128 * 3];
-const pickUpGolden = [128 * 4, 128 * 5, 128 * 6];
-const pickUpGreen = [128 * 7, 128 * 8, 128 * 9];
-const pickUpPink = [128 * 10, 128 * 11, 128 * 12];
-const pickUpBlue = [128 * 13, 128 * 14, 128 * 15];
-const pickUpYellow = [128 * 16, 128 * 17, 128 * 18];
-const pickUpWhite = [128 * 19, 128 * 20, 128 * 21];
-const pickUpScanner = [128 * 22, 128 * 23, 128 * 24];
+export const other = {
+  bomb: "/other/bomb.png",
+  cloud: "/other/cloud.png",
+  gameOver: "/other/game_over.png",
+  portal: "/other/portal.png",
+  scanner: "/other/scanner.png",
+  gameWin: "/other/game_win.png",
+};
 
 export const animation = {
-  movement,
-  explode,
-  pickUpGolden,
-  pickUpGreen,
-  pickUpPink,
-  pickUpBlue,
-  pickUpYellow,
-  pickUpWhite,
-  pickUpScanner,
+  movement: [0, 128],
+  explode: [128 * 2, 128 * 3],
+  pickUpGolden: [128 * 4, 128 * 5, 128 * 6],
+  pickUpGreen: [128 * 7, 128 * 8, 128 * 9],
+  pickUpPink: [128 * 10, 128 * 11, 128 * 12],
+  pickUpBlue: [128 * 13, 128 * 14, 128 * 15],
+  pickUpYellow: [128 * 16, 128 * 17, 128 * 18],
+  pickUpWhite: [128 * 19, 128 * 20, 128 * 21],
+  pickUpScanner: [128 * 22, 128 * 23, 128 * 24],
 };
 
 export const colors = [

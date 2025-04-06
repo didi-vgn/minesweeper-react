@@ -1,19 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { cloud } from "../utils/assets";
+import { other } from "../utils/assets";
 import { useAdventureContext } from "../context/AdventureContext";
 
 export default function Scanner({ x, y }) {
   const { event } = useAdventureContext();
-  const [pos, setPos] = useState(0);
+  const [frameIndex, setFrameIndex] = useState(0);
   const [active, setActive] = useState(false);
 
   const handleAnimationChange = useCallback(() => {
-    const newPos = pos + 256;
-    if (pos >= 1536) {
+    const newIndex = frameIndex + 256;
+    if (newIndex >= 1536) {
       setActive(false);
-      setPos(0);
+      setFrameIndex(0);
     } else {
-      setPos(newPos);
+      setFrameIndex(newIndex);
     }
   });
 
@@ -33,7 +33,7 @@ export default function Scanner({ x, y }) {
   const spriteStyle = {
     height: "256px",
     width: "1536px",
-    backgroundImage: `url(${cloud})`,
+    backgroundImage: `url(${other.cloud})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "contain",
   };
@@ -43,20 +43,18 @@ export default function Scanner({ x, y }) {
     width: "256px",
     overflow: "hidden",
     position: "absolute",
-    zIndex: 85,
+    zIndex: 95,
     transform: `translateX(${x * 64 - 96}px) translateY(${y * 64 - 96}px)`,
   };
 
   return (
-    <div style={containerStyle}>
-      {true && (
-        <div
-          style={{
-            ...spriteStyle,
-            transform: `translateX(-${pos}px)`,
-          }}
-        ></div>
-      )}
+    <div className={!active ? "hidden" : ""} style={containerStyle}>
+      <div
+        style={{
+          ...spriteStyle,
+          transform: `translateX(-${frameIndex}px)`,
+        }}
+      ></div>
     </div>
   );
 }

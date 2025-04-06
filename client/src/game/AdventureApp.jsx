@@ -14,6 +14,7 @@ import Overlay from "./components/Overlay";
 import { countBombsScanned } from "./logic/countBombsScanned";
 import NewAchievementToast from "./components/NewAchievementToast";
 import { toast } from "react-toastify";
+import { gemColors, other } from "./utils/assets";
 
 export default function AdventureApp({ onClick, progress }) {
   const { user, token } = useAuthContext();
@@ -31,11 +32,12 @@ export default function AdventureApp({ onClick, progress }) {
   }
 
   function calculateScore(time) {
+    const levelData = adventureLevels[gameState.level - 1];
+    const { gems, level } = gameState;
+
     return Math.floor(
-      ((gameState.gems * 100) / (1 + Math.log(time))) *
-        ((adventureLevels[gameState.level - 1].width +
-          adventureLevels[gameState.level - 1].bombs) /
-          20)
+      (gems * 150 * (1 + level * 0.05) * (1 + levelData.bombs / 100)) /
+        (1 + Math.log(time + 1))
     );
   }
 
@@ -99,18 +101,18 @@ export default function AdventureApp({ onClick, progress }) {
     const currScore = calculateScore(time);
     setGameState((prev) => ({ ...prev, score: currScore }));
 
-    const existingGameIndex = progress.findIndex(
-      (level) => level.levelId === gameState.level
-    );
+    // const existingGameIndex = progress.findIndex(
+    //   (level) => level.levelId === gameState.level
+    // );
 
-    if (
-      existingGameIndex >= 0 &&
-      (gameState.gems < progress[existingGameIndex].collectedGems ||
-        (gameState.gems === progress[existingGameIndex].collectedGems &&
-          gameState.score < progress[existingGameIndex].points))
-    ) {
-      return;
-    }
+    // if (
+    //   existingGameIndex >= 0 &&
+    //   (gameState.gems < progress[existingGameIndex].collectedGems ||
+    //     (gameState.gems === progress[existingGameIndex].collectedGems &&
+    //       gameState.score < progress[existingGameIndex].points))
+    // ) {
+    //   return;
+    // }
     const gameData = {
       levelId: gameState.level,
       collectedGems: gameState.gems,
@@ -121,7 +123,7 @@ export default function AdventureApp({ onClick, progress }) {
   }
 
   return (
-    <div className='flex flex-col items-center gap-3 mt-5'>
+    <div className='flex flex-col items-center gap-3 mt-5 scale-125 mt-20 img-crisp'>
       <div className='relative'>
         <Overlay>
           <div className='flex justify-between items-center bg-[rgba(0,0,0,0.3)] pt-2 pb-2'>
@@ -133,7 +135,7 @@ export default function AdventureApp({ onClick, progress }) {
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
               {gameState.gems}
-              <img src='/gem/gem_rainbow.png' alt='' className='size-10' />
+              <img src={gemColors.rainbow} alt='' className='size-10' />
             </div>
             <div className='text-3xl font-outline'>
               <Stopwatch
@@ -144,7 +146,7 @@ export default function AdventureApp({ onClick, progress }) {
             </div>
             <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
               {gameState.scanners}
-              <img src='/gem/scanner.png' alt='' className='size-10' />
+              <img src={other.scanner} alt='' className='size-10' />
             </div>
             <div
               className='flex justify-center items-center size-12 bg-gray-100 text-2xl rounded-l-xl hover:bg-gray-200 cursor-pointer'

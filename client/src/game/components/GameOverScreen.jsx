@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 
 export default function GameOverScreen() {
-  const [pos, setPos] = useState(0);
+  const [frameIndex, setFrameIndex] = useState(0);
 
   const handleImageChange = useCallback(() => {
-    const newPos = pos + 512;
-    setPos(newPos === 1536 ? 0 : newPos);
-  }, [pos]);
+    const newIndex = frameIndex + 512;
+    setFrameIndex(newIndex === 1536 ? 0 : newIndex);
+  }, [frameIndex]);
 
   useEffect(() => {
     const interval = setInterval(handleImageChange, 500);
@@ -14,38 +14,13 @@ export default function GameOverScreen() {
   }, [handleImageChange]);
 
   return (
-    <div style={overlayStyle}>
-      <div style={containerStyle}>
+    <div className='absolute top-0 left-0 w-full h-full flex justify-center items-center bg-[rgba(0,0,0,0.5)] z-30'>
+      <div className='overflow-hidden w-[512px] h-[512px]'>
         <div
-          style={{ ...gameOverStyle, transform: `translateX(-${pos}px)` }}
+          className='w-[1536px] h-[512px] bg-[url(/other/game_over.png)] mt-15'
+          style={{ transform: `translateX(-${frameIndex}px)` }}
         ></div>
       </div>
     </div>
   );
 }
-
-const overlayStyle = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 30,
-};
-
-const gameOverStyle = {
-  marginTop: 30,
-  height: "512px",
-  width: "1536px",
-  backgroundImage: `url("/game_over.png")`,
-  backgroundRepeat: "no-repeat",
-};
-const containerStyle = {
-  height: "512px",
-  width: "512px",
-  overflow: "hidden",
-};

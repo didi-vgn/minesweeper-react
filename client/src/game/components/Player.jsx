@@ -14,15 +14,6 @@ export default function Player() {
     backgroundRepeat: "no-repeat",
   };
 
-  const containerStyle = {
-    height: "256px",
-    width: "128px",
-    overflow: "hidden",
-    position: "absolute",
-    zIndex: 99,
-    transform: "scale(0.5) translateX(-64px) translateY(-384px)",
-  };
-
   const handleSpriteChange = useCallback(() => {
     const newFrameIndex = frameIndex + 128;
     if (currentAnimation.includes(newFrameIndex)) {
@@ -72,7 +63,7 @@ export default function Player() {
   }, [event]);
 
   return (
-    <div style={containerStyle}>
+    <div className='w-[128px] h-[256px] overflow-hidden absolute z-94  bottom-0 left-0 origin-bottom-left scale-50'>
       <div
         style={{
           ...spriteStyle,

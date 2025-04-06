@@ -1,37 +1,9 @@
-export const adventureLevels = [
-  { id: 1, width: 30, bombs: 15, gems: 5, scanners: 2 },
-  { id: 2, width: 35, bombs: 20, gems: 6, scanners: 3 },
-  { id: 3, width: 40, bombs: 25, gems: 7, scanners: 3 },
-  { id: 4, width: 45, bombs: 30, gems: 8, scanners: 3 },
-  { id: 5, width: 50, bombs: 35, gems: 9, scanners: 4 },
-  { id: 6, width: 55, bombs: 42, gems: 10, scanners: 4 },
-  { id: 7, width: 60, bombs: 50, gems: 11, scanners: 4 },
-  { id: 8, width: 65, bombs: 58, gems: 12, scanners: 5 },
-  { id: 9, width: 70, bombs: 66, gems: 13, scanners: 5 },
-  { id: 10, width: 75, bombs: 75, gems: 14, scanners: 6 },
-  { id: 11, width: 80, bombs: 82, gems: 15, scanners: 6 },
-  { id: 12, width: 85, bombs: 90, gems: 16, scanners: 6 },
-  { id: 13, width: 90, bombs: 98, gems: 17, scanners: 7 },
-  { id: 14, width: 95, bombs: 105, gems: 18, scanners: 7 },
-  { id: 15, width: 100, bombs: 112, gems: 19, scanners: 7 },
-  { id: 16, width: 100, bombs: 118, gems: 20, scanners: 8 },
-  { id: 17, width: 105, bombs: 125, gems: 21, scanners: 8 },
-  { id: 18, width: 110, bombs: 130, gems: 22, scanners: 8 },
-  { id: 19, width: 115, bombs: 135, gems: 23, scanners: 9 },
-  { id: 20, width: 120, bombs: 140, gems: 24, scanners: 9 },
-  { id: 21, width: 120, bombs: 145, gems: 25, scanners: 9 },
-  { id: 22, width: 125, bombs: 150, gems: 26, scanners: 10 },
-  { id: 23, width: 130, bombs: 155, gems: 27, scanners: 10 },
-  { id: 24, width: 135, bombs: 160, gems: 28, scanners: 10 },
-  { id: 25, width: 140, bombs: 165, gems: 30, scanners: 11 },
-  { id: 26, width: 140, bombs: 170, gems: 32, scanners: 11 },
-  { id: 27, width: 145, bombs: 175, gems: 34, scanners: 11 },
-  { id: 28, width: 150, bombs: 180, gems: 36, scanners: 12 },
-  { id: 29, width: 150, bombs: 185, gems: 38, scanners: 12 },
-  { id: 30, width: 155, bombs: 190, gems: 40, scanners: 12 },
-  { id: 31, width: 160, bombs: 195, gems: 42, scanners: 13 },
-  { id: 32, width: 160, bombs: 200, gems: 44, scanners: 13 },
-  { id: 33, width: 165, bombs: 205, gems: 46, scanners: 13 },
-  { id: 34, width: 170, bombs: 210, gems: 48, scanners: 14 },
-  { id: 35, width: 175, bombs: 220, gems: 50, scanners: 15 },
-];
+export const adventureLevels = Array.from({ length: 50 }, (_, i) => {
+  const id = i + 1;
+  const width = 26 + 4 * id;
+  const bombs = Math.floor(width * 9 * (0.05 + id / 500));
+  const gems = Math.floor(width * 9 * 0.02);
+  const scanners = Math.floor(width * 9 * 0.01);
+
+  return { id, width, bombs, gems, scanners };
+});

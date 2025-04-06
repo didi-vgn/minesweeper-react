@@ -1,65 +1,47 @@
 import { useAdventureContext } from "../context/AdventureContext";
 import { TiWarningOutline } from "react-icons/ti";
-import { gemColors, colors } from "../utils/assets";
+import { gemColors, colors, other } from "../utils/assets";
 import Player from "./Player";
 import React from "react";
 
 const AdvCell = React.memo(({ cell, player }) => {
   const { preferences } = useAdventureContext();
-
   return (
-    <div>
+    <div className='relative'>
       <div className='w-[64px] h-[64px]'>
-        {(cell.value === -2 && <div className='w-full h-full'></div>) ||
-          (cell.clicked && (
-            <div className='relative'>
-              <img
-                src={preferences.mapSkin?.tile}
-                alt='tile'
-                className='w-full h-full'
-              />
-              {(cell.value >= 0 &&
-                ((cell.portal && (
-                  <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl'>
-                    ✳️
-                  </div>
-                )) ||
-                  (cell.gem && (
-                    <img
-                      src={gemColors[cell.gem]}
-                      alt=''
-                      className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
-                    />
-                  )) ||
-                  (cell.scanner && (
-                    <img
-                      src={gemColors["scanner"]}
-                      alt=''
-                      className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
-                    />
-                  )) || (
-                    <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl font-outline-black'>
-                      <div className={`${colors[cell.value]}`}>
-                        {cell.value === 0 ? "" : cell.value}
-                      </div>
-                    </div>
-                  ))) ||
-                (cell.value === -1 && (
-                  <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl'>
-                    💣
-                  </div>
-                ))}
-            </div>
-          )) || (
-            <div className='relative'>
-              <img src={preferences.mapSkin?.cover} alt='' />
-              {cell.scanned && cell.value === -1 && (
-                <div className='absolute top-[0.5px] left-[0.5px] z-90 text-slate-900 text-[60px] font-outline'>
-                  <TiWarningOutline />
+        {cell.value === -2 ? (
+          ""
+        ) : cell.clicked ? (
+          <div>
+            <img src={preferences.mapSkin.tile} alt='' />
+            <div className='absolute bottom-0 left-0 text-4xl w-full h-full flex justify-center items-center'>
+              {cell.gem ? (
+                <img src={gemColors[cell.gem]} alt='' className='' />
+              ) : cell.scanner ? (
+                <img src={other.scanner} alt='' />
+              ) : cell.portal ? (
+                <img src={other.portal} alt='' />
+              ) : cell.value > 0 ? (
+                <div className={`${colors[cell.value]} font-outline-black`}>
+                  {cell.value}
                 </div>
+              ) : cell.value === -1 ? (
+                <img src={other.bomb} alt='' />
+              ) : (
+                ""
               )}
             </div>
-          )}
+          </div>
+        ) : (
+          <div>
+            <img src={preferences.mapSkin.cover} alt='' />
+            {cell.scanned && (
+              <div className='absolute bottom-0 left-0 text-4xl w-full h-full flex justify-center items-center font-outline'>
+                <TiWarningOutline />
+              </div>
+            )}
+          </div>
+        )}
       </div>
       {player && <Player />}
     </div>

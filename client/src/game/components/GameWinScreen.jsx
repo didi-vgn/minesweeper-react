@@ -3,14 +3,14 @@ import { useAdventureContext } from "../context/AdventureContext";
 import { useInterval } from "../hooks/useInterval";
 
 export default function GameWinScreen() {
-  const [pos, setPos] = useState(0);
+  const [frameIndex, setFrameIndex] = useState(0);
   const { gameState } = useAdventureContext();
   const [points, setPoints] = useState(0);
 
   const handleImageChange = useCallback(() => {
-    const newPos = pos + 512;
-    setPos(newPos === 1536 ? 0 : newPos);
-  }, [pos]);
+    const newIndex = frameIndex + 512;
+    setFrameIndex(newIndex === 1536 ? 0 : newIndex);
+  }, [frameIndex]);
 
   useEffect(() => {
     const interval = setInterval(handleImageChange, 300);
@@ -29,10 +29,11 @@ export default function GameWinScreen() {
   );
 
   return (
-    <div style={overlayStyle}>
-      <div style={containerStyle}>
+    <div className='absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-[rgba(0,0,0,0.5)] z-30'>
+      <div className='overflow-hidden w-[512px] h-[512px]'>
         <div
-          style={{ ...gameOverStyle, transform: `translateX(-${pos}px)` }}
+          className='w-[1536px] h-[512px] bg-[url(/other/game_win.png)] mt-15'
+          style={{ transform: `translateX(-${frameIndex}px)` }}
         ></div>
       </div>
       <div className='text-6xl text-slate-100 translate-y-[-10rem]'>
@@ -41,29 +42,3 @@ export default function GameWinScreen() {
     </div>
   );
 }
-
-const overlayStyle = {
-  position: "absolute",
-  top: 0,
-  left: 0,
-  width: "100%",
-  height: "100%",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  backgroundColor: "rgba(0, 0, 0, 0.5)",
-  zIndex: 30,
-};
-
-const gameOverStyle = {
-  marginTop: 30,
-  height: "512px",
-  width: "1536px",
-  backgroundImage: `url("/game_win.png")`,
-  backgroundRepeat: "no-repeat",
-};
-const containerStyle = {
-  height: "512px",
-  width: "512px",
-  overflow: "hidden",
-};

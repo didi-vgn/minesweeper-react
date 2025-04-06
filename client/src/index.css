@@ -34,32 +34,48 @@
   overflow: hidden;
 }
 
+.background-forest {
+  background-image: url("/map/lake.png");
+}
+.background-cave {
+  background-image: url("/map/lava.png");
+}
+.background-snow {
+  background-image: url("/map/ocean.png");
+}
+.background-s {
+  background-size: 5%;
+}
+.background-l {
+  background-size: 15%;
+}
+
 .board {
   transition: transform 0.3s ease-in-out;
   width: max-content;
 }
 
+.img-crisp {
+  image-rendering: crisp-edges;
+  /* image-rendering: pixelated; */
+}
+
 .game-container-zoomed-out {
-  position: fixed;
   image-rendering: crisp-edges;
   transform: scale(0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 80;
+  height: 48rem;
+  width: 112rem;
+  /* z-index: 80; */
 }
 
 .game-container-zoomed-in {
-  position: fixed;
   overflow: hidden;
   width: 112rem;
   height: 48rem;
-  border: 2px;
-}
-
-.hidden {
-  display: none;
 }
 
 .font-outline {

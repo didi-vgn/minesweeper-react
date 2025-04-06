@@ -1,5 +1,4 @@
 import { useGameContext } from "./context/GameContext";
-import { RiResetLeftLine } from "react-icons/ri";
 import { FaStar } from "react-icons/fa";
 import Stopwatch from "./components/Stopwatch";
 import { useState } from "react";
@@ -12,8 +11,9 @@ import {
 import { calculateDifficulty } from "./logic/calculateDifficulty";
 import { boardToArray } from "./utils/boardToArray";
 import { useAuthContext } from "../context/AuthContext";
+import { FaArrowRotateRight } from "react-icons/fa6";
 
-export default function GameApp() {
+export default function ClassicApp({ back }) {
   const { token } = useAuthContext();
   const { gameState, resetGame, config, setConfig } = useGameContext();
   const [resetTrigger, setResetTrigger] = useState(0);
@@ -61,37 +61,54 @@ export default function GameApp() {
   }
 
   return (
-    <div>
-      <div className='custom-border bg-gray-300 p-3 grid grid-cols-4 gap-2 text-center'>
-        <div className='custom-border-rev bg-white flex items-center justify-center gap-2'>
-          {gameState.bombsLeft} <FaStar />
-        </div>
-        <div className='custom-border-rev bg-white flex justify-center items-center'>
-          <Stopwatch
-            status={gameState.status}
-            resetTrigger={resetTrigger}
-            onWin={uploadGame}
-          />
-        </div>
-        <select
-          name='gameMode'
-          id='difficulty'
-          defaultValue={"b"}
-          onChange={handleChangeGameMode}
+    <div className='text-xl'>
+      <div className='grid grid-cols-2 mb-10'>
+        <div
+          className='custom-border bg-gray-300 place-self-start w-23 text-center cursor-pointer'
+          onClick={back}
         >
-          <option value='a'>9x9 10 mines</option>
-          <option value='b'>16x16 40 mines</option>
-          <option value='c'>16x30 99 mines</option>
-        </select>
-        <button
+          Back
+        </div>
+        {/* <button
           onClick={handleReset}
-          className='flex justify-center items-center'
+          className='custom-border bg-gray-300 place-self-end cursor-pointer flex justify-center p-1 w-23'
         >
-          <RiResetLeftLine />
-        </button>
+          <FaArrowRotateRight />
+        </button> */}
       </div>
-      <div className='flex flex-col justify-center items-center bg-gray-300 p-1 custom-border'>
-        <BaseGameBoard />
+      <div className='flex flex-col items-center justify-center gap-5'>
+        <div className='grid grid-cols-4 gap-3'>
+          <div className='text-2xl flex items-center justify-center gap-2 place-self-end'>
+            {gameState.bombsLeft} <FaStar />
+          </div>
+          <div className='text-3xl mx-auto'>
+            <Stopwatch
+              status={gameState.status}
+              resetTrigger={resetTrigger}
+              onWin={uploadGame}
+            />
+          </div>
+          <select
+            name='gameMode'
+            id='difficulty'
+            defaultValue={"b"}
+            onChange={handleChangeGameMode}
+            className='text-2xl bg-gray-300 custom-border'
+          >
+            <option value='a'>9x9 10 mines</option>
+            <option value='b'>16x16 40 mines</option>
+            <option value='c'>16x30 99 mines</option>
+          </select>
+          <button
+            onClick={handleReset}
+            className='custom-border bg-gray-300 cursor-pointer flex justify-center p-1 place-self-start'
+          >
+            <FaArrowRotateRight />
+          </button>
+        </div>
+        <div className='bg-gray-300 p-1 custom-border'>
+          <BaseGameBoard />
+        </div>
       </div>
     </div>
   );

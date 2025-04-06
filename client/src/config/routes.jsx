@@ -1,4 +1,3 @@
-import Play from "../views/Play.jsx";
 import Leaderboard from "../views/Leaderboard.jsx";
 import LogIn from "../views/LogIn.jsx";
 import SignUp from "../views/SignUp.jsx";
@@ -17,8 +16,8 @@ import MinesweeperGames from "../views/admin/MinesweeperGames.jsx";
 import SettingsNickname from "../views/profile/SettingsNickname.jsx";
 import SettingsPassword from "../views/profile/SettingsPassword.jsx";
 import SettingsDeleteAccount from "../views/profile/SettingsDeleteAccount.jsx";
-import Adventure from "../views/adventure/Adventure.jsx";
 import Sandbox from "../views/Sandbox.jsx";
+import Game from "../views/game/Game.jsx";
 
 const router = [
   {
@@ -28,7 +27,8 @@ const router = [
     children: [
       {
         index: true,
-        element: <Play />,
+        path: "/",
+        element: <Game />,
       },
       {
         path: "profile",
@@ -88,10 +88,7 @@ const router = [
         path: "leaderboard",
         element: <Leaderboard />,
       },
-      {
-        path: "adventure",
-        element: <Adventure />,
-      },
+
       { path: "sandbox", element: <Sandbox /> },
       {
         path: "login",

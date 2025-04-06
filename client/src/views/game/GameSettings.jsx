@@ -5,7 +5,7 @@ import PrettyTitle from "../../game/components/PrettyTitle";
 import { icons } from "../../game/utils/assets";
 import { useState } from "react";
 
-export default function AdventureSettings({ back }) {
+export default function GameSettings({ back }) {
   const { settings, setSettings } = useAdventureContext();
 
   const characters = [
@@ -40,10 +40,10 @@ export default function AdventureSettings({ back }) {
   }
 
   return (
-    <div>
+    <div className='text-xl'>
       <div className='grid grid-cols-3 mb-10'>
         <div
-          className='custom-border bg-gray-300 place-self-start w-17 text-center cursor-pointer'
+          className='custom-border bg-gray-300 place-self-start w-23 text-center cursor-pointer'
           onClick={back}
         >
           Back

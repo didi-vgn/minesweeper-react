@@ -28,7 +28,7 @@ export function AdventureProvider({ children }) {
   const [settings, setSettings] = useState({
     character: "random",
     map: "random",
-    music: 0.3,
+    music: 0,
     sfx: 0.4,
   });
   const [preferences, setPreferences] = useState({
@@ -79,7 +79,7 @@ export function AdventureProvider({ children }) {
           : playerSprites[settings.character],
     });
     setGameState({
-      board: generateDungeonBoard(1, 59, 26),
+      board: generateDungeonBoard(1, 56, 24),
       status: "active",
       gems: 0,
       scanners: 0,
@@ -92,7 +92,7 @@ export function AdventureProvider({ children }) {
   const teleport = () => {
     setGameState((prev) => ({
       ...prev,
-      board: generateDungeonBoard(prev.level + 1, 59, 26),
+      board: generateDungeonBoard(prev.level + 1, 56, 24),
       level: prev.level + 1,
     }));
   };

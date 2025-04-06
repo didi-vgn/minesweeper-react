@@ -22,7 +22,7 @@ export default function ProfileAchievements() {
   }, [user]);
 
   function goToAdventure() {
-    navigate("/adventure");
+    navigate("/");
   }
   return (
     <div className='flex gap-5 flex-wrap w-8/10 m-auto'>
