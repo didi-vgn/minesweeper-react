@@ -1,8 +1,10 @@
+import { Queue } from "../utils/queue";
 import { addNumbers } from "./addNumbers";
 import {
   directions,
-  getWalkableNeighbors,
+  getNeighbors,
   manhattanDistance,
+  posToKey,
   random,
   reconstructPath,
   shuffle,
@@ -24,19 +26,24 @@ export function generateDungeonBoard(depth, width, height) {
       walkable.push({ i, j });
     }
   }
+
   shuffle(walkable);
   const b = Math.floor(walkable.length * (0.06 + 0.02 * depth));
-  const s = Math.floor(walkable.length * 0.01);
+  const s = Math.floor(walkable.length * 0.007);
   const g = Math.floor(walkable.length * 0.02);
+  const chance = Math.random();
+  const h = chance < 0.15 ? 2 : chance < 0.45 ? 1 : 0;
 
-  for (let w = 0; w < b + s + g; w++) {
+  for (let w = 0; w < b + s + g + h; w++) {
     const { i, j } = walkable[w];
     if (w < b) {
       map[i][j].value = -1;
     } else if (w < b + s) {
       map[i][j].scanner = true;
-    } else {
+    } else if (w < b + s + g) {
       map[i][j].gem = colors[random(colors.length)];
+    } else {
+      map[i][j].extraTime = true;
     }
   }
   const { x, y } = randomWalker(map, center, 200);
@@ -78,7 +85,7 @@ function randomWalker(map, start, steps) {
         continue;
       }
 
-      const distance = Math.abs(nx - start.x) + Math.abs(ny - start.y);
+      const distance = manhattanDistance(nx, ny, start.x, start.y);
 
       if (distance > bestDistance || Math.random() < 0.25) {
         bestDistance = distance;
@@ -99,11 +106,6 @@ const generateMap = (width, height) => {
   let map = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => ({
       value: -2,
-      clicked: false,
-      gem: null,
-      scanned: false,
-      scanner: false,
-      portal: false,
     }))
   );
   const center = {
@@ -156,20 +158,21 @@ const generateMap = (width, height) => {
 };
 
 function bfs(start, target, map) {
-  const queue = [start];
+  const queue = new Queue();
+  queue.enqueue(start);
   const cameFrom = new Map();
-  cameFrom.set(`${start.x},${start.y}`, null);
+  cameFrom.set(posToKey(start.x, start.y), null);
 
-  while (queue.length > 0) {
-    const current = queue.shift();
+  while (queue.getLength() > 0) {
+    const current = queue.dequeue();
     if (current.x === target.x && current.y === target.y) {
       return reconstructPath(cameFrom, target);
     }
-    for (let neighbor of getWalkableNeighbors(current, map)) {
-      const key = `${neighbor.x},${neighbor.y}`;
+    for (let neighbor of getNeighbors(current, map)) {
+      const key = posToKey(neighbor.x, neighbor.y);
       if (!cameFrom.has(key)) {
-        cameFrom.set(key, `${current.x},${current.y}`);
-        queue.push(neighbor);
+        cameFrom.set(key, posToKey(current.x, current.y));
+        queue.enqueue(neighbor);
       }
     }
   }
@@ -177,12 +180,15 @@ function bfs(start, target, map) {
 }
 
 function expandIsland(map, island, expansionSize) {
-  let frontier = [island];
-  let expanded = new Set([`${island.x},${island.y}`]);
+  const frontier = [island];
+  const expanded = new Set([posToKey(island.x, island.y)]);
 
   while (expansionSize > 0 && frontier.length > 0) {
-    let index = random(frontier.length);
-    let { x, y } = frontier.splice(index, 1)[0];
+    const index = random(frontier.length);
+    const selected = frontier[index];
+    frontier[index] = frontier[frontier.length - 1];
+    frontier.pop();
+    let { x, y } = selected;
 
     for (let [dx, dy] of directions) {
       let nx = x + dx;
@@ -194,12 +200,12 @@ function expandIsland(map, island, expansionSize) {
         ny >= map.length ||
         nx >= map[0].length ||
         map[ny][nx].value === 0 ||
-        expanded.has(`${nx},${ny}`)
+        expanded.has(posToKey(nx, ny))
       ) {
         continue;
       }
       map[ny][nx].value = 0;
-      expanded.add(`${nx},${ny}`);
+      expanded.add(posToKey(nx, ny));
       frontier.push({ x: nx, y: ny });
       expansionSize--;
     }

@@ -18,9 +18,14 @@ router.delete(
   achievementController.deleteAchievement
 );
 router.put(
-  "/",
+  "/adventure",
   authenticateToken,
-  achievementController.upsertStatsAndUnlockAchievements
+  achievementController.upsertStatsAndUnlockAchievementsAdv
+);
+router.put(
+  "/dungeon",
+  authenticateToken,
+  achievementController.upsertStatsAndUnlockAchievementsDun
 );
 router.get("/user/:userId", achievementController.findAchievementsByUserId);
 

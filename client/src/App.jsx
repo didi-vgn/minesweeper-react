@@ -15,7 +15,7 @@ function App() {
           <CustomNavLink path='leaderboard' text='Leaderboard' />
           <CustomNavLink path='/' text='Play' />
           <CustomNavLink path='profile' text='Profile' />
-          <CustomNavLink path='sandbox' text='Sandbox' />
+          <CustomNavLink path='credits' text='Credits' />
         </ul>
       </nav>
       <div>

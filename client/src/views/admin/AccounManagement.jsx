@@ -99,7 +99,7 @@ function AccountInfo({ user, refresh }) {
   return (
     <div>
       <div
-        className='grid grid-cols-[2fr_1fr_1fr_1fr] items-center my-1 bg-white p-1 shadow-sm cursor-pointer'
+        className='grid grid-cols-[2fr_1fr_1fr_1fr] items-center mt-1 bg-white p-1 shadow-sm cursor-pointer'
         onClick={expandInfo}
       >
         <div>{user.id}</div>
@@ -113,7 +113,7 @@ function AccountInfo({ user, refresh }) {
         </div>
       </div>
       {expand && (
-        <div className='grid grid-cols-2 bg-white shadow-sm p-5'>
+        <div className='grid grid-cols-2 bg-white p-5'>
           <div>
             <FormProvider {...methods}>
               <form onSubmit={onSubmit}>

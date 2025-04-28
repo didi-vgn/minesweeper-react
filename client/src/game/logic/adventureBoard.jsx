@@ -13,13 +13,10 @@ export const generateAdventureBoard = (
     Array.from({ length: width }, () => ({
       value: 0,
       clicked: false,
-      gem: null,
-      scanned: false,
-      scanner: false,
     }))
   );
 
-  const i = random(height - 2) + 1;
+  const i = random(height);
   const j = width - random(5) - 1;
   board[i][j].gem = "golden";
 
@@ -32,7 +29,7 @@ export const generateAdventureBoard = (
     [5, 1],
     [i, j],
   ]);
-  addItems(board, scanners, gems);
+  addItems(board, scanners, gems - 1);
   addNumbers(board);
   return board;
 };
@@ -46,7 +43,7 @@ const addItems = (board, scanners, gems) => {
   const scannersAvailablePos = [];
   const remainingAvailablePos = [];
 
-  for (let i = 1; i < height - 1; i++) {
+  for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
       if (i === 4 && j === 0) continue;
       if (board[i][j].value === -1 || board[i][j].gem === "golden") continue;
@@ -60,15 +57,13 @@ const addItems = (board, scanners, gems) => {
   }
 
   shuffle(scannersAvailablePos);
+
   for (let s = 0; s < scanners; s++) {
     const { i, j } = scannersAvailablePos.pop();
     board[i][j].scanner = true;
   }
 
-  let gemsAvailablePos = [
-    ...shuffle(scannersAvailablePos),
-    ...shuffle(remainingAvailablePos),
-  ];
+  let gemsAvailablePos = [...scannersAvailablePos, ...remainingAvailablePos];
   shuffle(gemsAvailablePos);
   for (let g = 0; g < gems; g++) {
     const { i, j } = gemsAvailablePos.pop();

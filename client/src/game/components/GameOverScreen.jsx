@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function GameOverScreen() {
   const [frameIndex, setFrameIndex] = useState(0);
 
-  const handleImageChange = useCallback(() => {
+  const handleImageChange = () => {
     const newIndex = frameIndex + 512;
     setFrameIndex(newIndex === 1536 ? 0 : newIndex);
-  }, [frameIndex]);
+  };
 
   useEffect(() => {
     const interval = setInterval(handleImageChange, 500);

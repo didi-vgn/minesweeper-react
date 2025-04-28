@@ -1,11 +1,9 @@
-import { useAdventureContext } from "../context/AdventureContext";
 import { TiWarningOutline } from "react-icons/ti";
 import { gemColors, colors, other } from "../utils/assets";
 import Player from "./Player";
 import React from "react";
 
-const AdvCell = React.memo(({ cell, player }) => {
-  const { preferences } = useAdventureContext();
+const AdvCell = ({ cell, player, preferences }) => {
   return (
     <div className='relative'>
       <div className='w-[64px] h-[64px]'>
@@ -21,6 +19,8 @@ const AdvCell = React.memo(({ cell, player }) => {
                 <img src={other.scanner} alt='' />
               ) : cell.portal ? (
                 <img src={other.portal} alt='' />
+              ) : cell.extraTime ? (
+                <img src={other.hourglassIcon} alt='' />
               ) : cell.value > 0 ? (
                 <div className={`${colors[cell.value]} font-outline-black`}>
                   {cell.value}
@@ -43,8 +43,26 @@ const AdvCell = React.memo(({ cell, player }) => {
           </div>
         )}
       </div>
-      {player && <Player />}
+      {player && <Player helper={cell.portal ? "press E" : ""} />}
     </div>
   );
-});
-export default AdvCell;
+};
+
+function areEqual(prevProps, nextProps) {
+  const prevCell = prevProps.cell;
+  const nextCell = nextProps.cell;
+
+  return (
+    prevCell.value === nextCell.value &&
+    prevCell.clicked === nextCell.clicked &&
+    prevCell.gem === nextCell.gem &&
+    prevCell.scanner === nextCell.scanner &&
+    prevCell.portal === nextCell.portal &&
+    prevCell.extraTime === nextCell.extraTime &&
+    prevCell.scanned === nextCell.scanned &&
+    prevProps.player === nextProps.player &&
+    prevProps.preferences.mapSkin.tile === nextProps.preferences.mapSkin.tile &&
+    prevProps.preferences.mapSkin.cover === nextProps.preferences.mapSkin.cover
+  );
+}
+export default React.memo(AdvCell, areEqual);

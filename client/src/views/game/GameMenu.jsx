@@ -1,4 +1,4 @@
-import PrettyTitle from "../../game/components/PrettyTitle";
+import PrettyTitle from "../../components/PrettyTitle";
 import { playSoundEffect } from "../../game/utils/assets";
 
 export default function GameMenu({

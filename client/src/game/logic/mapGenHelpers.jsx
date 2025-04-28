@@ -5,13 +5,17 @@ export const directions = [
   [-1, 0],
 ];
 
+export const posToKey = (x, y) => `${x}-${y}`;
+export const keyToPos = (key) => {
+  const [x, y] = key.split("-").map(Number);
+  return { x, y };
+};
+
 export function shuffle(arr) {
-  const shuffledArr = [...arr];
   for (let k = arr.length - 1; k > 0; k--) {
     const rand = Math.floor(Math.random() * (k + 1));
     [arr[k], arr[rand]] = [arr[rand], arr[k]];
   }
-  return shuffledArr;
 }
 
 export function manhattanDistance(x1, y1, x2, y2) {
@@ -22,7 +26,7 @@ export function random(x) {
   return Math.floor(Math.random() * x);
 }
 
-export function getWalkableNeighbors(pos, grid) {
+export function getNeighbors(pos, grid) {
   const neighbors = [];
   for (const [dx, dy] of directions) {
     const nx = pos.x + dx;
@@ -36,9 +40,10 @@ export function getWalkableNeighbors(pos, grid) {
 
 export function reconstructPath(cameFrom, target) {
   const path = [];
-  let current = `${target.x},${target.y}`;
-  while (current !== null) {
-    const [x, y] = current.split(",").map(Number);
+  let current = posToKey(target.x, target.y);
+
+  while (current) {
+    const { x, y } = keyToPos(current);
     path.push({ x, y });
     current = cameFrom.get(current);
   }

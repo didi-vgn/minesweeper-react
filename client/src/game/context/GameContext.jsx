@@ -85,12 +85,16 @@ export function GameProvider({ children }) {
     }));
   };
 
+  const actions = {
+    resetGame,
+    handleLeftClick,
+    handleRightClick,
+  };
+
   const contextValue = {
     gameState,
     setGameState,
-    handleLeftClick,
-    handleRightClick,
-    resetGame,
+    actions,
     config,
     setConfig,
   };

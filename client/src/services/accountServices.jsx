@@ -1,4 +1,4 @@
-import { API_HOST } from "../utils/variables";
+import { API_HOST } from "../config/var";
 
 export const getAllUsers = async () => {
   const response = await fetch(`${API_HOST}users`, {

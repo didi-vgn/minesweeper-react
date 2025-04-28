@@ -50,6 +50,8 @@ export const other = {
   portal: "/other/portal.png",
   scanner: "/other/scanner.png",
   gameWin: "/other/game_win.png",
+  hourglass: "/other/hourglass.png",
+  hourglassIcon: "/other/icon_hourglass.png",
 };
 
 export const animation = {

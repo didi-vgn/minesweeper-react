@@ -1,37 +1,32 @@
 import { adjacentCells } from "../utils/variables";
+import { posToKey } from "./mapGenHelpers";
 
 export const calculateDifficulty = (board) => {
   const height = board.length;
   const width = board[0].length;
-
-  let visited = Array.from({ length: height }, () =>
-    Array.from({ length: width }, () => 0)
-  );
+  const visited = new Set();
+  let numericCells = 0;
+  let emptyClusters = 0;
 
   function withinBounds(row, col) {
     return row >= 0 && row < height && col >= 0 && col < width;
   }
 
-  let numericCells = 0;
-  let emptyClusters = 0;
-
   function floodFill(i, j) {
     let stack = [[i, j]];
-    visited[i][j] = 1;
+    visited.add(posToKey(i, j));
 
     while (stack.length > 0) {
       const [i, j] = stack.pop();
-
       adjacentCells.forEach(([row, col]) => {
         const newRow = i + row;
         const newCol = j + col;
-
         if (
           withinBounds(newRow, newCol) &&
-          visited[newRow][newCol] === 0 &&
+          !visited.has(posToKey(newRow, newCol)) &&
           board[newRow][newCol].value === 0
         ) {
-          visited[newRow][newCol] = 1;
+          visited.add(posToKey(newRow, newCol));
           stack.push([newRow, newCol]);
         }
       });
@@ -51,7 +46,7 @@ export const calculateDifficulty = (board) => {
         if (count) {
           numericCells++;
         }
-      } else if (board[i][j].value === 0 && visited[i][j] === 0) {
+      } else if (board[i][j].value === 0 && !visited.has(posToKey(i, j))) {
         emptyClusters++;
         floodFill(i, j);
       }

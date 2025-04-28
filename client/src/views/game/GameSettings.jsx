@@ -1,9 +1,10 @@
 import { MdMusicNote } from "react-icons/md";
 import { MdMusicOff } from "react-icons/md";
 import { useAdventureContext } from "../../game/context/AdventureContext";
-import PrettyTitle from "../../game/components/PrettyTitle";
 import { icons } from "../../game/utils/assets";
 import { useState } from "react";
+import SmallButton from "../../components/SmallButton";
+import PrettyTitle from "../../components/PrettyTitle";
 
 export default function GameSettings({ back }) {
   const { settings, setSettings } = useAdventureContext();
@@ -42,12 +43,7 @@ export default function GameSettings({ back }) {
   return (
     <div className='text-xl'>
       <div className='grid grid-cols-3 mb-10'>
-        <div
-          className='custom-border bg-gray-300 place-self-start w-23 text-center cursor-pointer'
-          onClick={back}
-        >
-          Back
-        </div>
+        <SmallButton onClick={back} text='Back' />
         <div className='text-5xl place-self-center'>
           <PrettyTitle string='Settings' />
         </div>

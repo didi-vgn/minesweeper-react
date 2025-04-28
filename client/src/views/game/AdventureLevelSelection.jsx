@@ -1,26 +1,22 @@
 import { useState } from "react";
 import { useAdventureContext } from "../../game/context/AdventureContext";
 import { adventureLevels } from "../../game/utils/levelsData";
-import PrettyTitle from "../../game/components/PrettyTitle";
 import { colors, playSoundEffect } from "../../game/utils/assets";
+import SmallButton from "../../components/SmallButton";
+import PrettyTitle from "../../components/PrettyTitle";
 
 export default function AdventureLevelSelection({ back, progress, play }) {
-  const { newGame } = useAdventureContext();
+  const { actions } = useAdventureContext();
 
   function selectLevel(levelData) {
-    newGame(levelData);
+    actions.newGame(levelData);
     play();
   }
 
   return (
     <div className='text-xl'>
       <div className='grid grid-cols-3'>
-        <div
-          className='custom-border bg-gray-300 place-self-start w-23 cursor-pointer text-center'
-          onClick={back}
-        >
-          Back
-        </div>
+        <SmallButton onClick={back} text='Back' />
         <div className='text-5xl place-self-center'>
           <PrettyTitle string='Adventure' />
         </div>
@@ -53,8 +49,8 @@ function LevelIcon({ onClick, level, data }) {
   const [hover, setHover] = useState(false);
 
   const style = data
-    ? "custom-border-emerald bg-emerald-500"
-    : "custom-border bg-gray-300";
+    ? "custom-border-lg-lime bg-lime-500 active:border-l-lime-400 active:border-t-lime-400 active:border-r-lime-200 active:border-b-lime-200 active:scale-95"
+    : "custom-border-lg bg-gray-300 active:border-l-gray-400 active:border-t-gray-400 active:border-r-gray-200 active:border-b-gray-200 active:scale-95";
 
   return (
     <div
@@ -66,30 +62,29 @@ function LevelIcon({ onClick, level, data }) {
       }}
       onMouseLeave={() => setHover(false)}
     >
-      {(hover &&
-        ((!data > 0 && (
+      {hover ? (
+        !data ? (
           <div className='flex flex-col gap-1 items-center'>
-            <div className='text-xl font-bold'>Play</div>
+            <div className='text-2xl font-bold'>Play</div>
             <div className='text-sm'>0/{adventureLevels[level - 1].gems} G</div>
           </div>
-        )) || (
+        ) : (
           <div className='flex flex-col items-center'>
-            <div className='text-xl font-bold'>Replay</div>
+            <div className='text-2xl font-bold'>Replay</div>
             <div className='text-sm'>
-              {data.collectedGems}/{adventureLevels[level - 1].gems + 1} G
+              {data.collectedGems}/{adventureLevels[level - 1].gems} G
             </div>
             <div className='text-sm'>{data.points} P</div>
           </div>
-        ))) || (
-        <>
-          <div
-            className={`text-4xl font-outline-black ${
-              colors[((level - 1) % 8) + 1]
-            }`}
-          >
-            {level}
-          </div>
-        </>
+        )
+      ) : (
+        <div
+          className={`text-5xl font-outline-black ${
+            colors[((level - 1) % 8) + 1]
+          }`}
+        >
+          {level}
+        </div>
       )}
     </div>
   );

@@ -1,13 +1,13 @@
-import { API_HOST } from "../utils/variables";
+import { API_HOST } from "../config/var";
 
-export const getGameScores = async (
-  gameMode,
+export const getClassicGameScores = async (
+  difficulty,
   nickname,
   sort = "points",
   order = "desc"
 ) => {
   const response = await fetch(
-    `${API_HOST}games?gameMode=${gameMode}&nickname=${nickname}&sort=${sort}&order=${order}`
+    `${API_HOST}games?difficulty=${difficulty}&nickname=${nickname}&sort=${sort}&order=${order}`
   );
   const responseData = await response.json();
   if (!response.ok) {

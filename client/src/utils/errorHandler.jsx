@@ -23,6 +23,8 @@ export default function errorHandler(err) {
     toast.warning("You don't have permission to perform this action.");
   } else if (err.statusCode === 401) {
     toast.warning("Incorrect username or password.");
+  } else if (err.statusCode === 429) {
+    toast.warning("Too many requests. Please try again later.");
   } else if (err.statusCode === 500) {
     switch (err.errorCode) {
       case "DATABASE_ERROR":

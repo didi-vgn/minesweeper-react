@@ -1,9 +1,9 @@
 import { createContext, useContext, useState } from "react";
-import { generateAdventureBoard } from "../logic/campaignBoard";
 import { leftClick } from "../logic/click";
 import { mapSkins, playerSprites, playSoundEffect } from "../utils/assets";
 import { adjacentCells } from "../utils/variables";
 import { generateDungeonBoard } from "../logic/dungeonBoard";
+import { generateAdventureBoard } from "../logic/adventureBoard";
 
 const AdventureContext = createContext(null);
 
@@ -24,12 +24,14 @@ export function AdventureProvider({ children }) {
     scanners: 0,
     level: 0,
     score: 0,
+    bombsScanned: 0,
+    scannersUsed: false,
   });
   const [settings, setSettings] = useState({
     character: "random",
     map: "random",
     music: 0,
-    sfx: 0.4,
+    sfx: 0.1,
   });
   const [preferences, setPreferences] = useState({
     mapSkin: null,
@@ -52,7 +54,7 @@ export function AdventureProvider({ children }) {
     setGameState({
       board: generateAdventureBoard(
         levelData.width,
-        9,
+        10,
         levelData.bombs,
         levelData.gems,
         levelData.scanners
@@ -62,11 +64,12 @@ export function AdventureProvider({ children }) {
       scanners: 0,
       level: levelData.id,
       score: 0,
+      bombsScanned: 0,
+      scannersUsed: false,
     });
     triggerEvent("base");
   };
 
-  ////test
   const newDungeon = () => {
     setPreferences({
       mapSkin:
@@ -85,6 +88,8 @@ export function AdventureProvider({ children }) {
       scanners: 0,
       level: 1,
       score: 0,
+      bombsScanned: 0,
+      scannersUsed: false,
     });
     triggerEvent("base");
   };
@@ -106,7 +111,8 @@ export function AdventureProvider({ children }) {
     if (
       gameState.board[i][j].clicked &&
       !gameState.board[i][j].gem &&
-      !gameState.board[i][j].scanner
+      !gameState.board[i][j].scanner &&
+      !gameState.board[i][j].extraTime
     )
       return;
     !gameState.board[i][j].clicked &&
@@ -138,6 +144,10 @@ export function AdventureProvider({ children }) {
       playSoundEffect("collectGem", settings.sfx);
       newBoard[i][j].scanner = false;
       newState.scanners = 1;
+    } else if (newBoard[i][j].extraTime) {
+      triggerEvent("extraTime");
+      playSoundEffect("collectGem", settings.sfx);
+      newBoard[i][j].extraTime = false;
     } else if (newBoard[i][j].value === -1) {
       triggerEvent("bomb");
       playSoundEffect("bomb", settings.sfx);
@@ -156,35 +166,46 @@ export function AdventureProvider({ children }) {
   const scan = (i, j) => {
     playSoundEffect("smoke", settings.sfx);
     triggerEvent("scan");
-    setGameState((prev) => ({
-      ...prev,
-      scanners: prev.scanners - 1,
-    }));
-
     setTimeout(() => {
-      const newBoard = gameState.board.map((row) =>
-        row.map((cell) => ({ ...cell }))
-      );
-      const height = gameState.board.length;
-      const width = gameState.board[0].length;
-      adjacentCells.forEach(([r, c]) => {
-        const newRow = r + i;
-        const newCol = c + j;
-        if (
-          newRow >= 0 &&
-          newRow < height &&
-          newCol >= 0 &&
-          newCol < width &&
-          newBoard[newRow][newCol].value === -1
-        ) {
-          newBoard[newRow][newCol].scanned = true;
-        }
+      setGameState((prev) => {
+        const newBoard = prev.board.map((row) =>
+          row.map((cell) => ({ ...cell }))
+        );
+        let newBombsScanned = 0;
+        const height = prev.board.length;
+        const width = prev.board[0].length;
+        adjacentCells.forEach(([r, c]) => {
+          const newRow = r + i;
+          const newCol = c + j;
+          if (
+            newRow >= 0 &&
+            newRow < height &&
+            newCol >= 0 &&
+            newCol < width &&
+            newBoard[newRow][newCol].value === -1 &&
+            !newBoard[newRow][newCol].scanned
+          ) {
+            newBoard[newRow][newCol].scanned = true;
+            newBombsScanned++;
+          }
+        });
+        return {
+          ...prev,
+          board: newBoard,
+          scanners: prev.scanners - 1,
+          bombsScanned: prev.bombsScanned + newBombsScanned,
+          scannersUsed: true,
+        };
       });
-      setGameState((prev) => ({
-        ...prev,
-        board: newBoard,
-      }));
     }, 500);
+  };
+
+  const actions = {
+    newGame,
+    newDungeon,
+    teleport,
+    movePlayer,
+    scan,
   };
 
   const contextValue = {
@@ -192,13 +213,9 @@ export function AdventureProvider({ children }) {
     setGameState,
     preferences,
     settings,
-    event,
     setSettings,
-    newGame,
-    movePlayer,
-    scan,
-    newDungeon,
-    teleport,
+    event,
+    actions,
   };
 
   return (

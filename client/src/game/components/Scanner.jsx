@@ -28,7 +28,7 @@ export default function Scanner({ x, y }) {
     if (event === "scan" && !active) {
       setActive(true);
     }
-  }, [[event, x, y, active]]);
+  }, [[event, active]]);
 
   const spriteStyle = {
     height: "256px",
@@ -39,16 +39,18 @@ export default function Scanner({ x, y }) {
   };
 
   const containerStyle = {
-    height: "256px",
-    width: "256px",
-    overflow: "hidden",
-    position: "absolute",
-    zIndex: 95,
-    transform: `translateX(${x * 64 - 96}px) translateY(${y * 64 - 96}px)`,
+    transform: `translateX(${x * 64}px) translateY(${
+      y * 64
+    }px) translate(-38%, -38%)`,
   };
 
   return (
-    <div className={!active ? "hidden" : ""} style={containerStyle}>
+    <div
+      className={`${
+        !active ? "hidden" : ""
+      } w-[256px] h-[256px] overflow-hidden absolute z-95`}
+      style={containerStyle}
+    >
       <div
         style={{
           ...spriteStyle,

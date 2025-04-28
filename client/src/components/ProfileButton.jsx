@@ -10,21 +10,12 @@ export default function ProfileButton() {
   return (
     <Dropdown
       text={
-        user ? (
-          <div className='flex items-center gap-1'>
-            <div className='text-emerald-600'>
-              <PiFinnTheHumanDuotone />
-            </div>
-            {user.nickname}
+        <div className='flex items-center gap-1'>
+          <div className={`${user ? "text-emerald-600" : "text-red-600"}`}>
+            <PiFinnTheHumanDuotone />
           </div>
-        ) : (
-          <div className='flex items-center gap-1'>
-            <div className='text-red-600'>
-              <PiFinnTheHumanDuotone />
-            </div>
-            Not authenticated
-          </div>
-        )
+          {user?.nickname || "guest"}
+        </div>
       }
     >
       {user ? (

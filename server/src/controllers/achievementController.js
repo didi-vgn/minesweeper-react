@@ -40,19 +40,50 @@ exports.deleteAchievement = async (req, res, next) => {
   }
 };
 
-exports.upsertStatsAndUnlockAchievements = async (req, res, next) => {
+exports.upsertStatsAndUnlockAchievementsAdv = async (req, res, next) => {
   const userId = req.user.id;
-  const { totalGems, bombsScanned, characterUsed, levelsCompleted, deaths } =
-    req.body;
+  const {
+    totalGems,
+    bombsScanned,
+    characterUsed,
+    levelsCompleted,
+    deaths,
+    noScanWins,
+  } = req.body;
 
   try {
-    const newAchievements = await db.upsertStats(
+    const newAchievements = await db.upsertAdventureStats(
       userId,
       totalGems,
       bombsScanned,
       characterUsed,
       levelsCompleted,
-      deaths
+      deaths,
+      noScanWins
+    );
+    return res.status(200).json({ newAchievements });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
+  }
+};
+
+exports.upsertStatsAndUnlockAchievementsDun = async (req, res, next) => {
+  const userId = req.user.id;
+  const { totalGems, bombsScanned, characterUsed, deaths, depth, extraTime } =
+    req.body;
+
+  try {
+    const newAchievements = await db.upsertDungeonStats(
+      userId,
+      totalGems,
+      bombsScanned,
+      characterUsed,
+      deaths,
+      depth,
+      extraTime
     );
     return res.status(200).json({ newAchievements });
   } catch (err) {

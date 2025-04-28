@@ -1,4 +1,4 @@
-import { colors } from "../utils/assets";
+import { colors } from "../game/utils/assets";
 
 export default function PrettyTitle({ string }) {
   const title = string.split("");

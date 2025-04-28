@@ -22,26 +22,18 @@ export default function Profile() {
         )}
         {user && (
           <div
-            onClick={() => navigate("/profile/minesweeper-records")}
-            className='cursor-pointer hover:bg-gray-300'
-          >
-            Minesweeper Records
-          </div>
-        )}
-        {user && (
-          <div
             onClick={() => navigate("/profile/settings")}
             className='cursor-pointer hover:bg-gray-300'
           >
             Settings
           </div>
         )}
-        {user && (
+        {user?.role === "ADMIN" && (
           <div
             onClick={() => navigate("/profile/admin")}
             className='cursor-pointer hover:bg-gray-300'
           >
-            Admin
+            Admin Dashboard
           </div>
         )}
       </Header>

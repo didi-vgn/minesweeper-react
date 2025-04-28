@@ -13,10 +13,11 @@ model User {
   password Password?
   nickname String @db.VarChar(255) @unique
   role Role @default(USER)
-  games Game[]
+  classicGames ClassicScore[]
   adventureProgress Adventure_Progress[]
   stats Stats?
   achievements User_Achievement[] 
+  dungeonGames DungeonScore[]
 }
 
 model Password {
@@ -26,15 +27,25 @@ model Password {
   password String @db.VarChar(255)
 }
 
-model Game{
+model ClassicScore{
   id Int @id @default(autoincrement())
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String?
-  mode GameMode
+  difficulty Difficulty
   time String 
   bbbv Int
   points Float
   board Json
+  playedOn DateTime @default(now())
+}
+
+model DungeonScore{
+  id Int @id @default(autoincrement())
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  points Int
+  depth Int
+  playedOn DateTime @default(now())
 }
 
 model Adventure_Progress {
@@ -76,12 +87,17 @@ model Stats {
   whiteGames Int @default(0)
   yellowGames Int @default(0)
   greenGames Int @default(0)
+  teleports Int @default(0)
+  bestDepth Int @default(0)
+  noScanWins Int @default(0)
+  extraTime Int @default(0)
+  mostGemsCollected Int @default(0)
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum GameMode{
-  BEGGINER
+enum Difficulty{
+  BEGINNER
   INTERMEDIATE
   EXPERT
 }

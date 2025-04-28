@@ -2,8 +2,6 @@ import { useGameContext } from "./context/GameContext";
 import { FaStar } from "react-icons/fa";
 import Stopwatch from "./components/Stopwatch";
 import { useState } from "react";
-import BaseGameBoard from "./components/BaseGameBoard";
-import { processStats } from "../utils/processGameStats";
 import {
   postGameStats,
   postGameStatsGuest,
@@ -12,15 +10,19 @@ import { calculateDifficulty } from "./logic/calculateDifficulty";
 import { boardToArray } from "./utils/boardToArray";
 import { useAuthContext } from "../context/AuthContext";
 import { FaArrowRotateRight } from "react-icons/fa6";
+import Cell from "./components/Cell";
+import { formatTime } from "../utils/formatTime";
+import errorHandler from "../utils/errorHandler";
+import SmallButton from "../components/SmallButton";
 
 export default function ClassicApp({ back }) {
   const { token } = useAuthContext();
-  const { gameState, resetGame, config, setConfig } = useGameContext();
+  const { gameState, config, setConfig, actions } = useGameContext();
   const [resetTrigger, setResetTrigger] = useState(0);
 
   function handleReset() {
     setResetTrigger((prev) => prev + 1);
-    resetGame();
+    actions.resetGame();
   }
 
   function handleChangeGameMode(e) {
@@ -33,28 +35,34 @@ export default function ClassicApp({ back }) {
 
     setConfig(newConfig);
     setResetTrigger((prev) => prev + 1);
-    resetGame(newConfig.width, newConfig.height, newConfig.bombs);
+    actions.resetGame(newConfig.width, newConfig.height, newConfig.bombs);
   }
 
   function uploadGame(time) {
     if (time === 0) return;
-    const stats = {
-      bombs: config.bombs,
-      bbbv: calculateDifficulty(gameState.board),
-      board: JSON.stringify(boardToArray(gameState.board)),
-      time: time,
-    };
     async function postGame() {
       try {
-        const gameData = processStats(stats);
+        const bbbv = calculateDifficulty(gameState.board);
+        const stats = {
+          difficulty:
+            config.bombs === 10
+              ? "BEGINNER"
+              : config.bombs === 40
+              ? "INTERMEDIATE"
+              : "EXPERT",
+          time: formatTime(time),
+          bbbv: bbbv,
+          points: Number((Math.round((bbbv / time) * 100) / 100).toFixed(2)),
+          board: JSON.stringify(boardToArray(gameState.board)),
+        };
         let response;
         if (token) {
-          response = await postGameStats(gameData, token);
+          response = await postGameStats(stats, token);
         } else {
-          response = await postGameStatsGuest(gameData);
+          response = await postGameStatsGuest(stats);
         }
       } catch (err) {
-        console.error(err);
+        errorHandler(err);
       }
     }
     postGame();
@@ -63,25 +71,14 @@ export default function ClassicApp({ back }) {
   return (
     <div className='text-xl'>
       <div className='grid grid-cols-2 mb-10'>
-        <div
-          className='custom-border bg-gray-300 place-self-start w-23 text-center cursor-pointer'
-          onClick={back}
-        >
-          Back
-        </div>
-        {/* <button
-          onClick={handleReset}
-          className='custom-border bg-gray-300 place-self-end cursor-pointer flex justify-center p-1 w-23'
-        >
-          <FaArrowRotateRight />
-        </button> */}
+        <SmallButton text='Back' onClick={back} />
       </div>
       <div className='flex flex-col items-center justify-center gap-5'>
         <div className='grid grid-cols-4 gap-3'>
-          <div className='text-2xl flex items-center justify-center gap-2 place-self-end'>
+          <div className='text-2xl flex items-center justify-center gap-2 place-self-end border rounded-md p-1 w-28'>
             {gameState.bombsLeft} <FaStar />
           </div>
-          <div className='text-3xl mx-auto'>
+          <div className='text-3xl place-self-center text-center border rounded-md p-1 w-28'>
             <Stopwatch
               status={gameState.status}
               resetTrigger={resetTrigger}
@@ -93,21 +90,32 @@ export default function ClassicApp({ back }) {
             id='difficulty'
             defaultValue={"b"}
             onChange={handleChangeGameMode}
-            className='text-2xl bg-gray-300 custom-border'
+            className='text-2xl border rounded-md p-1'
           >
             <option value='a'>9x9 10 mines</option>
             <option value='b'>16x16 40 mines</option>
             <option value='c'>16x30 99 mines</option>
           </select>
-          <button
+          <SmallButton
+            text={<FaArrowRotateRight className='size-7 my-1' />}
             onClick={handleReset}
-            className='custom-border bg-gray-300 cursor-pointer flex justify-center p-1 place-self-start'
-          >
-            <FaArrowRotateRight />
-          </button>
+          />
         </div>
         <div className='bg-gray-300 p-1 custom-border'>
-          <BaseGameBoard />
+          <div className='flex flex-col m-5 custom-border-rev select-none'>
+            {gameState.board.map((row, i) => (
+              <div className='flex' key={i}>
+                {row.map((cell, j) => (
+                  <Cell
+                    key={`${i}-${j}`}
+                    cell={cell}
+                    onClick={() => actions.handleLeftClick(i, j)}
+                    onRightClick={(e) => actions.handleRightClick(e, i, j)}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

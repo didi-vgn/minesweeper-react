@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAdventureContext } from "../context/AdventureContext";
 import { useInterval } from "../hooks/useInterval";
 
@@ -7,10 +7,10 @@ export default function GameWinScreen() {
   const { gameState } = useAdventureContext();
   const [points, setPoints] = useState(0);
 
-  const handleImageChange = useCallback(() => {
+  const handleImageChange = () => {
     const newIndex = frameIndex + 512;
     setFrameIndex(newIndex === 1536 ? 0 : newIndex);
-  }, [frameIndex]);
+  };
 
   useEffect(() => {
     const interval = setInterval(handleImageChange, 300);

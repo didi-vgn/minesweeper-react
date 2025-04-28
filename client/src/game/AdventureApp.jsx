@@ -1,67 +1,31 @@
 import { useEffect, useState } from "react";
 import { useAdventureContext } from "./context/AdventureContext";
-import { FaArrowRotateRight } from "react-icons/fa6";
-import { IoMdArrowRoundBack } from "react-icons/io";
-import Stopwatch from "./components/Stopwatch";
 import { adventureLevels } from "./utils/levelsData";
-import AdventureBoard from "./components/AdventureBoard";
 import { useAuthContext } from "../context/AuthContext";
-import {
-  postAdvGameProgress,
-  postStatsAndUnlockAchievements,
-} from "../services/adventureGamesServices";
-import Overlay from "./components/Overlay";
-import { countBombsScanned } from "./logic/countBombsScanned";
-import NewAchievementToast from "./components/NewAchievementToast";
-import { toast } from "react-toastify";
-import { gemColors, other } from "./utils/assets";
+import { useAdvEndGameSubmission } from "./hooks/useEndGameSubmission";
+import AdventureHud from "./components/AdventureHud";
+import Scanner from "./components/Scanner";
+import { useAdvGameControls } from "./hooks/useGameControls";
+import AdvCell from "./components/AdvCell";
+import GameOverScreen from "./components/GameOverScreen";
+import GameWinScreen from "./components/GameWinScreen";
+import { useAdvScoreMethod } from "./hooks/usePostScoreMethods";
 
-export default function AdventureApp({ onClick, progress }) {
+export default function AdventureApp({ back, progress }) {
   const { user, token } = useAuthContext();
-  const { newGame, preferences, gameState, setGameState } =
+  const { preferences, gameState, setGameState, actions } =
     useAdventureContext();
   const [player, setPlayer] = useState({ x: 0, y: 4 });
   const [viewportStart, setViewportStart] = useState(0);
+  const viewportWidth = 24;
   const [resetTrigger, setResetTrigger] = useState(0);
+  const { postProgress } = useAdvScoreMethod();
 
   function reset() {
     setPlayer({ x: 0, y: 4 });
-    newGame(adventureLevels[gameState.level - 1]);
+    actions.newGame(adventureLevels[gameState.level - 1]);
     setViewportStart(0);
     setResetTrigger((prev) => prev + 1);
-  }
-
-  function calculateScore(time) {
-    const levelData = adventureLevels[gameState.level - 1];
-    const { gems, level } = gameState;
-
-    return Math.floor(
-      (gems * 150 * (1 + level * 0.05) * (1 + levelData.bombs / 100)) /
-        (1 + Math.log(time + 1))
-    );
-  }
-
-  async function postStats(stats) {
-    try {
-      const response = await postStatsAndUnlockAchievements(stats, token);
-      if (response.newAchievements.length > 0) {
-        response.newAchievements.map((a) => {
-          toast(({ closeToast }) => (
-            <NewAchievementToast data={a} closeToast={closeToast} />
-          ));
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  async function postGameProgress(gameData) {
-    try {
-      await postAdvGameProgress(gameData, token);
-    } catch (err) {
-      console.error(err);
-    }
   }
 
   function saveToLocalStorage(gameData) {
@@ -83,85 +47,90 @@ export default function AdventureApp({ onClick, progress }) {
       console.error("Failed to save to local storage.", err);
     }
   }
-
-  useEffect(() => {
-    if (!user || (gameState.status !== "won" && gameState.status !== '"lost'))
-      return;
-    const stats = {
-      totalGems: gameState.gems,
-      bombsScanned: countBombsScanned(gameState.board),
-      characterUsed: preferences.playerSkin.split(".")[0].split("_")[2],
-      levelsCompleted: gameState.status === "won" ? 1 : 0,
-      deaths: gameState.status === "lost" ? 1 : 0,
-    };
-    postStats(stats);
-  }, [gameState.status]);
+  useAdvEndGameSubmission({ gameState, preferences });
 
   function uploadGame(time) {
-    const currScore = calculateScore(time);
+    const currScore = Math.floor(
+      (gameState.gems *
+        150 *
+        (1 + gameState.level * 0.05) *
+        (1 + adventureLevels[gameState.level - 1].bombs / 100)) /
+        (1 + Math.log(time + 1))
+    );
     setGameState((prev) => ({ ...prev, score: currScore }));
-
-    // const existingGameIndex = progress.findIndex(
-    //   (level) => level.levelId === gameState.level
-    // );
-
-    // if (
-    //   existingGameIndex >= 0 &&
-    //   (gameState.gems < progress[existingGameIndex].collectedGems ||
-    //     (gameState.gems === progress[existingGameIndex].collectedGems &&
-    //       gameState.score < progress[existingGameIndex].points))
-    // ) {
-    //   return;
-    // }
+    const existingGameIndex = progress.findIndex(
+      (level) => level.levelId === gameState.level
+    );
+    if (
+      existingGameIndex >= 0 &&
+      (gameState.gems < progress[existingGameIndex].collectedGems ||
+        (gameState.gems === progress[existingGameIndex].collectedGems &&
+          gameState.score < progress[existingGameIndex].points))
+    ) {
+      return;
+    }
     const gameData = {
       levelId: gameState.level,
       collectedGems: gameState.gems,
       points: currScore,
     };
 
-    user ? postGameProgress(gameData) : saveToLocalStorage(gameData);
+    user ? postProgress(token, gameData) : saveToLocalStorage(gameData);
   }
 
+  useAdvGameControls({
+    player,
+    setPlayer,
+    viewportStart,
+    gameState,
+    actions,
+  });
+
+  useEffect(() => {
+    actions.movePlayer(player.y, player.x);
+    if (player.x > viewportStart + 12) {
+      setViewportStart((prev) =>
+        Math.min(prev + 1, gameState.board[0].length - viewportWidth)
+      );
+    }
+  }, [player, viewportStart]);
+
   return (
-    <div className='flex flex-col items-center gap-3 mt-5 scale-125 mt-20 img-crisp'>
-      <div className='relative'>
-        <Overlay>
-          <div className='flex justify-between items-center bg-[rgba(0,0,0,0.3)] pt-2 pb-2'>
-            <div
-              className='flex justify-center items-center size-12 bg-gray-100 text-2xl rounded-r-xl hover:bg-gray-200 cursor-pointer'
-              onClick={onClick}
-            >
-              <IoMdArrowRoundBack />
+    <div className='overflow-hidden relative place-self-center custom-border scale-120 mt-20'>
+      <AdventureHud
+        back={back}
+        gems={gameState.gems}
+        status={gameState.status}
+        resetTrigger={resetTrigger}
+        uploadGame={uploadGame}
+        scanners={gameState.scanners}
+        reset={reset}
+      />
+      <div className='game-container bg-gray-300'>
+        <Scanner x={player.x - viewportStart} y={player.y} />
+        <div
+          className={`flex flex-col`}
+          style={{
+            transform: `translateX(-${viewportStart * 4}rem)`,
+            transition: "transform 0.3s ease-in-out",
+            willChange: "transform",
+          }}
+        >
+          {gameState.board?.map((row, i) => (
+            <div key={i} className='flex'>
+              {row.map((cell, j) => (
+                <AdvCell
+                  key={`${i}-${j}`}
+                  cell={cell}
+                  player={player.x === j && player.y === i ? true : false}
+                  preferences={preferences}
+                />
+              ))}
             </div>
-            <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
-              {gameState.gems}
-              <img src={gemColors.rainbow} alt='' className='size-10' />
-            </div>
-            <div className='text-3xl font-outline'>
-              <Stopwatch
-                status={gameState.status}
-                resetTrigger={resetTrigger}
-                onWin={uploadGame}
-              />
-            </div>
-            <div className='flex gap-2 items-center justify-center text-3xl w-35 h-10 font-outline'>
-              {gameState.scanners}
-              <img src={other.scanner} alt='' className='size-10' />
-            </div>
-            <div
-              className='flex justify-center items-center size-12 bg-gray-100 text-2xl rounded-l-xl hover:bg-gray-200 cursor-pointer'
-              onClick={reset}
-            >
-              <FaArrowRotateRight />
-            </div>
-          </div>
-        </Overlay>
-        <AdventureBoard
-          viewportStart={viewportStart}
-          setViewportStart={setViewportStart}
-          player={player}
-          setPlayer={setPlayer}
-        ></AdventureBoard>
+          ))}
+        </div>
+        {gameState.status === "lost" && <GameOverScreen />}
+        {gameState.status === "won" && <GameWinScreen />}
       </div>
     </div>
   );

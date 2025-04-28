@@ -21,12 +21,13 @@ export default function Input({ label, type, id, placeholder, validation }) {
         className='custom-border-rev w-full bg-white p-3 font-medium border-gray-800 placeholder:opacity-60'
         {...register(id, validation)}
       />
-      {(error && (
-        <div className='flex items-center justify-end gap-1 text-pink-600 text-sm h-5'>
-          <MdOutlineErrorOutline /> {error.message}
-        </div>
-      )) ||
-        (!error && <div className='h-5'></div>)}
+      <div className='h-5'>
+        {error && (
+          <div className='flex items-center justify-end gap-1 text-pink-600 text-sm'>
+            <MdOutlineErrorOutline /> {error.message}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

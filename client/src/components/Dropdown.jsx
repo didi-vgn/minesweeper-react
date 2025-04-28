@@ -1,14 +1,32 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RiArrowDropDownLine } from "react-icons/ri";
 
 export default function Dropdown({ text, children }) {
   const [expand, setExpand] = useState(false);
+  const dropdownRef = useRef(null);
+
   function toggleDropdown() {
     setExpand(!expand);
   }
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setExpand(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className='relative inline-flex flex-col items-center text-gray-600 text-center hover:bg-gray-300 m-1 gap-2'>
+    <div
+      ref={dropdownRef}
+      className='relative inline-flex flex-col items-center text-gray-600 text-center hover:bg-gray-300 m-1 gap-2'
+    >
       <div
         onClick={toggleDropdown}
         className='cursor-pointer flex items-center gap-1'

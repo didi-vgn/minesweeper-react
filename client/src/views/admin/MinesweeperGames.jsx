@@ -1,4 +1,3 @@
-import LargeButton from "../../components/LargeButton";
 import {
   deleteAllGames,
   getMinesweeperStats,
@@ -18,7 +17,6 @@ export default function MinesweeperGames() {
       try {
         const data = await getMinesweeperStats();
         setStats(data.stats);
-        console.log(data.stats);
       } catch (err) {
         console.error(err);
       }
@@ -40,25 +38,19 @@ export default function MinesweeperGames() {
       <div>
         <div className='text-2xl'>
           Total number of games played:{" "}
-          {stats?.games[0]._count.id +
-            stats?.games[1]._count.id +
-            stats?.games[2]._count.id}
+          {(stats?.games[0]?._count.id || 0) +
+            (stats?.games[1]?._count.id || 0) +
+            (stats?.games[2]?._count.id || 0)}
         </div>
-        <div>Begginer: {stats?.games[0]._count.id}</div>
-        <div>Intermediate: {stats?.games[1]._count.id}</div>
-        <div>Expert: {stats?.games[2]._count.id}</div>
+        <div>Beginner: {stats?.games[0]?._count.id || 0}</div>
+        <div>Intermediate: {stats?.games[1]?._count.id || 0}</div>
+        <div>Expert: {stats?.games[2]?._count.id || 0}</div>
       </div>
       <div>
-        <div className='text-2xl'>
-          Most active players: 1.{stats?.topUsers[0].nickname}(
-          {stats?.topUsers[0].count} games)
-        </div>
-        <div>
-          2.{stats?.topUsers[1].nickname}({stats?.topUsers[1].count} games)
-        </div>
-        <div>
-          3.{stats?.topUsers[2].nickname}({stats?.topUsers[2].count} games)
-        </div>
+        <div className='text-2xl'>Most active players:</div>
+        {stats?.topUsers?.map((u, i) => (
+          <div key={i}>{`${i + 1}. ${u.nickname} (${u.count} games)`}</div>
+        ))}
       </div>
       <div>
         <div className='text-2xl'>Delete all games from the database</div>

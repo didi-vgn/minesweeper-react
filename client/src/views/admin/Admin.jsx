@@ -1,16 +1,17 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import CustomNavLink from "../../components/CustomNavLink";
+import { useEffect } from "react";
 
 export default function Admin() {
   const { user } = useAuthContext();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if (user.role !== "ADMIN") {
-  //     navigate("/forbidden");
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (user.role !== "ADMIN") {
+      navigate("/forbidden");
+    }
+  }, [user]);
 
   return (
     <div className='flex items-center justify-center'>

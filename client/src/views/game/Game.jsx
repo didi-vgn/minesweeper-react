@@ -16,7 +16,7 @@ import GameSettings from "./GameSettings";
 
 export default function Game() {
   const { user } = useAuthContext();
-  const { settings, newDungeon } = useAdventureContext();
+  const { settings, actions } = useAdventureContext();
   const [progress, setProgress] = useState([]);
   const [currentTab, setCurrentTab] = useState("menu");
   const musicRef = useRef(new Audio(audio.music.main));
@@ -39,7 +39,7 @@ export default function Game() {
   }
 
   function startDungeon() {
-    newDungeon();
+    actions.newDungeon();
     setCurrentTab("dungeon");
   }
 
@@ -78,11 +78,11 @@ export default function Game() {
           setProgress(localProgress);
         }
       } catch (err) {
-        console.error("Failed to read from local storage", err);
+        console.error(err);
       }
     }
 
-    (user && fetchGameProgress()) || fetchLocalGameProgress();
+    user ? fetchGameProgress() : fetchLocalGameProgress();
   }, [user, currentTab]);
 
   return (
@@ -113,7 +113,7 @@ export default function Game() {
         {currentTab === "classic" && <ClassicApp back={back} />}
         {currentTab === "adventure" && (
           <AdventureApp
-            onClick={() => setCurrentTab("levels")}
+            back={() => setCurrentTab("levels")}
             progress={progress}
           />
         )}

@@ -2,11 +2,11 @@ const db = require("../config/database");
 const { PrismaClientKnownRequestError } = require("@prisma/client");
 const { prismaErrorHandler } = require("../errors/prismaErrorHandler");
 
-exports.createGame = async (req, res, next) => {
+exports.addClassicRecord = async (req, res, next) => {
   const userId = req.user?.id || null;
-  const { mode, time, bbbv, points, board } = req.body;
+  const { difficulty, time, bbbv, points, board } = req.body;
   try {
-    await db.createGame(userId, mode, time, bbbv, points, board);
+    await db.createClassicRecord(userId, difficulty, time, bbbv, points, board);
     return res
       .status(201)
       .json({ message: "Game stats added to leaderboards." });
@@ -18,10 +18,15 @@ exports.createGame = async (req, res, next) => {
   }
 };
 
-exports.findManyGames = async (req, res, next) => {
-  const { gameMode, nickname, sort, order } = req.query;
+exports.getClassicLeaderboard = async (req, res, next) => {
+  const { difficulty, nickname, sort, order } = req.query;
   try {
-    const games = await db.findManyGames(gameMode, nickname, sort, order);
+    const games = await db.findManyClassicScores(
+      difficulty,
+      nickname,
+      sort,
+      order
+    );
     return res.status(200).json({ games });
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
@@ -74,6 +79,49 @@ exports.minesweeperStats = async (req, res, next) => {
   try {
     const stats = await db.findMinesweeperStats();
     return res.status(200).json({ stats });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
+  }
+};
+
+exports.getAdventureLeaderboard = async (req, res, next) => {
+  const { nickname, sort, order } = req.query;
+  try {
+    const leaderboard = await db.findAdventureLeaderboard(
+      nickname,
+      sort,
+      order
+    );
+    return res.status(200).json({ leaderboard });
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
+  }
+};
+
+exports.addDungeonRecord = async (req, res, next) => {
+  const userId = req.user?.id || null;
+  const { points, depth } = req.body;
+  try {
+    await db.createDungeonScore(userId, points, depth);
+  } catch (err) {
+    if (err instanceof PrismaClientKnownRequestError) {
+      return next(prismaErrorHandler(err));
+    }
+    next(err);
+  }
+};
+
+exports.getDungeonLeaderboard = async (req, res, next) => {
+  const { nickname, sort, order } = req.query;
+  try {
+    const leaderboard = await db.findManyDungeonScores(nickname, sort, order);
+    return res.status(200).json({ leaderboard });
   } catch (err) {
     if (err instanceof PrismaClientKnownRequestError) {
       return next(prismaErrorHandler(err));

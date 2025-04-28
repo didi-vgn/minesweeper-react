@@ -1,4 +1,3 @@
-import Leaderboard from "../views/Leaderboard.jsx";
 import LogIn from "../views/LogIn.jsx";
 import SignUp from "../views/SignUp.jsx";
 import ErrorPage from "../views/ErrorPage.jsx";
@@ -6,7 +5,6 @@ import App from "../App.jsx";
 import ForbiddenPage from "../views/ForbiddenPage.jsx";
 import Profile from "../views/profile/Profile.jsx";
 import ProfileAchievements from "../views/profile/ProfileAchievements.jsx";
-import ProfileMinesweeperRecords from "../views/profile/ProfileMinesweeperRecords.jsx";
 import ProfileSettings from "../views/profile/ProfileSettings.jsx";
 import Admin from "../views/admin/Admin.jsx";
 import AccountManagement from "../views/admin/AccounManagement.jsx";
@@ -16,8 +14,11 @@ import MinesweeperGames from "../views/admin/MinesweeperGames.jsx";
 import SettingsNickname from "../views/profile/SettingsNickname.jsx";
 import SettingsPassword from "../views/profile/SettingsPassword.jsx";
 import SettingsDeleteAccount from "../views/profile/SettingsDeleteAccount.jsx";
-import Sandbox from "../views/Sandbox.jsx";
 import Game from "../views/game/Game.jsx";
+import Leaderboard from "../views/leaderboard/Leaderboard.jsx";
+import ClassicLeaderboard from "../views/leaderboard/ClassicLeaderboard.jsx";
+import AdventureLeaderboard from "../views/leaderboard/AdventureLeaderboard.jsx";
+import DungeonLeaderboard from "../views/leaderboard/DungeonLeaderboard.jsx";
 
 const router = [
   {
@@ -37,10 +38,6 @@ const router = [
           {
             index: true,
             element: <ProfileAchievements />,
-          },
-          {
-            path: "minesweeper-records",
-            element: <ProfileMinesweeperRecords />,
           },
           {
             path: "settings",
@@ -87,9 +84,12 @@ const router = [
       {
         path: "leaderboard",
         element: <Leaderboard />,
+        children: [
+          { index: true, element: <ClassicLeaderboard /> },
+          { path: "adventure", element: <AdventureLeaderboard /> },
+          { path: "dungeon", element: <DungeonLeaderboard /> },
+        ],
       },
-
-      { path: "sandbox", element: <Sandbox /> },
       {
         path: "login",
         element: <LogIn />,

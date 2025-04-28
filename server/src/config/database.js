@@ -58,22 +58,29 @@ exports.findUserBy = async (name, value) => {
   });
 };
 
-exports.createGame = async (userId = null, mode, time, bbbv, points, board) => {
+exports.createClassicRecord = async (
+  userId = null,
+  difficulty,
+  time,
+  bbbv,
+  points,
+  board
+) => {
   const data = {
-    mode: mode,
+    difficulty: difficulty,
     time: time,
     bbbv: bbbv,
     points: points,
     board: board,
   };
   if (userId) data.userId = userId;
-  return await prisma.game.create({ data });
+  return await prisma.classicScore.create({ data });
 };
 
-exports.findManyGames = async (gameMode, nickname, sort, order) => {
-  return await prisma.game.findMany({
+exports.findManyClassicScores = async (difficulty, nickname, sort, order) => {
+  return await prisma.classicScore.findMany({
     where: {
-      ...(gameMode && { mode: gameMode.toUpperCase() }),
+      ...(difficulty && { difficulty: difficulty.toUpperCase() }),
       ...(nickname && { user: { nickname } }),
     },
     orderBy: { [sort]: order },
@@ -86,13 +93,13 @@ exports.findManyGames = async (gameMode, nickname, sort, order) => {
 };
 
 exports.findMinesweeperStats = async () => {
-  const games = await prisma.game.groupBy({
-    by: ["mode"],
+  const games = await prisma.classicScore.groupBy({
+    by: ["difficulty"],
     _count: { id: true },
-    orderBy: { mode: "asc" },
+    orderBy: { difficulty: "asc" },
   });
 
-  const top = await prisma.game.groupBy({
+  const top = await prisma.classicScore.groupBy({
     by: ["userId"],
     where: { userId: { not: null } },
     _count: { id: true },
@@ -115,7 +122,7 @@ exports.findMinesweeperStats = async () => {
 };
 
 exports.deleteAllGames = async () => {
-  await prisma.game.deleteMany({});
+  await prisma.classicScore.deleteMany({});
 };
 
 exports.upsertAdventureGame = async (
@@ -149,6 +156,42 @@ exports.findManyAdventureGames = async (userId) => {
   });
 };
 
+exports.findAdventureLeaderboard = async (nickname, sort, order) => {
+  const allProgress = await prisma.adventure_Progress.groupBy({
+    by: ["userId"],
+    _count: { id: true },
+    _sum: { points: true },
+    orderBy: {
+      [sort === "progress" ? "_count" : "_sum"]: {
+        [sort === "progress" ? "id" : "points"]: order,
+      },
+    },
+  });
+
+  const userIds = allProgress.map((a) => a.userId);
+  const users = await prisma.user.findMany({
+    where: {
+      id: { in: userIds },
+      ...(nickname ? { nickname } : {}),
+    },
+    select: { id: true, nickname: true },
+  });
+
+  const filteredUserIds = new Set(users.map((u) => u.id));
+  const leaderboard = allProgress
+    .filter((p) => filteredUserIds.has(p.userId))
+    .map((p) => {
+      const user = users.find((u) => u.id === p.userId);
+      return {
+        nickname: user.nickname,
+        progress: p._count.id,
+        points: p._sum.points,
+      };
+    });
+
+  return leaderboard;
+};
+
 exports.createAchievement = async (id, title, description) => {
   return await prisma.achievement.create({
     data: {
@@ -169,36 +212,108 @@ exports.deleteAchievement = async (id) => {
   await prisma.achievement.delete({ where: { id } });
 };
 
-exports.upsertStats = async (
+exports.createDungeonScore = async (userId = null, points, depth) => {
+  return await prisma.dungeonScore.create({
+    data: {
+      userId,
+      points,
+      depth,
+    },
+  });
+};
+
+exports.findManyDungeonScores = async (nickname, sort, order) => {
+  return await prisma.dungeonScore.findMany({
+    where: {
+      ...(nickname && { user: { nickname } }),
+    },
+    orderBy: { [sort]: order },
+    include: {
+      user: {
+        select: { nickname: true },
+      },
+    },
+  });
+};
+
+exports.upsertAdventureStats = async (
   userId,
   totalGems,
   bombsScanned,
   characterUsed,
   levelsCompleted,
-  deaths
+  deaths,
+  noScanWins
 ) => {
-  await prisma.stats.upsert({
-    where: {
-      userId,
-    },
-    update: {
-      totalGems: { increment: totalGems },
-      bombsScanned: { increment: bombsScanned },
-      [`${characterUsed}Games`]: { increment: 1 },
-      levelsCompleted: { increment: levelsCompleted },
-      deaths: { increment: deaths },
-    },
-    create: {
-      userId,
-      totalGems,
-      bombsScanned,
-      [`${characterUsed}Games`]: 1,
-      levelsCompleted,
-      deaths,
+  const updateData = {
+    totalGems: { increment: totalGems },
+    bombsScanned: { increment: bombsScanned },
+    [`${characterUsed}Games`]: { increment: 1 },
+    levelsCompleted: { increment: levelsCompleted },
+    deaths: { increment: deaths },
+    noScanWins: { increment: noScanWins },
+  };
+  const createData = {
+    totalGems,
+    bombsScanned,
+    [`${characterUsed}Games`]: 1,
+    levelsCompleted,
+    deaths,
+    noScanWins,
+  };
+  await upsertStats(userId, updateData, createData);
+  return await checkAndUnlockAchievements(userId);
+};
+
+exports.upsertDungeonStats = async (
+  userId,
+  totalGems,
+  bombsScanned,
+  characterUsed,
+  deaths,
+  depth,
+  extraTime
+) => {
+  const stats = await prisma.stats.findUnique({
+    where: { userId },
+    select: {
+      bestDepth: true,
+      mostGemsCollected: true,
     },
   });
-
+  const { bestDepth = 0, mostGemsCollected = 0 } = stats || {};
+  const depthRecord = Math.max(depth, bestDepth);
+  const gemsRecord = Math.max(totalGems, mostGemsCollected);
+  const updateData = {
+    totalGems: { increment: totalGems },
+    bombsScanned: { increment: bombsScanned },
+    [`${characterUsed}Games`]: { increment: 1 },
+    deaths: { increment: deaths },
+    teleports: { increment: depth - 1 },
+    bestDepth: depthRecord,
+    mostGemsCollected: gemsRecord,
+    extraTime: { increment: extraTime },
+  };
+  const createData = {
+    totalGems,
+    bombsScanned,
+    [`${characterUsed}Games`]: 1,
+    deaths,
+    teleports: depth - 1,
+    bestDepth: depth,
+    mostGemsCollected: totalGems,
+    extraTime,
+  };
+  await upsertStats(userId, updateData, createData);
   return await checkAndUnlockAchievements(userId);
+};
+
+const upsertStats = (userId, updateData, createData) => {
+  return prisma.stats.upsert({
+    where: { userId },
+    update: updateData,
+    create: { userId, ...createData },
+  });
 };
 
 const checkAndUnlockAchievements = async (userId) => {

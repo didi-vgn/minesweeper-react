@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAdventureContext } from "../context/AdventureContext";
 import { animation } from "../utils/assets";
+import Scanner from "./Scanner";
 
-export default function Player() {
+export default function Player({ helper }) {
   const [currentAnimation, setCurrentAnimation] = useState(animation.movement);
   const [frameIndex, setFrameIndex] = useState(currentAnimation[0]);
   const { event, preferences } = useAdventureContext();
@@ -63,13 +64,22 @@ export default function Player() {
   }, [event]);
 
   return (
-    <div className='w-[128px] h-[256px] overflow-hidden absolute z-94  bottom-0 left-0 origin-bottom-left scale-50'>
+    <div className='relative'>
       <div
-        style={{
-          ...spriteStyle,
-          transform: `translateX(-${frameIndex}px)`,
-        }}
-      />
+        className={`absolute -top-27 -left-6 z-90 w-max text-center animate-bounce text-2xl bg-white border ${
+          helper === "" && "hidden"
+        }`}
+      >
+        {helper}
+      </div>
+      <div className='w-[128px] h-[256px] overflow-hidden absolute z-94  bottom-0 left-0 origin-bottom-left scale-50'>
+        <div
+          style={{
+            ...spriteStyle,
+            transform: `translateX(-${frameIndex}px)`,
+          }}
+        />
+      </div>
     </div>
   );
 }
