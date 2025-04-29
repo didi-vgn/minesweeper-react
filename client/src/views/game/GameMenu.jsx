@@ -7,6 +7,7 @@ export default function GameMenu({
   dungeon,
   settings,
   info,
+  credits,
   sfx,
 }) {
   return (
@@ -48,6 +49,13 @@ export default function GameMenu({
         onMouseEnter={() => playSoundEffect("click", sfx)}
       >
         How to Play
+      </div>
+      <div
+        className='text-4xl m-3 cursor-pointer hover:scale-150'
+        onClick={credits}
+        onMouseEnter={() => playSoundEffect("click", sfx)}
+      >
+        Credits
       </div>
     </div>
   );

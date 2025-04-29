@@ -13,6 +13,7 @@ import ClassicApp from "../../game/ClassicApp";
 import DungenApp from "../../game/DungeonApp";
 import GameMenu from "./GameMenu";
 import GameSettings from "./GameSettings";
+import Credits from "./Credits";
 
 export default function Game() {
   const { user } = useAuthContext();
@@ -98,6 +99,7 @@ export default function Game() {
             dungeon={startDungeon}
             settings={() => setCurrentTab("settings")}
             info={() => setCurrentTab("info")}
+            credits={() => setCurrentTab("credits")}
             sfx={settings.sfx}
           />
         )}
@@ -110,6 +112,7 @@ export default function Game() {
         )}
         {currentTab === "settings" && <GameSettings back={back} />}
         {currentTab === "info" && <HowToPlay back={back} />}
+        {currentTab === "credits" && <Credits back={back} />}
         {currentTab === "classic" && <ClassicApp back={back} />}
         {currentTab === "adventure" && (
           <AdventureApp

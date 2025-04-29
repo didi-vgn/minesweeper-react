@@ -7,43 +7,66 @@ const AdvCell = ({ cell, player, preferences }) => {
   return (
     <div className='relative'>
       <div className='w-[64px] h-[64px]'>
-        {cell.value === -2 ? (
-          ""
-        ) : cell.clicked ? (
+        {cell.value === -2 ? null : cell.clicked ? (
           <div>
-            <img src={preferences.mapSkin.tile} alt='' />
-            <div className='absolute bottom-0 left-0 text-4xl w-full h-full flex justify-center items-center'>
-              {cell.gem ? (
-                <img src={gemColors[cell.gem]} alt='' className='' />
-              ) : cell.scanner ? (
-                <img src={other.scanner} alt='' />
-              ) : cell.portal ? (
-                <img src={other.portal} alt='' />
-              ) : cell.extraTime ? (
-                <img src={other.hourglassIcon} alt='' />
-              ) : cell.value > 0 ? (
-                <div className={`${colors[cell.value]} font-outline-black`}>
-                  {cell.value}
+            <img src={preferences.mapSkin.tile} alt='Tile' />
+            <div className='absolute bottom-0 left-0 text-4xl w-full h-full'>
+              <Values val={cell.value} />
+              {!player && <Items cell={cell} />}
+              {player && (
+                <div className='absolute bottom-0 left-0'>
+                  <Player helper={cell.portal ? "press E" : ""} />
                 </div>
-              ) : cell.value === -1 ? (
-                <img src={other.bomb} alt='' />
-              ) : (
-                ""
               )}
+              {cell.portal && <img src={other.portal} alt='Portal' />}
             </div>
           </div>
         ) : (
           <div>
-            <img src={preferences.mapSkin.cover} alt='' />
+            <img src={preferences.mapSkin.cover} alt='Cover' />
             {cell.scanned && (
               <div className='absolute bottom-0 left-0 text-4xl w-full h-full flex justify-center items-center font-outline'>
                 <TiWarningOutline />
               </div>
             )}
+            {player && (
+              <div className='absolute bottom-0 left-0'>
+                <Player helper={cell.portal ? "press E" : ""} />
+              </div>
+            )}
           </div>
         )}
       </div>
-      {player && <Player helper={cell.portal ? "press E" : ""} />}
+    </div>
+  );
+};
+
+const Values = ({ val }) => {
+  return (
+    <>
+      {val > 0 ? (
+        <div
+          className={`${colors[val]} font-outline-black w-full h-full flex justify-center items-center absolute z-1`}
+        >
+          {val}
+        </div>
+      ) : val === -1 ? (
+        <img src={other.bomb} alt='Bomb' />
+      ) : null}
+    </>
+  );
+};
+
+const Items = ({ cell }) => {
+  return (
+    <div className='w-full h-full absolute z-2'>
+      {cell.gem ? (
+        <img src={gemColors[cell.gem]} alt='Gem' />
+      ) : cell.scanner ? (
+        <img src={other.scanner} alt='Scanner' />
+      ) : cell.extraTime ? (
+        <img src={other.hourglassIcon} alt='Hourglass' />
+      ) : null}
     </div>
   );
 };

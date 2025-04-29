@@ -11,7 +11,7 @@ export default function HowToPlay({ back }) {
           <PrettyTitle string='How to Play' />
         </div>
       </div>
-      <div className='m-10 text-lg flex flex-col gap-6'>
+      <div className='m-10 text-lg flex flex-col gap-6 w-3/5 mx-auto'>
         <div>
           <div className='font-bold'>Objective: </div>
           <div>
