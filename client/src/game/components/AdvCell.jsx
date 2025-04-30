@@ -1,5 +1,5 @@
 import { TiWarningOutline } from "react-icons/ti";
-import { gemColors, colors, other } from "../utils/assets";
+import { gemColors, colors, other, mapSkins } from "../utils/assets";
 import Player from "./Player";
 import React from "react";
 
@@ -9,7 +9,7 @@ const AdvCell = ({ cell, player, preferences }) => {
       <div className='w-[64px] h-[64px]'>
         {cell.value === -2 ? null : cell.clicked ? (
           <div>
-            <img src={preferences.mapSkin.tile} alt='Tile' />
+            <img src={mapSkins[preferences.mapSkin].tile} alt='Tile' />
             <div className='absolute bottom-0 left-0 text-4xl w-full h-full'>
               <Values val={cell.value} />
               {!player && <Items cell={cell} />}
@@ -23,7 +23,7 @@ const AdvCell = ({ cell, player, preferences }) => {
           </div>
         ) : (
           <div>
-            <img src={preferences.mapSkin.cover} alt='Cover' />
+            <img src={mapSkins[preferences.mapSkin].cover} alt='Cover' />
             {cell.scanned && (
               <div className='absolute bottom-0 left-0 text-4xl w-full h-full flex justify-center items-center font-outline'>
                 <TiWarningOutline />
@@ -84,8 +84,7 @@ function areEqual(prevProps, nextProps) {
     prevCell.extraTime === nextCell.extraTime &&
     prevCell.scanned === nextCell.scanned &&
     prevProps.player === nextProps.player &&
-    prevProps.preferences.mapSkin.tile === nextProps.preferences.mapSkin.tile &&
-    prevProps.preferences.mapSkin.cover === nextProps.preferences.mapSkin.cover
+    prevProps.preferences.mapSkin === nextProps.preferences.mapSkin
   );
 }
 export default React.memo(AdvCell, areEqual);

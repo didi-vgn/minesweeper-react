@@ -1,9 +1,10 @@
 import { createContext, useContext, useState } from "react";
 import { leftClick } from "../logic/click";
-import { mapSkins, playerSprites, playSoundEffect } from "../utils/assets";
+import { playSoundEffect } from "../utils/assets";
 import { adjacentCells } from "../utils/variables";
 import { generateDungeonBoard } from "../logic/dungeonBoard";
 import { generateAdventureBoard } from "../logic/adventureBoard";
+import { random } from "../logic/mapGenHelpers";
 
 const AdventureContext = createContext(null);
 
@@ -11,10 +12,8 @@ export function useAdventureContext() {
   return useContext(AdventureContext);
 }
 
-const randomProp = (obj) => {
-  const keys = Object.keys(obj);
-  return obj[keys[Math.floor(Math.random() * keys.length)]];
-};
+const mapOptions = ["snow", "cave", "forest"];
+const playerOptions = ["blue", "pink", "yellow", "green", "white"];
 
 export function AdventureProvider({ children }) {
   const [gameState, setGameState] = useState({
@@ -44,12 +43,12 @@ export function AdventureProvider({ children }) {
     setPreferences({
       mapSkin:
         settings.map === "random"
-          ? randomProp(mapSkins)
-          : mapSkins[settings.map],
+          ? mapOptions[random(mapOptions.length)]
+          : settings.map,
       playerSkin:
         settings.character === "random"
-          ? randomProp(playerSprites)
-          : playerSprites[settings.character],
+          ? playerOptions[random(playerOptions.length)]
+          : settings.character,
     });
     setGameState({
       board: generateAdventureBoard(
@@ -74,12 +73,12 @@ export function AdventureProvider({ children }) {
     setPreferences({
       mapSkin:
         settings.map === "random"
-          ? randomProp(mapSkins)
-          : mapSkins[settings.map],
+          ? mapOptions[random(mapOptions.length)]
+          : settings.map,
       playerSkin:
         settings.character === "random"
-          ? randomProp(playerSprites)
-          : playerSprites[settings.character],
+          ? playerOptions[random(playerOptions.length)]
+          : settings.character,
     });
     setGameState({
       board: generateDungeonBoard(1, 56, 24),
@@ -116,10 +115,7 @@ export function AdventureProvider({ children }) {
     )
       return;
     !gameState.board[i][j].clicked &&
-      playSoundEffect(
-        preferences.mapSkin.cover.split("_")[0].split("/")[2],
-        settings.sfx
-      );
+      playSoundEffect(preferences.mapSkin, settings.sfx);
     const newBoard = leftClick(gameState.board, i, j);
     const newState = {
       gems: 0,

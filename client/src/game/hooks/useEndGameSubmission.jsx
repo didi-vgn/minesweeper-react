@@ -25,7 +25,7 @@ export function useDunEndGameSubmission({
           postStats(token, {
             totalGems: gameState.gems,
             bombsScanned: gameState.bombsScanned,
-            characterUsed: preferences.playerSkin.split(".")[0].split("_")[2],
+            characterUsed: preferences.playerSkin,
             deaths: gameState.status === "lost" ? 1 : 0,
             depth: gameState.level,
             extraTime: totalExtraTime,
@@ -44,7 +44,7 @@ export function useAdvEndGameSubmission({ gameState, preferences }) {
       postStats(token, {
         totalGems: gameState.gems,
         bombsScanned: gameState.bombsScanned,
-        characterUsed: preferences.playerSkin.split(".")[0].split("_")[2],
+        characterUsed: preferences.playerSkin,
         levelsCompleted: gameState.status === "won" ? 1 : 0,
         deaths: gameState.status === "lost" ? 1 : 0,
         noScanWins: Number(

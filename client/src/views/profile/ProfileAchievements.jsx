@@ -3,6 +3,7 @@ import { getUserAchievements } from "../../services/adventureGamesServices";
 import { useNavigate } from "react-router-dom";
 import Achievement from "../../components/Achievement";
 import { useAuthContext } from "../../context/AuthContext";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function ProfileAchievements() {
   const { user } = useAuthContext();
@@ -22,7 +23,7 @@ export default function ProfileAchievements() {
   }, [user]);
 
   function goToAdventure() {
-    navigate("/");
+    navigate(`${BASE_PATH}/`);
   }
   return (
     <div className='flex gap-5 flex-wrap w-8/10 m-auto'>

@@ -6,6 +6,7 @@ import Input from "../components/Input";
 import { useAuthContext } from "../context/AuthContext";
 import { logInUser } from "../services/authServices";
 import errorHandler from "../utils/errorHandler";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function LogIn() {
   const methods = useForm();
@@ -16,7 +17,7 @@ export default function LogIn() {
     try {
       const response = await logInUser(data);
       login(response);
-      navigate("/profile");
+      navigate(`${BASE_PATH}/profile`);
     } catch (err) {
       errorHandler(err);
     }

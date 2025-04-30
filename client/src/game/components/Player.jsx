@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAdventureContext } from "../context/AdventureContext";
-import { animation } from "../utils/assets";
-import Scanner from "./Scanner";
+import { animation, playerSprites } from "../utils/assets";
 
 export default function Player({ helper }) {
   const [currentAnimation, setCurrentAnimation] = useState(animation.movement);
@@ -11,7 +10,7 @@ export default function Player({ helper }) {
   const spriteStyle = {
     height: "256px",
     width: "3200px",
-    backgroundImage: `url(${preferences.playerSkin})`,
+    backgroundImage: `url(${playerSprites[preferences.playerSkin]})`,
     backgroundRepeat: "no-repeat",
   };
 

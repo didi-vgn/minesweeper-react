@@ -6,6 +6,7 @@ import { GameProvider } from "./game/context/GameContext";
 import { AdventureProvider } from "./game/context/AdventureContext";
 import React from "react";
 import { Slide, ToastContainer } from "react-toastify";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
       <nav className='bg-gray-600 text-gray-100 text-3xl h-15'>
         <ul className='grid grid-cols-3 gap-10 w-4/5 mx-auto h-full'>
           <CustomNavLink path='leaderboard' text='Leaderboard' />
-          <CustomNavLink path='/' text='Play' />
+          <CustomNavLink path={`${BASE_PATH}/`} text='Play' end={true} />
           <CustomNavLink path='profile' text='Profile' />
         </ul>
       </nav>

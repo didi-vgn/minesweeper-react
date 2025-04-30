@@ -19,16 +19,16 @@ import Leaderboard from "../views/leaderboard/Leaderboard.jsx";
 import ClassicLeaderboard from "../views/leaderboard/ClassicLeaderboard.jsx";
 import AdventureLeaderboard from "../views/leaderboard/AdventureLeaderboard.jsx";
 import DungeonLeaderboard from "../views/leaderboard/DungeonLeaderboard.jsx";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 const router = [
   {
-    path: "/",
+    path: `${BASE_PATH}`,
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
       {
         index: true,
-        path: "/",
         element: <Game />,
       },
       {
@@ -101,11 +101,15 @@ const router = [
     ],
   },
   {
-    path: "/forbidden",
+    path: `${BASE_PATH}/forbidden`,
     element: <ForbiddenPage />,
   },
   {
-    path: "/error",
+    path: `${BASE_PATH}/error`,
+    element: <ErrorPage />,
+  },
+  {
+    path: "*",
     element: <ErrorPage />,
   },
 ];

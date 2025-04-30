@@ -42,13 +42,13 @@
 }
 
 .background-forest {
-  background-image: url("/map/lake.png");
+  background-image: url("/minesweeper-react/map/lake.png");
 }
 .background-cave {
-  background-image: url("/map/lava.png");
+  background-image: url("/minesweeper-react/map/lava.png");
 }
 .background-snow {
-  background-image: url("/map/ocean.png");
+  background-image: url("/minesweeper-react/map/ocean.png");
 }
 .background-s {
   background-size: 5%;

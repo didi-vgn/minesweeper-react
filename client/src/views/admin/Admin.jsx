@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 import CustomNavLink from "../../components/CustomNavLink";
 import { useEffect } from "react";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function Admin() {
   const { user } = useAuthContext();
@@ -9,7 +10,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (user.role !== "ADMIN") {
-      navigate("/forbidden");
+      navigate(`${BASE_PATH}/forbidden`);
     }
   }, [user]);
 

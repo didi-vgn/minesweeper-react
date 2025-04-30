@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function NewAchievementToast({ data, closeToast }) {
   const navigate = useNavigate();
@@ -6,7 +7,7 @@ export default function NewAchievementToast({ data, closeToast }) {
     <div className='font-mono'>
       <div className='flex items-center gap-1 justify-center'>
         <img
-          src={`/achievements/${data.id}.png`}
+          src={`${BASE_PATH}/achievements/${data.id}.png`}
           alt={`${data.title}`}
           className='size-17'
         />
@@ -18,7 +19,7 @@ export default function NewAchievementToast({ data, closeToast }) {
           <div
             className='text-sm text-center text-gray-500 mt-2 cursor-pointer hover:underline'
             onClick={() => {
-              navigate("/profile");
+              navigate(`${BASE_PATH}/profile`);
               closeToast();
             }}
           >

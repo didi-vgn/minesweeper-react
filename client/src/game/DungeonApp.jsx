@@ -97,7 +97,7 @@ export default function DungenApp({ back }) {
       <div
         className={`overflow-hidden relative place-self-center custom-border background-${
           zoomedOut ? "s" : "l"
-        } background-${preferences.mapSkin.cover.split("_")[0].split("/")[2]}`}
+        } background-${preferences.mapSkin}`}
       >
         <DungeonHud
           back={back}

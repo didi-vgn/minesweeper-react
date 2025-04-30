@@ -2,6 +2,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { PiFinnTheHumanDuotone } from "react-icons/pi";
 import Dropdown from "./Dropdown";
 import { useNavigate } from "react-router-dom";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function ProfileButton() {
   const { user, logout } = useAuthContext();
@@ -22,7 +23,7 @@ export default function ProfileButton() {
         <>
           <div
             className='block px-4 py-2 text-sm hover:bg-gray-100'
-            onClick={() => navigate("/profile/settings")}
+            onClick={() => navigate(`${BASE_PATH}/profile/settings`)}
           >
             Settings
           </div>
@@ -37,13 +38,13 @@ export default function ProfileButton() {
         <>
           <div
             className='block px-4 py-2 text-sm hover:bg-gray-100'
-            onClick={() => navigate("/login")}
+            onClick={() => navigate(`${BASE_PATH}/login`)}
           >
             Log In
           </div>
           <div
             className='block px-4 py-2 text-sm hover:bg-gray-100'
-            onClick={() => navigate("/signup")}
+            onClick={() => navigate(`${BASE_PATH}/signup`)}
           >
             Sign Up
           </div>

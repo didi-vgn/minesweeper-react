@@ -1,4 +1,5 @@
 import { useState } from "react";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function Achievement({ data }) {
   const [click, setClick] = useState(false);
@@ -10,7 +11,7 @@ export default function Achievement({ data }) {
       {!click ? (
         <div className='grid grid-rows-[1fr_3rem] gap-1 items-center'>
           <img
-            src={`/achievements/${data.achievement.id}.png`}
+            src={`${BASE_PATH}/achievements/${data.achievement.id}.png`}
             alt={data.achievement.title}
             className='size-30 m-auto'
           />
@@ -22,7 +23,7 @@ export default function Achievement({ data }) {
         <div className='grid grid-rows-[1fr_0.5fr_0.5fr] gap-1 items-center'>
           <div className='flex gap-2 items-center'>
             <img
-              src={`/achievements/${data.achievement.id}.png`}
+              src={`${BASE_PATH}/achievements/${data.achievement.id}.png`}
               alt={data.achievement.title}
               className='size-13'
             />

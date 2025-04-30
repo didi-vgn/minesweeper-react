@@ -10,6 +10,7 @@ import {
 import { signUpUser } from "../services/authServices";
 import errorHandler from "../utils/errorHandler";
 import { toast } from "react-toastify";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function SignUp() {
   const methods = useForm();
@@ -19,7 +20,7 @@ export default function SignUp() {
   const onSubmit = methods.handleSubmit(async (data) => {
     try {
       await signUpUser(data);
-      navigate("/profile");
+      navigate(`${BASE_PATH}/profile`);
       toast.success("Account created successfully!");
     } catch (err) {
       errorHandler(err);

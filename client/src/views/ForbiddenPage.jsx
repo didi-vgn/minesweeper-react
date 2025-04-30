@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { TfiFaceSad } from "react-icons/tfi";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function ForbiddenPage() {
   return (
@@ -10,7 +11,7 @@ export default function ForbiddenPage() {
       <h1 className='flex justify-center gap-3 items-center my-10'>
         Access deniend. You don't have permissions to view this page.
       </h1>
-      <Link to='/'>
+      <Link to={`${BASE_PATH}/`}>
         <div className='hover:underline cursor-pointer'>
           Go back to main page
         </div>

@@ -7,6 +7,7 @@ import {
 import errorHandler from "../../utils/errorHandler";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../context/AuthContext";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function Achievements() {
   const [achievements, setAchievements] = useState([]);
@@ -53,7 +54,7 @@ export default function Achievements() {
           className='grid grid-cols-[70px_1fr_1fr_1fr_170px] gap-2 items-center my-1 bg-white p-1 shadow-sm'
         >
           <img
-            src={`/achievements/${achievement.id}.png`}
+            src={`${BASE_PATH}/achievements/${achievement.id}.png`}
             alt={`${achievement.title}`}
             className='size-15'
           />
