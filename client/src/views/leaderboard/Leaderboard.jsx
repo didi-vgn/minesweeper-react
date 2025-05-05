@@ -2,6 +2,7 @@ import Header from "../../components/Header";
 import ProfileButton from "../../components/ProfileButton";
 import { createSearchParams, Outlet } from "react-router-dom";
 import { NavLink, useSearchParams } from "react-router-dom";
+const BASE_PATH = import.meta.env.BASE_URL;
 
 export default function Leaderboard() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,7 +32,7 @@ export default function Leaderboard() {
           />
 
           <NavLink
-            to='/leaderboard'
+            to={`${BASE_PATH}/leaderboard`}
             end={true}
             className={({ isActive }) =>
               `${
@@ -48,7 +49,7 @@ export default function Leaderboard() {
                 <NavLink
                   key={d}
                   to={{
-                    pathname: "/leaderboard",
+                    pathname: `${BASE_PATH}/leaderboard`,
                     search: createSearchParams({
                       difficulty: d,
                       nickname: query,
