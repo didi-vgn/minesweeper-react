@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { other } from "../utils/assets";
 import { useAdventureContext } from "../context/AdventureContext";
 
@@ -7,22 +7,20 @@ export default function Scanner({ x, y }) {
   const [frameIndex, setFrameIndex] = useState(0);
   const [active, setActive] = useState(false);
 
-  const handleAnimationChange = useCallback(() => {
-    const newIndex = frameIndex + 256;
-    if (newIndex >= 1536) {
-      setActive(false);
-      setFrameIndex(0);
-    } else {
-      setFrameIndex(newIndex);
-    }
-  });
-
   useEffect(() => {
     if (active) {
-      const interval = setInterval(handleAnimationChange, 100);
+      const interval = setInterval(() => {
+        const newIndex = frameIndex + 256;
+        if (newIndex >= 1536) {
+          setActive(false);
+          setFrameIndex(0);
+        } else {
+          setFrameIndex(newIndex);
+        }
+      }, 100);
       return () => clearInterval(interval);
     }
-  }, [active, handleAnimationChange]);
+  }, [active, frameIndex]);
 
   useEffect(() => {
     if (event === "scan" && !active) {

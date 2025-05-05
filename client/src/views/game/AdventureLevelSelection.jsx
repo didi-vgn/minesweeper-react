@@ -20,14 +20,14 @@ export default function AdventureLevelSelection({ back, progress, play }) {
         <div className='text-5xl place-self-center'>
           <PrettyTitle string='Adventure' />
         </div>
-        <div className='grid grid-rows-2 place-self-end'>
-          <div>
-            {progress.reduce((acc, curr) => acc + curr.points, 0)} points
-          </div>
+        <div className='grid grid-cols-2 gap-x-5 place-self-end'>
+          <div>{progress.reduce((acc, curr) => acc + curr.points, 0)}</div>
+          <div>points</div>
           <div>
             {progress.reduce((acc, curr) => acc + curr.collectedGems, 0)}/
-            {adventureLevels.reduce((acc, curr) => acc + curr.gems, 0)} gems
+            {adventureLevels.reduce((acc, curr) => acc + curr.gems, 0)}
           </div>
+          <div>stars</div>
         </div>
       </div>
       <div className='grid grid-cols-10 gap-3 m-5'>
@@ -66,13 +66,13 @@ function LevelIcon({ onClick, level, data }) {
         !data ? (
           <div className='flex flex-col gap-1 items-center'>
             <div className='text-2xl font-bold'>Play</div>
-            <div className='text-sm'>0/{adventureLevels[level - 1].gems} G</div>
+            <div className='text-sm'>0/{adventureLevels[level - 1].gems} S</div>
           </div>
         ) : (
           <div className='flex flex-col items-center'>
             <div className='text-2xl font-bold'>Replay</div>
             <div className='text-sm'>
-              {data.collectedGems}/{adventureLevels[level - 1].gems} G
+              {data.collectedGems}/{adventureLevels[level - 1].gems} S
             </div>
             <div className='text-sm'>{data.points} P</div>
           </div>

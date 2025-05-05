@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useAdventureContext } from "../context/AdventureContext";
 import { animation, playerSprites } from "../utils/assets";
 
@@ -14,22 +14,20 @@ export default function Player({ helper }) {
     backgroundRepeat: "no-repeat",
   };
 
-  const handleSpriteChange = useCallback(() => {
-    const newFrameIndex = frameIndex + 128;
-    if (currentAnimation.includes(newFrameIndex)) {
-      setFrameIndex(newFrameIndex);
-    } else if (currentAnimation === animation.explode) {
-      setFrameIndex(animation.explode[0]);
-    } else {
-      setCurrentAnimation(animation.movement);
-      setFrameIndex(animation.movement[0]);
-    }
-  }, [frameIndex, currentAnimation]);
-
   useEffect(() => {
-    const interval = setInterval(handleSpriteChange, 300);
+    const interval = setInterval(() => {
+      const newFrameIndex = frameIndex + 128;
+      if (currentAnimation.includes(newFrameIndex)) {
+        setFrameIndex(newFrameIndex);
+      } else if (currentAnimation === animation.explode) {
+        setFrameIndex(animation.explode[0]);
+      } else {
+        setCurrentAnimation(animation.movement);
+        setFrameIndex(animation.movement[0]);
+      }
+    }, 300);
     return () => clearInterval(interval);
-  }, [handleSpriteChange]);
+  }, [frameIndex, currentAnimation]);
 
   useEffect(() => {
     if (event === "base") {

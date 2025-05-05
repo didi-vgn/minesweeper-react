@@ -6,7 +6,7 @@ import {
   postGameStats,
   postGameStatsGuest,
 } from "../services/baseGameServices";
-import { calculateDifficulty } from "./logic/calculateDifficulty";
+import { getThreeBv } from "./logic/getThreeBv";
 import { boardToArray } from "./utils/boardToArray";
 import { useAuthContext } from "../context/AuthContext";
 import { FaArrowRotateRight } from "react-icons/fa6";
@@ -42,7 +42,7 @@ export default function ClassicApp({ back }) {
     if (time === 0) return;
     async function postGame() {
       try {
-        const bbbv = calculateDifficulty(gameState.board);
+        const bbbv = getThreeBv(gameState.board);
         const stats = {
           difficulty:
             config.bombs === 10

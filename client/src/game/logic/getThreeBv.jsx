@@ -1,7 +1,7 @@
 import { adjacentCells } from "../utils/variables";
 import { posToKey } from "./mapGenHelpers";
 
-export const calculateDifficulty = (board) => {
+export const getThreeBv = (board) => {
   const height = board.length;
   const width = board[0].length;
   const visited = new Set();

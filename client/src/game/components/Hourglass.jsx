@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { other } from "../utils/assets";
 import { useAdventureContext } from "../context/AdventureContext";
 
@@ -7,22 +7,21 @@ export default function Hourglass({ x, y }) {
   const [active, setActive] = useState(false);
   const { event } = useAdventureContext();
 
-  const handleAnimationChange = useCallback(() => {
-    const newIndex = frameIndex + 64;
-    if (newIndex >= 384) {
-      setActive(false);
-      setFrameIndex(0);
-    } else {
-      setFrameIndex(newIndex);
-    }
-  });
-
   useEffect(() => {
     if (active) {
-      const interval = setInterval(handleAnimationChange, 100);
+      const interval = setInterval(() => {
+        const newIndex = frameIndex + 64;
+        if (newIndex >= 384) {
+          setActive(false);
+          setFrameIndex(0);
+        } else {
+          setFrameIndex(newIndex);
+        }
+      }, 100);
+
       return () => clearInterval(interval);
     }
-  }, [active, handleAnimationChange]);
+  }, [active, frameIndex]);
 
   useEffect(() => {
     if (event === "extraTime" && !active) {

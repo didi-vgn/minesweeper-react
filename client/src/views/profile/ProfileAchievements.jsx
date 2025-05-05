@@ -26,7 +26,7 @@ export default function ProfileAchievements() {
     navigate(`${BASE_PATH}/`);
   }
   return (
-    <div className='flex gap-5 flex-wrap w-8/10 m-auto'>
+    <div className='flex gap-5 flex-wrap w-9/10 m-auto justify-center'>
       {achievements.length === 0 && (
         <div className='flex flex-col items-center mx-auto my-20'>
           <div className='text-2xl text-pink-600'>
