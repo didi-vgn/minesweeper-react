@@ -53,19 +53,20 @@ export default function AdventureApp({ back, progress }) {
     const currScore = Math.floor(
       (gameState.gems *
         150 *
-        (1 + gameState.level * 0.05) *
-        (1 + adventureLevels[gameState.level - 1].bombs / 100)) /
-        (1 + Math.log(time + 1))
+        (1 + 0.1 * gameState.scanners) *
+        (1 + 0.2 * gameState.level)) /
+        (1 + Math.pow(Math.log(time + 1), 1.5))
     );
     setGameState((prev) => ({ ...prev, score: currScore }));
     const existingGameIndex = progress.findIndex(
       (level) => level.levelId === gameState.level
     );
+
     if (
       existingGameIndex >= 0 &&
       (gameState.gems < progress[existingGameIndex].collectedGems ||
         (gameState.gems === progress[existingGameIndex].collectedGems &&
-          gameState.score < progress[existingGameIndex].points))
+          currScore < progress[existingGameIndex].points))
     ) {
       return;
     }
