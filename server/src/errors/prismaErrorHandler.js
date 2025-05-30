@@ -16,14 +16,8 @@ exports.prismaErrorHandler = (err) => {
         400,
         err.meta.target
       );
-    case "P20006":
-      return new AppError("Record not found.", "NOT_FOUND", 404);
     case "P2025":
-      return new AppError(
-        "Record to update or delete not found.",
-        "NOT_FOUND",
-        404
-      );
+      return new AppError("Record not found.", "NOT_FOUND", 404);
     case "P1000":
       return new AppError(
         "Could not connect to the database.",

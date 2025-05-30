@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useRef, useState } from "react";
 import { leftClick } from "../logic/click";
 import { playSoundEffect } from "../utils/assets";
 import { adjacentCells } from "../utils/variables";
@@ -38,6 +38,8 @@ export function AdventureProvider({ children }) {
   });
 
   const [event, setEvent] = useState(null);
+  const scanLockRef = useRef(false);
+  const scannersRef = useRef(gameState.scanners);
 
   const newGame = (levelData) => {
     setPreferences({
@@ -106,6 +108,10 @@ export function AdventureProvider({ children }) {
     setTimeout(() => setEvent(null), 100);
   }
 
+  const updateStatus = (newStatus) => {
+    setGameState((prev) => ({ ...prev, status: newStatus }));
+  };
+
   const movePlayer = (i, j) => {
     if (
       gameState.board[i][j].clicked &&
@@ -114,13 +120,13 @@ export function AdventureProvider({ children }) {
       !gameState.board[i][j].extraTime
     )
       return;
+
     !gameState.board[i][j].clicked &&
       playSoundEffect(preferences.mapSkin, settings.sfx);
     const newBoard = leftClick(gameState.board, i, j);
     const newState = {
       gems: 0,
       scanners: 0,
-      status: "active",
     };
 
     if (newBoard[i][j].gem) {
@@ -133,7 +139,7 @@ export function AdventureProvider({ children }) {
         playSoundEffect("win", settings.sfx);
         newBoard[i][j].gem = null;
         newState.gems = 1;
-        newState.status = "won";
+        updateStatus("won");
       }
     } else if (newBoard[i][j].scanner) {
       triggerEvent("scanner");
@@ -147,7 +153,7 @@ export function AdventureProvider({ children }) {
     } else if (newBoard[i][j].value === -1) {
       triggerEvent("bomb");
       playSoundEffect("bomb", settings.sfx);
-      newState.status = "lost";
+      updateStatus("lost");
     }
 
     setGameState((prev) => ({
@@ -155,21 +161,30 @@ export function AdventureProvider({ children }) {
       board: newBoard,
       gems: prev.gems + newState.gems,
       scanners: prev.scanners + newState.scanners,
-      status: newState.status,
     }));
   };
 
   const scan = (i, j) => {
+    if (scanLockRef.current) return;
+    scanLockRef.current = true;
     playSoundEffect("smoke", settings.sfx);
     triggerEvent("scan");
+
     setTimeout(() => {
       setGameState((prev) => {
+        if (prev.scanners <= 0) {
+          scanLockRef.current = false;
+          return prev;
+        }
+
         const newBoard = prev.board.map((row) =>
           row.map((cell) => ({ ...cell }))
         );
+
         let newBombsScanned = 0;
         const height = prev.board.length;
         const width = prev.board[0].length;
+
         adjacentCells.forEach(([r, c]) => {
           const newRow = r + i;
           const newCol = c + j;
@@ -185,6 +200,7 @@ export function AdventureProvider({ children }) {
             newBombsScanned++;
           }
         });
+
         return {
           ...prev,
           board: newBoard,
@@ -193,6 +209,8 @@ export function AdventureProvider({ children }) {
           scannersUsed: true,
         };
       });
+
+      scanLockRef.current = false;
     }, 500);
   };
 
